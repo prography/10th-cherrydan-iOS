@@ -1,0 +1,585 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		E5E506A22DE969790075264B /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = E5E506A12DE969730075264B /* .gitignore */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		601A23DF2DE42E8500ED0FE1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 601A23C12DE42E8300ED0FE1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 601A23C82DE42E8300ED0FE1;
+			remoteInfo = cherrydan;
+		};
+		601A23E92DE42E8500ED0FE1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 601A23C12DE42E8300ED0FE1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 601A23C82DE42E8300ED0FE1;
+			remoteInfo = cherrydan;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		601A23C92DE42E8300ED0FE1 /* cherrydan.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = cherrydan.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		601A23DE2DE42E8500ED0FE1 /* cherrydanTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = cherrydanTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		601A23E82DE42E8500ED0FE1 /* cherrydanUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = cherrydanUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E5E506A12DE969730075264B /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		601A240E2DE43B4500ED0FE1 /* Exceptions for "cherrydan" folder in "cherrydan" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 601A23C82DE42E8300ED0FE1 /* cherrydan */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		601A23CB2DE42E8300ED0FE1 /* cherrydan */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				601A240E2DE43B4500ED0FE1 /* Exceptions for "cherrydan" folder in "cherrydan" target */,
+			);
+			path = cherrydan;
+			sourceTree = "<group>";
+		};
+		601A23E12DE42E8500ED0FE1 /* cherrydanTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = cherrydanTests;
+			sourceTree = "<group>";
+		};
+		601A23EB2DE42E8500ED0FE1 /* cherrydanUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = cherrydanUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		601A23C62DE42E8300ED0FE1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		601A23DB2DE42E8500ED0FE1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		601A23E52DE42E8500ED0FE1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		601A23C02DE42E8300ED0FE1 = {
+			isa = PBXGroup;
+			children = (
+				E5E506A12DE969730075264B /* .gitignore */,
+				601A23CB2DE42E8300ED0FE1 /* cherrydan */,
+				601A23E12DE42E8500ED0FE1 /* cherrydanTests */,
+				601A23EB2DE42E8500ED0FE1 /* cherrydanUITests */,
+				601A23CA2DE42E8300ED0FE1 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		601A23CA2DE42E8300ED0FE1 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				601A23C92DE42E8300ED0FE1 /* cherrydan.app */,
+				601A23DE2DE42E8500ED0FE1 /* cherrydanTests.xctest */,
+				601A23E82DE42E8500ED0FE1 /* cherrydanUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		601A23C82DE42E8300ED0FE1 /* cherrydan */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 601A23F22DE42E8500ED0FE1 /* Build configuration list for PBXNativeTarget "cherrydan" */;
+			buildPhases = (
+				601A23C52DE42E8300ED0FE1 /* Sources */,
+				601A23C62DE42E8300ED0FE1 /* Frameworks */,
+				601A23C72DE42E8300ED0FE1 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				601A23CB2DE42E8300ED0FE1 /* cherrydan */,
+			);
+			name = cherrydan;
+			packageProductDependencies = (
+			);
+			productName = cherrydan;
+			productReference = 601A23C92DE42E8300ED0FE1 /* cherrydan.app */;
+			productType = "com.apple.product-type.application";
+		};
+		601A23DD2DE42E8500ED0FE1 /* cherrydanTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 601A23F52DE42E8500ED0FE1 /* Build configuration list for PBXNativeTarget "cherrydanTests" */;
+			buildPhases = (
+				601A23DA2DE42E8500ED0FE1 /* Sources */,
+				601A23DB2DE42E8500ED0FE1 /* Frameworks */,
+				601A23DC2DE42E8500ED0FE1 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				601A23E02DE42E8500ED0FE1 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				601A23E12DE42E8500ED0FE1 /* cherrydanTests */,
+			);
+			name = cherrydanTests;
+			packageProductDependencies = (
+			);
+			productName = cherrydanTests;
+			productReference = 601A23DE2DE42E8500ED0FE1 /* cherrydanTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		601A23E72DE42E8500ED0FE1 /* cherrydanUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 601A23F82DE42E8500ED0FE1 /* Build configuration list for PBXNativeTarget "cherrydanUITests" */;
+			buildPhases = (
+				601A23E42DE42E8500ED0FE1 /* Sources */,
+				601A23E52DE42E8500ED0FE1 /* Frameworks */,
+				601A23E62DE42E8500ED0FE1 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				601A23EA2DE42E8500ED0FE1 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				601A23EB2DE42E8500ED0FE1 /* cherrydanUITests */,
+			);
+			name = cherrydanUITests;
+			packageProductDependencies = (
+			);
+			productName = cherrydanUITests;
+			productReference = 601A23E82DE42E8500ED0FE1 /* cherrydanUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		601A23C12DE42E8300ED0FE1 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1620;
+				LastUpgradeCheck = 1620;
+				TargetAttributes = {
+					601A23C82DE42E8300ED0FE1 = {
+						CreatedOnToolsVersion = 16.2;
+					};
+					601A23DD2DE42E8500ED0FE1 = {
+						CreatedOnToolsVersion = 16.2;
+						TestTargetID = 601A23C82DE42E8300ED0FE1;
+					};
+					601A23E72DE42E8500ED0FE1 = {
+						CreatedOnToolsVersion = 16.2;
+						TestTargetID = 601A23C82DE42E8300ED0FE1;
+					};
+				};
+			};
+			buildConfigurationList = 601A23C42DE42E8300ED0FE1 /* Build configuration list for PBXProject "cherrydan" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 601A23C02DE42E8300ED0FE1;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 601A23CA2DE42E8300ED0FE1 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				601A23C82DE42E8300ED0FE1 /* cherrydan */,
+				601A23DD2DE42E8500ED0FE1 /* cherrydanTests */,
+				601A23E72DE42E8500ED0FE1 /* cherrydanUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		601A23C72DE42E8300ED0FE1 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E5E506A22DE969790075264B /* .gitignore in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		601A23DC2DE42E8500ED0FE1 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		601A23E62DE42E8500ED0FE1 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		601A23C52DE42E8300ED0FE1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		601A23DA2DE42E8500ED0FE1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		601A23E42DE42E8500ED0FE1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		601A23E02DE42E8500ED0FE1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 601A23C82DE42E8300ED0FE1 /* cherrydan */;
+			targetProxy = 601A23DF2DE42E8500ED0FE1 /* PBXContainerItemProxy */;
+		};
+		601A23EA2DE42E8500ED0FE1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 601A23C82DE42E8300ED0FE1 /* cherrydan */;
+			targetProxy = 601A23E92DE42E8500ED0FE1 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		601A23F02DE42E8500ED0FE1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		601A23F12DE42E8500ED0FE1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		601A23F32DE42E8500ED0FE1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = H856SYKNM8;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = cherrydan/Info.plist;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.teamSquid.cherrydan;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		601A23F42DE42E8500ED0FE1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = H856SYKNM8;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = cherrydan/Info.plist;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.teamSquid.cherrydan;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		601A23F62DE42E8500ED0FE1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = H856SYKNM8;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.teamSquid.cherrydanTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/cherrydan.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/cherrydan";
+			};
+			name = Debug;
+		};
+		601A23F72DE42E8500ED0FE1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = H856SYKNM8;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.teamSquid.cherrydanTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/cherrydan.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/cherrydan";
+			};
+			name = Release;
+		};
+		601A23F92DE42E8500ED0FE1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = H856SYKNM8;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.teamSquid.cherrydanUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = cherrydan;
+			};
+			name = Debug;
+		};
+		601A23FA2DE42E8500ED0FE1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = H856SYKNM8;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.teamSquid.cherrydanUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = cherrydan;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		601A23C42DE42E8300ED0FE1 /* Build configuration list for PBXProject "cherrydan" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				601A23F02DE42E8500ED0FE1 /* Debug */,
+				601A23F12DE42E8500ED0FE1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		601A23F22DE42E8500ED0FE1 /* Build configuration list for PBXNativeTarget "cherrydan" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				601A23F32DE42E8500ED0FE1 /* Debug */,
+				601A23F42DE42E8500ED0FE1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		601A23F52DE42E8500ED0FE1 /* Build configuration list for PBXNativeTarget "cherrydanTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				601A23F62DE42E8500ED0FE1 /* Debug */,
+				601A23F72DE42E8500ED0FE1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		601A23F82DE42E8500ED0FE1 /* Build configuration list for PBXNativeTarget "cherrydanUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				601A23F92DE42E8500ED0FE1 /* Debug */,
+				601A23FA2DE42E8500ED0FE1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 601A23C12DE42E8300ED0FE1 /* Project object */;
+}
