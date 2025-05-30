@@ -19,12 +19,12 @@
                                 <rect key="frame" x="141.66666666666666" y="363" width="90" height="86"/>
                             </imageView>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="middleTruncation" baselineAdjustment="alignBaselines" minimumFontSize="18" translatesAutoresizingMaskIntoConstraints="NO" id="GJd-Yh-RWb">
-                                <rect key="frame" x="156" y="457" width="63" height="31"/>
+                                <rect key="frame" x="152.33333333333334" y="457" width="70.333333333333343" height="32.333333333333314"/>
                                 <attributedString key="attributedText">
                                     <fragment content="체리단">
                                         <attributes>
                                             <color key="NSColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                                            <font key="NSFont" size="27" name="GangwonEduAll-OTFBold"/>
+                                            <font key="NSFont" metaFont="system" size="27"/>
                                             <font key="NSOriginalFont" metaFont="system" size="27"/>
                                             <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="truncatingTail" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
                                         </attributes>

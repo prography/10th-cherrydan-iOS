@@ -12,8 +12,7 @@ struct cherrydanApp: App {
 
     var body: some Scene {
         WindowGroup {
-//            ContentView()
-            OnboardingView()
+            MainTabView()
         }
     }
 }
