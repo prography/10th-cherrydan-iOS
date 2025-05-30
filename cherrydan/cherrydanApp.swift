@@ -1,10 +1,3 @@
-//
-//  cherrydanApp.swift
-//  cherrydan
-//
-//  Created by humanics on 5/26/25.
-//
-
 import SwiftUI
 
 @main
