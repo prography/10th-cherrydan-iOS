@@ -2,30 +2,32 @@ import SwiftUI
 
 struct MainTabView: View {
     @State private var selectedTab = 0
+    @ObservedObject private var tabBar = TabBarManager.shared
     
     var body: some View {
-        NavigationStack {
+        ZStack {
             VStack(spacing: 0) {
                 switch(selectedTab) {
                 case 0:
                     HomeView()
                 case 1:
-                    HomeView()
+                    OnboardingView()
                 case 2:
-                    HomeView()
+                    CategoryView()
                 default:
                     HomeView()
                 }
-                
-                Rectangle()
-                    .fill(.pBeige)
-                    .frame(height:2)
-                
-                bottomTab
-                    .padding(.horizontal, 32)
             }
-            .animation(.fastEaseInOut, value: selectedTab)
+            
+            if !tabBar.isHidden {
+                bottomTab
+                    .frame(maxHeight: .infinity, alignment: .bottom)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+            
         }
+        .background(.white)
+        .ignoresSafeArea(.container, edges: .bottom)
     }
     
     @ViewBuilder
@@ -36,26 +38,34 @@ struct MainTabView: View {
             ("writing_guide","작성 가이드"),
             ("my","마이페이지")
         ]
-
-        HStack(alignment: .center, spacing: 0) {
-            ForEach(0..<4, id: \.self) { index in
-                let isFocused = selectedTab == index
-                
-                Button(action:{
-                    selectedTab = index
-                } ) {
-                    VStack(spacing: 4) {
-                        Image("\(tabBarText[index].0)\(isFocused ? "_focused": "")")
-                        
-                        Text(tabBarText[index].1)
-                            .font(.m5r)
-                            .foregroundStyle(isFocused ? .mPink3 : .mPink1)
+        
+        VStack(spacing: 0) {
+            Rectangle()
+                .fill(.pBeige)
+                .frame(height:2)
+            
+            HStack(alignment: .center, spacing: 0) {
+                ForEach(0..<4, id: \.self) { index in
+                    let isFocused = selectedTab == index
+                    
+                    Button(action: {
+                        selectedTab = index
+                    } ) {
+                        VStack(spacing: 4) {
+                            Image("\(tabBarText[index].0)\(isFocused ? "_focused": "")")
+                            
+                            Text(tabBarText[index].1)
+                                .font(.m5r)
+                                .foregroundStyle(isFocused ? .mPink3 : .mPink1)
+                        }
+                        .frame(maxWidth: .infinity)
                     }
-                    .frame(maxWidth: .infinity)
                 }
             }
+            .padding(.horizontal, 32)
+            .frame(height: 96)
+            .background(.white)
         }
-        .frame(height: 80)
     }
 }
 
