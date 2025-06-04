@@ -35,7 +35,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		601A240E2DE43B4500ED0FE1 /* Exceptions for "cherrydan" folder in "cherrydan" target */ = {
+		E59A2B552DF0286C00B7610C /* Exceptions for "cherrydan" folder in "cherrydan" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -45,14 +45,6 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		601A23CB2DE42E8300ED0FE1 /* cherrydan */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				601A240E2DE43B4500ED0FE1 /* Exceptions for "cherrydan" folder in "cherrydan" target */,
-			);
-			path = cherrydan;
-			sourceTree = "<group>";
-		};
 		601A23E12DE42E8500ED0FE1 /* cherrydanTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = cherrydanTests;
@@ -61,6 +53,14 @@
 		601A23EB2DE42E8500ED0FE1 /* cherrydanUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = cherrydanUITests;
+			sourceTree = "<group>";
+		};
+		E59A2B412DF0286C00B7610C /* cherrydan */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				E59A2B552DF0286C00B7610C /* Exceptions for "cherrydan" folder in "cherrydan" target */,
+			);
+			path = cherrydan;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -94,7 +94,7 @@
 			isa = PBXGroup;
 			children = (
 				E5E506A12DE969730075264B /* .gitignore */,
-				601A23CB2DE42E8300ED0FE1 /* cherrydan */,
+				E59A2B412DF0286C00B7610C /* cherrydan */,
 				601A23E12DE42E8500ED0FE1 /* cherrydanTests */,
 				601A23EB2DE42E8500ED0FE1 /* cherrydanUITests */,
 				601A23CA2DE42E8300ED0FE1 /* Products */,
@@ -127,7 +127,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				601A23CB2DE42E8300ED0FE1 /* cherrydan */,
+				E59A2B412DF0286C00B7610C /* cherrydan */,
 			);
 			name = cherrydan;
 			packageProductDependencies = (
