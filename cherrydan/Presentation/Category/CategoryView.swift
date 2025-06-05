@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct CategoryView: View {
+    @Environment(\.dismiss) private var dismiss
     @State private var selectedTab = 0
     @State private var selectedRegion: Int = 0
     
@@ -19,12 +20,16 @@ struct CategoryView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            CDHeaderWithLeftContent() {
-                HStack(alignment: .center) {
-                    Image("chevron_left")
-                    
-                    Text("카테고리")
-                        .font(.t1)
+            CDHeaderWithLeftContent(){
+                Button(action: {
+                    dismiss()
+                }) {
+                    HStack(alignment: .center) {
+                        Image("chevron_left")
+                        
+                        Text("카테고리")
+                            .font(.t1)
+                    }
                 }
             }
             
@@ -67,7 +72,6 @@ struct CategoryView: View {
                                     .padding(.horizontal, isSelected ? 16 : 0)
                                     .padding(.top, 16)
                                     
-                                    // 해당 지역의 세부 지역들
                                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 0) {
                                         ForEach(regionData[regionKey] ?? [], id: \.self) { region in
                                             regionDetailButton(region)
@@ -106,7 +110,7 @@ struct CategoryView: View {
             HStack {
                 Text(Array(regionData.keys)[index])
                     .font(.m4r)
-                    .foregroundColor(selectedRegion == index ? .gray9 : .gray5)
+                    .foregroundStyle(selectedRegion == index ? .gray9 : .gray5)
                 
                 Spacer()
             }
@@ -122,7 +126,7 @@ struct CategoryView: View {
         }) {
             Text(region)
                 .font(.m5r)
-                .foregroundColor(.gray9)
+                .foregroundStyle(.gray9)
                 .frame(width: 110, height: 40, alignment: .leading)
         }
     }

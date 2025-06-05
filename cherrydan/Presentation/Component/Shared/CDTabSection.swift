@@ -22,7 +22,7 @@ struct CDTabSection: View {
         VStack(spacing: 8){
             Text(data[index])
                 .font(.m3b)
-                .foregroundColor(selectedTab == index ? .mPink3 : .gray4)
+                .foregroundStyle(selectedTab == index ? .mPink3 : .gray4)
                 .padding(.horizontal, 4)
             
             Rectangle()
