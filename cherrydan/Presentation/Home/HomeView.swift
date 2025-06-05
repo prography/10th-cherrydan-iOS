@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct HomeView: View {
+    @StateObject private var viewModel = HomeViewModel()
     @State private var selectedTab = 0
     
     let buttonArr = ["인기 공고", "마감임박", "새로운 공고", "선정확률 높은", "관심 공고", "지역 맞춤"]
@@ -12,26 +13,46 @@ struct HomeView: View {
     ]
     
     var body: some View {
-        VStack(spacing: 0) {
-            CDHeaderWithLeftContent() {
-                HStack(alignment: .center) {
-                    Text("카테고리")
-                        .font(.t1)
-                    
-                    Image("hamburger")
+        NavigationStack(path: $viewModel.navigationPath) {
+            VStack(spacing: 0) {
+                CDHeaderWithLeftContent(
+                    leftContent: {
+                        Button(action: {
+                            viewModel.navigateTo(.category)
+                        }) {
+                            HStack(alignment: .center) {
+                                Text("카테고리")
+                                    .font(.t1)
+                                    .foregroundStyle(.gray9)
+                                
+                                Image("hamburger")
+                            }
+                        }
+                    },
+                    searchAction: {
+                        viewModel.navigateTo(.search)
+                    }
+                )
+                
+                ScrollView {
+                    VStack(spacing: 20) {
+                        CampaignBanner(campaigns: campaigns)
+                        
+                        CDTabSection(
+                            selectedTab: $selectedTab,
+                            data: buttonArr
+                        )
+                        
+                        campaignGridSection
+                    }
                 }
             }
-            
-            ScrollView {
-                VStack(spacing: 20) {
-                    CampaignBanner(campaigns: campaigns)
-                    
-                    CDTabSection(
-                        selectedTab: $selectedTab,
-                        data: buttonArr
-                    )
-                    
-                    campaignGridSection
+            .navigationDestination(for: HomeDestination.self) { destination in
+                switch destination {
+                case .category:
+                    CategoryView()
+                case .search:
+                    SearchView()
                 }
             }
         }

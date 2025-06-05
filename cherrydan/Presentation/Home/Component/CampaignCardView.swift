@@ -29,7 +29,7 @@ struct CampaignCardView: View {
                 
                 Text("\(reviewPlatform)")
                     .font(.m6r)
-                    .foregroundColor(.gray0)
+                    .foregroundStyle(.gray0)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
                     .background(.gray5)
@@ -54,16 +54,16 @@ struct CampaignCardView: View {
                 
                 Text(subtitle)
                     .font(.m5r)
-                    .foregroundColor(.gray9)
+                    .foregroundStyle(.gray9)
                 
                 HStack(spacing: 0) {
                     Text("신청 \(applicantCount)/")
                         .font(.m5r)
-                        .foregroundColor(.gray9)
+                        .foregroundStyle(.gray9)
                     
                     Text("\(totalApplicants)명")
                         .font(.m5r)
-                        .foregroundColor(.gray4)
+                        .foregroundStyle(.gray4)
                 }
             }
             
@@ -72,7 +72,7 @@ struct CampaignCardView: View {
                 
                 Text(socialPlatform.displayName)
                     .font(.m5r)
-                    .foregroundColor(.gray9)
+                    .foregroundStyle(.gray9)
             }
         }
     }

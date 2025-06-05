@@ -38,11 +38,11 @@ struct CampaignBanner: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(campaign[0])
                     .font(.t4)
-                    .foregroundColor(.gray1)
+                    .foregroundStyle(.gray1)
                 
                 Text(campaign[1])
                     .font(.t5)
-                    .foregroundColor(.gray1)
+                    .foregroundStyle(.gray1)
             }
             .frame(maxWidth: .infinity, maxHeight: 80, alignment: .leading)
         }
