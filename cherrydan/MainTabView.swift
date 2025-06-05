@@ -14,6 +14,8 @@ struct MainTabView: View {
                     OnboardingView()
                 case 2:
                     CategoryView()
+                case 3:
+                    MyPageView()
                 default:
                     HomeView()
                 }
