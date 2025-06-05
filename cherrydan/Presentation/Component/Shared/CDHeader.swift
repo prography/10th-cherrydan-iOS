@@ -5,6 +5,12 @@ struct CDHeaderWithLeftContent<Content: View>: View {
     @Environment(\.dismiss) private var dismiss
     
     let leftContent: (() -> Content)
+    let searchAction: (() -> Void)?
+    
+    init(@ViewBuilder leftContent: @escaping () -> Content, searchAction: (() -> Void)? = nil) {
+        self.leftContent = leftContent
+        self.searchAction = searchAction
+    }
       
     var body: some View {
         HStack(alignment: .center) {
@@ -17,7 +23,9 @@ struct CDHeaderWithLeftContent<Content: View>: View {
                     Image("notification")
                 }
                 
-                Button(action: {}) {
+                Button(action: {
+                    searchAction?()
+                }) {
                     Image("search_bg")
                 }
             }
