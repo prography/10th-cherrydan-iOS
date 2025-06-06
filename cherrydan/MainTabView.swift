@@ -11,7 +11,7 @@ struct MainTabView: View {
                 case 0:
                     HomeView()
                 case 1:
-                    OnboardingView()
+                    MyCampaignView()
                 case 2:
                     CategoryView()
                 case 3:
