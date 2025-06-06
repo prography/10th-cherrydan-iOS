@@ -2,6 +2,8 @@ import SwiftUI
 
 enum MyPageDestination: Hashable {
     case agreement
+    case myInfo
+    case mediaConnect
 }
 
 struct MyPageView: View {
@@ -35,6 +37,10 @@ struct MyPageView: View {
                 switch destination {
                 case .agreement:
                     AgreementView()
+                case .myInfo:
+                    MyInfoView()
+                case .mediaConnect:
+                    MediaConnectView()
                 }
             }
         }
@@ -46,8 +52,12 @@ struct MyPageView: View {
                 .foregroundStyle(.mPink2)
                 .font(.m5b)
             
-            menuItem("내 정보"){}
-            menuItem("SNS 연결"){}
+            menuItem("내 정보") {
+                navigationPath.append(MyPageDestination.myInfo)
+            }
+            menuItem("SNS 연결") {
+                navigationPath.append(MyPageDestination.mediaConnect)
+            }
             menuItem("체험단 연결"){}
             
             Divider()
