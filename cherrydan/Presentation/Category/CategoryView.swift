@@ -29,6 +29,7 @@ struct CategoryView: View {
                         
                         Text("카테고리")
                             .font(.t1)
+                            .foregroundStyle(.gray9)
                     }
                 }
             }

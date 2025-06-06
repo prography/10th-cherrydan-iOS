@@ -15,24 +15,20 @@ struct HomeView: View {
     var body: some View {
         NavigationStack(path: $viewModel.navigationPath) {
             VStack(spacing: 0) {
-                CDHeaderWithLeftContent(
-                    leftContent: {
-                        Button(action: {
-                            viewModel.navigateTo(.category)
-                        }) {
-                            HStack(alignment: .center) {
-                                Text("카테고리")
-                                    .font(.t1)
-                                    .foregroundStyle(.gray9)
-                                
-                                Image("hamburger")
-                            }
+                CDHeaderWithLeftContent() {
+                    Button(action: {
+                        viewModel.navigateTo(.category)
+                    }) {
+                        HStack(alignment: .center) {
+                            Text("카테고리")
+                                .font(.t1)
+                                .foregroundStyle(.gray9)
+                            
+                            Image("hamburger")
                         }
-                    },
-                    searchAction: {
-                        viewModel.navigateTo(.search)
                     }
-                )
+                }
+                
                 
                 ScrollView {
                     VStack(spacing: 20) {
