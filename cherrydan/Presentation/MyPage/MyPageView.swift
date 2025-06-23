@@ -1,49 +1,30 @@
 import SwiftUI
 
-enum MyPageDestination: Hashable {
-    case agreement
-    case myInfo
-    case mediaConnect
-}
-
 struct MyPageView: View {
-    @State private var navigationPath = NavigationPath()
+    @EnvironmentObject var router: MyPageRouter
     
     var body: some View {
-        NavigationStack(path: $navigationPath) {
-            VStack(spacing: 0) {
-                CDHeaderWithLeftContent(){
-                    Text("마이페이지")
-                        .font(.t1)
-                        .foregroundStyle(.gray9)
-                }
-                .padding(.top, 6)
-                
-                ScrollView {
-                    VStack(alignment: .trailing) {
-                        menuSection
-                        
-                        bottomButtonSection
-                    }
-                    .padding(.top, 24)
-                    .padding(.bottom, 120)
-                    .padding(.horizontal, 16)
-                }
-                
-                Spacer()
+        CHScreen {
+            CDHeaderWithLeftContent(){
+                Text("마이페이지")
+                    .font(.t1)
+                    .foregroundStyle(.gray9)
             }
-            .background(.white)
-            .navigationDestination(for: MyPageDestination.self) { destination in
-                switch destination {
-                case .agreement:
-                    AgreementView()
-                case .myInfo:
-                    MyInfoView()
-                case .mediaConnect:
-                    MediaConnectView()
+            .padding(.top, 6)
+            
+            ScrollView {
+                VStack(alignment: .trailing) {
+                    menuSection
+                    
+                    bottomButtonSection
                 }
+                .padding(.top, 24)
+                .padding(.bottom, 120)
+                .padding(.horizontal, 16)
             }
-        }
+            
+            Spacer()
+        }   
     }
     
     private var menuSection: some View {
@@ -53,12 +34,14 @@ struct MyPageView: View {
                 .font(.m5b)
             
             menuItem("내 정보") {
-                navigationPath.append(MyPageDestination.myInfo)
+                router.push(to: .profileSetting)
             }
             menuItem("SNS 연결") {
-                navigationPath.append(MyPageDestination.mediaConnect)
+                
             }
-            menuItem("체험단 연결"){}
+            menuItem("체험단 연결"){
+                router.push(to: .mediaConnect)
+            }
             
             Divider()
                 .padding(.top, 4)
@@ -68,7 +51,9 @@ struct MyPageView: View {
                 .foregroundStyle(.mPink2)
                 .font(.m5b)
             
-            menuItem("알림 설정") {}
+            menuItem("알림 설정") {
+                
+            }
             
             Divider()
                 .padding(.top, 4)
@@ -81,7 +66,7 @@ struct MyPageView: View {
             menuItem("자주 묻는 질문") {}
             menuItem("이용 가이드") {}
             menuItem("약관 및 이용 동의") {
-                navigationPath.append(MyPageDestination.agreement)
+                router.push(to: .agreement)
             }
             
             Divider()
@@ -130,4 +115,5 @@ struct MyPageView: View {
 
 #Preview {
     MyPageView()
-} 
+        .environmentObject(MyPageRouter())
+}
