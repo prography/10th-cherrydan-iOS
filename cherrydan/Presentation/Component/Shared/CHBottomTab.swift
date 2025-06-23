@@ -1,0 +1,48 @@
+import SwiftUI
+
+struct CHBottomTab: View {
+    @Binding var selectedTab: Int
+    
+    let tabBarText = [
+        ("category","카테고리"),
+        ("notice_board","체리단 소식"),
+        ("home","홈"),
+        ("my_campaign","내 체험단"),
+        ("my","마이페이지")
+    ]
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            Rectangle()
+                .fill(.pBeige)
+                .frame(height:2)
+            
+            HStack(alignment: .center, spacing: 0) {
+                ForEach(0..<tabBarText.count, id: \.self) { index in
+                    let isFocused = selectedTab == index
+                    
+                    Button(action: {
+                        selectedTab = index
+                    } ) {
+                        VStack(spacing: 4) {
+                            Image("\(tabBarText[index].0)\(isFocused ? "_focused": "")")
+                            
+                            Text(tabBarText[index].1)
+                                .font(.m6r)
+                                .foregroundStyle(isFocused ? .mPink3 : .mPink1)
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
+                }
+            }
+            .padding(.horizontal, 20)
+            .frame(height: 80)
+            .background(.white)
+        }
+        .frame(maxHeight: .infinity, alignment: .bottom)
+    }
+}
+
+#Preview {
+    CHBottomTab(selectedTab: .constant(0))
+}
