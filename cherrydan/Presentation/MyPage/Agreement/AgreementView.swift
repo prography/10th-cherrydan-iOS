@@ -5,7 +5,7 @@ struct AgreementView: View {
     @State private var isChecked = true
     
     var body: some View {
-        VStack(spacing: 0) {
+        CHScreen {
             CDHeaderWithLeftContent(){
                 Button(action: {
                     dismiss()
@@ -32,10 +32,6 @@ struct AgreementView: View {
             Spacer()
         }
         .background(.gray1)
-        
-        .navigationBarBackButtonHidden(true)
-        
-        .hideTabBar()
     }
     
     private var receivingAgreementSection: some View {

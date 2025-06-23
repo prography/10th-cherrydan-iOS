@@ -8,7 +8,7 @@ struct MediaConnectView: View {
     @State private var tiktokConnected = false
     
     var body: some View {
-        VStack(spacing: 0) {
+        CHScreen {
             CDHeaderWithLeftContent(
                 leftContent: {
                     Button(action: {
@@ -36,11 +36,6 @@ struct MediaConnectView: View {
             
             Spacer()
         }
-        .background(.white)
-        
-        .navigationBarBackButtonHidden(true)
-        
-        .hideTabBar()
     }
     
     private var mediaItemSection: some View {

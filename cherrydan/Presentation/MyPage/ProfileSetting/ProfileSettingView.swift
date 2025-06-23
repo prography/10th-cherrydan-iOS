@@ -1,13 +1,13 @@
 import SwiftUI
 
-struct MyInfoView: View {
+struct ProfileSettingView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var selectedInterestAreas = ["강동구", "강남구", "송파구"]
     @State private var selectedInterestTopics = ["운동", "음식"]
     @State private var selectedKeywords = ["키워드", "키워드"]
     
     var body: some View {
-        VStack(spacing: 0) {
+        CHScreen {
             CDHeaderWithLeftContent(
                 leftContent: {
                     Button(action: {
@@ -31,11 +31,6 @@ struct MyInfoView: View {
                     .padding(.bottom, 120)
             }
         }
-        .background(.white)
-        
-        .navigationBarBackButtonHidden(true)
-        
-        .hideTabBar()
     }
     
     private var infoList: some View {
@@ -188,5 +183,5 @@ struct MyInfoView: View {
 }
 
 #Preview {
-    MyInfoView()
-} 
+    ProfileSettingView()
+}
