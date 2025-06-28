@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "kakao.png",
+      "filename" : "apple-login.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "kakao@2x.png",
+      "filename" : "apple-login@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "kakao@3x.png",
+      "filename" : "apple-login@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

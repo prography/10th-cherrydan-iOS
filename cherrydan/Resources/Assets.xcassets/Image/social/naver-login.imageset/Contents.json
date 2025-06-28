@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "naver.png",
+      "filename" : "naver-login.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "naver@2x.png",
+      "filename" : "naver-login@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "naver@3x.png",
+      "filename" : "naver-login@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
