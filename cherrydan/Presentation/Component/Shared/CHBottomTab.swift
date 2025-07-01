@@ -37,9 +37,8 @@ struct CHBottomTab: View {
             }
             .padding(.horizontal, 20)
             .frame(height: 80)
-            .background(.white)
+            .background(.gray0)
         }
-        .frame(maxHeight: .infinity, alignment: .bottom)
     }
 }
 

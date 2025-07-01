@@ -1,32 +1,30 @@
 import SwiftUI
 
 struct CDTabSection: View {
-    @Binding var selectedTab: Int
-    let data: [String]
+    @Binding var selectedCategory: CategoryType
     
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 0) {
-                ForEach(0..<data.count, id: \.self) { index in
-                    tabItem(index)
-                        .onTapGesture { selectedTab = index }
+                ForEach(CategoryType.allCases, id: \.self) { category in
+                    tabItem(category)
+                    .padding(.horizontal, 12)
+                        .onTapGesture { selectedCategory = category }
                 }
-                .padding(.horizontal, 8)
+                .padding(.horizontal, 2)
             }
-            .padding(.horizontal, 8)
         }
-        .animation(.fastEaseInOut, value: selectedTab)
+        .animation(.fastEaseInOut, value: selectedCategory)
     }
     
-    private func tabItem(_ index:Int) -> some View {
+    private func tabItem(_ category: CategoryType) -> some View {
         VStack(spacing: 8){
-            Text(data[index])
-                .font(.m3b)
-                .foregroundStyle(selectedTab == index ? .mPink3 : .gray4)
-                .padding(.horizontal, 4)
+            Text(category.title)
+                .font(selectedCategory == category ? .m3b : .m3r)
+                .foregroundStyle(selectedCategory == category ? .mPink3 : .gray4)
             
             Rectangle()
-                .fill(index == selectedTab ? .mPink3 : .clear)
+                .fill(selectedCategory == category ? .mPink3 : .clear)
                 .frame(height: 2)
         }
     }

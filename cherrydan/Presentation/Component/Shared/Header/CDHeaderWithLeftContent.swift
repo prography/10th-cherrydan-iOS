@@ -1,6 +1,5 @@
 import SwiftUI
 
-// MARK: - 타이틀이 있는 뒤로가기 네비게이션 바
 struct CDHeaderWithLeftContent<Content: View>: View {
     @Environment(\.dismiss) private var dismiss
     
@@ -26,7 +25,6 @@ struct CDHeaderWithLeftContent<Content: View>: View {
                 }
             }
         }
-        .padding(.horizontal, 16)
         .frame(height: 52)
     }
 }
