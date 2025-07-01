@@ -2,6 +2,54 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>KakaoLogin</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>kakao200f937cbd09c57dfbfccc2994058585</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>NaverLogin</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.teamSquid.cherrydan</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>GoogleLogin</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.430465585674-uujea1l87h9c23p7b68puei033tiqprp</string>
+			</array>
+		</dict>
+	</array>
+	<key>GIDClientID</key>
+	<string>430465585674-uujea1l87h9c23p7b68puei033tiqprp.apps.googleusercontent.com</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>kakaokompassauth</string>
+		<string>kakaolink</string>
+		<string>kakaoplus</string>
+		<string>naversearchapp</string>
+		<string>naversearchthirdlogin</string>
+	</array>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 	<key>UIAppFonts</key>
 	<array>
 		<string>GangwonEduAll-OTFLight.otf</string>
@@ -9,6 +57,11 @@
 		<string>Happiness-Sans-Bold.otf</string>
 		<string>Happiness-Sans-Regular.otf</string>
 		<string>Happiness-Sans-Title.otf</string>
+	</array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+		<string>fetch</string>
 	</array>
 </dict>
 </plist>
