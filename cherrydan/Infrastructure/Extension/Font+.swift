@@ -5,7 +5,7 @@ extension Font {
     // Title Text - GangwonEduAll OTF
     static let t1 = Font.custom("GangwonEduAll-OTFLight", size: 28)
     static let t2 = Font.custom("GangwonEduAll-OTFBold", size: 24)
-    static let t3 = Font.custom("GangwonEduAll-OTFMedium", size: 20)
+    static let t3 = Font.custom("GangwonEduAll-OTFLight", size: 20)
     static let t4 = Font.custom("GangwonEduAll-OTFBold", size: 18)
     static let t5 = Font.custom("GangwonEduAll-OTFLight", size: 12)
     
