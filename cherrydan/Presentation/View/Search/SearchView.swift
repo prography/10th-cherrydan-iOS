@@ -36,7 +36,7 @@ struct SearchView: View {
             
             Spacer()
         }
-        .background(.white)
+        .background(.gray0)
     }
     
     private var headerSection: some View {
