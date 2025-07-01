@@ -3,13 +3,14 @@ import SwiftUI
 struct CherrydanView: View {
     @StateObject private var authManager = AuthManager.shared
     @StateObject private var popupManager = PopupManager.shared
-    @StateObject private var tabBar = TabBarManager.shared
     
     @StateObject private var homeRouter = HomeRouter()
+    @StateObject private var categoryRouter = CategoryRouter()
     @StateObject private var noticeBoardRouter = NoticeBoardRouter()
+    @StateObject private var myCampaignRouter = MyCampaignRouter()
     @StateObject private var myPageRouter = MyPageRouter()
     
-    @State private var selectedTab = 0
+    @State private var selectedTab = 2
     
     var body: some View {
         Group {
@@ -18,24 +19,21 @@ struct CherrydanView: View {
                     VStack(spacing: 0) {
                         switch(selectedTab) {
                         case 0:
-                            CategoryView()
+                            CategoryNavigationStack(selectedTab: $selectedTab)
+                                .environmentObject(categoryRouter)
                         case 1:
-                            NoticeBoardNavigationStack()
+                            NoticeBoardNavigationStack(selectedTab: $selectedTab)
                                 .environmentObject(noticeBoardRouter)
                         case 2:
-                            HomeNavigationStack()
+                            HomeNavigationStack(selectedTab: $selectedTab)
                                 .environmentObject(homeRouter)
                         case 3:
-                            MyCampaignView()
+                            MyCampaignNavigationStack(selectedTab: $selectedTab)
+                                .environmentObject(myCampaignRouter)
                         default:
-                            MyPageNavigationStack()
+                            MyPageNavigationStack(selectedTab: $selectedTab)
                                 .environmentObject(myPageRouter)
                         }
-                    }
-                    
-                    if !tabBar.isHidden {
-                        HMBottomTab(selectedTab: $selectedTab)
-                            .transition(.move(edge: .bottom).combined(with: .opacity))
                     }
                 }
             } else {

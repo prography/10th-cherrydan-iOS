@@ -8,10 +8,14 @@ final class MyPageRouter: BaseRouter {
 
 struct MyPageNavigationStack: View {
     @EnvironmentObject private var router: MyPageRouter
+    @Binding var selectedTab: Int
     
     var body: some View {
         NavigationStack(path: $router.path) {
-            MyPageView()
+            VStack (spacing: 0){
+                MyPageView()
+                CHBottomTab(selectedTab: $selectedTab)
+            }
                 .navigationDestination(for: MyPageRoute.self) { route in
                     destinationView(for: route)
                         .swipeBackDisabled(route.disableSwipeBack)
@@ -34,6 +38,6 @@ struct MyPageNavigationStack: View {
 } 
 
 #Preview {
-    MyPageNavigationStack()
+    MyPageNavigationStack(selectedTab: .constant(4))
         .environmentObject(MyPageRouter())
 }

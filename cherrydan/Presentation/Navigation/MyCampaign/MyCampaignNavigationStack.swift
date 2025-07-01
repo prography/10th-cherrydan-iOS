@@ -1,22 +1,22 @@
 import SwiftUI
 
 @MainActor
-final class NoticeBoardRouter: BaseRouter {
-    typealias RouteType = NoticeBoardRoute
+final class MyCampaignRouter: BaseRouter {
+    typealias RouteType = MyCampaignRoute
     @Published var path = NavigationPath()
 }
 
-struct NoticeBoardNavigationStack: View {
-    @EnvironmentObject private var router: NoticeBoardRouter
+struct MyCampaignNavigationStack: View {
+    @EnvironmentObject private var router: MyCampaignRouter
     @Binding var selectedTab: Int
     
     var body: some View {
         NavigationStack(path: $router.path) {
             VStack (spacing: 0){
-                NoticeBoardView()
+                MyCampaignView()
                 CHBottomTab(selectedTab: $selectedTab)
             }
-            .navigationDestination(for: NoticeBoardRoute.self) { route in
+            .navigationDestination(for: MyCampaignRoute.self) { route in
                 destinationView(for: route)
                     .swipeBackDisabled(route.disableSwipeBack)
                     .onAppear {
@@ -28,14 +28,14 @@ struct NoticeBoardNavigationStack: View {
     }
     
     @ViewBuilder
-    private func destinationView(for route: NoticeBoardRoute) -> some View {
+    private func destinationView(for route: MyCampaignRoute) -> some View {
         switch route {
-        case .noticeDetail(let noticeId): NoticeDetailView(noticeId: noticeId)
+        case .categoryDetail: EmptyView()
         }
     }
 }
 
 #Preview {
-    NoticeBoardNavigationStack(selectedTab: .constant(3))
-        .environmentObject(NoticeBoardRouter())
+    MyCampaignNavigationStack(selectedTab: .constant(2))
+        .environmentObject(MyCampaignRouter())
 }

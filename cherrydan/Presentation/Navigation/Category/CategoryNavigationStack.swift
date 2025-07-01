@@ -1,22 +1,22 @@
 import SwiftUI
 
 @MainActor
-final class NoticeBoardRouter: BaseRouter {
-    typealias RouteType = NoticeBoardRoute
+final class CategoryRouter: BaseRouter {
+    typealias RouteType = CategoryRoute
     @Published var path = NavigationPath()
 }
 
-struct NoticeBoardNavigationStack: View {
-    @EnvironmentObject private var router: NoticeBoardRouter
+struct CategoryNavigationStack: View {
+    @EnvironmentObject private var router: CategoryRouter
     @Binding var selectedTab: Int
     
     var body: some View {
         NavigationStack(path: $router.path) {
             VStack (spacing: 0){
-                NoticeBoardView()
+                CategoryView()
                 CHBottomTab(selectedTab: $selectedTab)
             }
-            .navigationDestination(for: NoticeBoardRoute.self) { route in
+            .navigationDestination(for: CategoryRoute.self) { route in
                 destinationView(for: route)
                     .swipeBackDisabled(route.disableSwipeBack)
                     .onAppear {
@@ -28,14 +28,14 @@ struct NoticeBoardNavigationStack: View {
     }
     
     @ViewBuilder
-    private func destinationView(for route: NoticeBoardRoute) -> some View {
+    private func destinationView(for route: CategoryRoute) -> some View {
         switch route {
-        case .noticeDetail(let noticeId): NoticeDetailView(noticeId: noticeId)
+        case .categoryDetail: EmptyView()
         }
     }
 }
 
 #Preview {
-    NoticeBoardNavigationStack(selectedTab: .constant(3))
-        .environmentObject(NoticeBoardRouter())
+    CategoryNavigationStack(selectedTab: .constant(2))
+        .environmentObject(CategoryRouter())
 }

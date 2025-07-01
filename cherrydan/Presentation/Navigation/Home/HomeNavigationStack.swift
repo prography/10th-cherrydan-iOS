@@ -8,18 +8,22 @@ final class HomeRouter: BaseRouter {
 
 struct HomeNavigationStack: View {
     @EnvironmentObject private var router: HomeRouter
+    @Binding var selectedTab: Int
     
     var body: some View {
         NavigationStack(path: $router.path) {
-            HomeView()
-                .navigationDestination(for: HomeRoute.self) { route in
-                    destinationView(for: route)
-                        .swipeBackDisabled(route.disableSwipeBack)
-                        .onAppear {
-                            // print("📊 Main Analytics: \(route.analyticsName)")
-                            // print("🔒 SwipeBack enabled: \(route.disableSwipeBack)")
-                        }
-                }
+            VStack (spacing: 0){
+                HomeView()
+                CHBottomTab(selectedTab: $selectedTab)
+            }
+            .navigationDestination(for: HomeRoute.self) { route in
+                destinationView(for: route)
+                    .swipeBackDisabled(route.disableSwipeBack)
+                    .onAppear {
+                        // print("📊 Main Analytics: \(route.analyticsName)")
+                        // print("🔒 SwipeBack enabled: \(route.disableSwipeBack)")
+                    }
+            }
         }
     }
     
@@ -30,9 +34,9 @@ struct HomeNavigationStack: View {
         case .notification: NotificationView()
         }
     }
-} 
+}
 
 #Preview {
-    HomeNavigationStack()
+    HomeNavigationStack(selectedTab: .constant(2))
         .environmentObject(HomeRouter())
 }
