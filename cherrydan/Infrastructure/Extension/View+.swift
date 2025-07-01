@@ -1,10 +1,6 @@
 import SwiftUI
 
 extension View {
-    func hideTabBar(_ shouldHide: Bool = true) -> some View {
-        modifier(HideTabBarModifier(shouldHide: shouldHide))
-    }
-    
     func underline(_ color: Color = .gray5, width: CGFloat = 1) -> some View {
         modifier(UnderlineModifier(color: color, lineHeight: width))
     }
