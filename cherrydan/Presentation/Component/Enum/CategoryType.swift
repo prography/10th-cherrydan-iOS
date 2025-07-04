@@ -25,11 +25,4 @@ enum CategoryType: String, CaseIterable, Codable {
         }
     }
     
-    var rawName: String {
-        self.rawValue
-    }
-    
-    var displayName: String {
-        self.title
-    }
 }
