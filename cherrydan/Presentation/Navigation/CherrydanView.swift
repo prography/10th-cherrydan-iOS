@@ -10,7 +10,7 @@ struct CherrydanView: View {
     @StateObject private var myCampaignRouter = MyCampaignRouter()
     @StateObject private var myPageRouter = MyPageRouter()
     
-    @State private var selectedTab = 2
+    @State private var selectedTab = 0
     
     var body: some View {
         Group {
@@ -19,20 +19,22 @@ struct CherrydanView: View {
                     VStack(spacing: 0) {
                         switch(selectedTab) {
                         case 0:
-                            CategoryNavigationStack(selectedTab: $selectedTab)
-                                .environmentObject(categoryRouter)
-                        case 1:
-                            NoticeBoardNavigationStack(selectedTab: $selectedTab)
-                                .environmentObject(noticeBoardRouter)
-                        case 2:
                             HomeNavigationStack(selectedTab: $selectedTab)
                                 .environmentObject(homeRouter)
-                        case 3:
+//                            CategoryNavigationStack(selectedTab: $selectedTab)
+//                                .environmentObject(categoryRouter)
+                        case 1:
                             MyCampaignNavigationStack(selectedTab: $selectedTab)
                                 .environmentObject(myCampaignRouter)
+//                            NoticeBoardNavigationStack(selectedTab: $selectedTab)
+//                                .environmentObject(noticeBoardRouter)
                         default:
                             MyPageNavigationStack(selectedTab: $selectedTab)
                                 .environmentObject(myPageRouter)
+//                            HomeNavigationStack(selectedTab: $selectedTab)
+//                                .environmentObject(homeRouter)
+//                        case 3:
+//                        default:
                         }
                     }
                 }
