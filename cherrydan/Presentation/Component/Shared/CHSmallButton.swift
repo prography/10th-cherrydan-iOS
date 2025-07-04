@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct CHSmallButton: View {
+struct CDSmallButton: View {
     let title: String
     let isMinor: Bool
     let action: () -> Void

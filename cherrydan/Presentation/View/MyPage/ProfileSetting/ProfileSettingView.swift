@@ -7,22 +7,9 @@ struct ProfileSettingView: View {
     @State private var selectedKeywords = ["키워드", "키워드"]
     
     var body: some View {
-        CHScreen {
-            CDHeaderWithLeftContent(
-                leftContent: {
-                    Button(action: {
-                        dismiss()
-                    }) {
-                        HStack(alignment: .center) {
-                            Image("chevron_left")
-                            
-                            Text("내 정보")
-                                .font(.t1)
-                                .foregroundStyle(.gray9)
-                        }
-                    }
-                }
-            )
+        CDScreen(horizontalPadding: 0) {
+            CDBackHeaderWithTitle(title: "내 정보")
+                .padding(.horizontal, 16)
             
             ScrollView(.vertical, showsIndicators: false) {
                 infoList
@@ -101,7 +88,7 @@ struct ProfileSettingView: View {
             .foregroundStyle(.gray9)
             .padding(.vertical, 10)
             
-            CHSmallButton("변경") {}
+            CDSmallButton("변경") {}
                 .frame(maxWidth: .infinity, alignment: .trailing)
                 .padding(.bottom, 8)
             
@@ -152,7 +139,7 @@ struct ProfileSettingView: View {
                         tagButton(tag, onRemove: { onRemove(tag) })
                     }
                     
-                    CHSmallButton("추가") {}
+                    CDSmallButton("추가") {}
                 }
                 .padding(.vertical, 10)
             }

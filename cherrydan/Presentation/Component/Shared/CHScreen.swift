@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct CHScreen<Content: View>: View {
+struct CDScreen<Content: View>: View {
     let content: Content
     let isAlignCenter: Bool
     let horizontalPadding: CGFloat

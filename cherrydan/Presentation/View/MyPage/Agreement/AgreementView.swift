@@ -5,20 +5,9 @@ struct AgreementView: View {
     @State private var isChecked = true
     
     var body: some View {
-        CHScreen {
-            CDHeaderWithLeftContent(){
-                Button(action: {
-                    dismiss()
-                }) {
-                    HStack(alignment: .center) {
-                        Image("chevron_left")
-                        
-                        Text("약관 및 이용 동의")
-                            .font(.t1)
-                            .foregroundStyle(.gray9)
-                    }
-                }
-            }
+        CDScreen(horizontalPadding: 0) {
+            CDBackHeaderWithTitle(title: "약관 및 이용 동의")
+            .padding(.horizontal, 16)
             
             ScrollView {
                 VStack(spacing: 24) {

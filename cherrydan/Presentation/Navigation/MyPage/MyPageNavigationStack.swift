@@ -14,7 +14,7 @@ struct MyPageNavigationStack: View {
         NavigationStack(path: $router.path) {
             VStack (spacing: 0){
                 MyPageView()
-                CHBottomTab(selectedTab: $selectedTab)
+                CDBottomTab(selectedTab: $selectedTab)
             }
                 .navigationDestination(for: MyPageRoute.self) { route in
                     destinationView(for: route)
@@ -33,6 +33,8 @@ struct MyPageNavigationStack: View {
         case .agreement: AgreementView()
         case .mediaConnect: MediaConnectView()
         case .profileSetting: ProfileSettingView()
+        case .search: SearchView()
+        case .notification: NotificationView()
         }
     }
 } 

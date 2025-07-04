@@ -14,7 +14,7 @@ struct HomeNavigationStack: View {
         NavigationStack(path: $router.path) {
             VStack (spacing: 0){
                 HomeView()
-                CHBottomTab(selectedTab: $selectedTab)
+                CDBottomTab(selectedTab: $selectedTab)
             }
             .navigationDestination(for: HomeRoute.self) { route in
                 destinationView(for: route)

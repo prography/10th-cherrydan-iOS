@@ -2,6 +2,8 @@ import Foundation
 
 enum NoticeBoardRoute: BaseRoute {
     case noticeDetail(noticeId: String)
+    case search
+    case notification
     
     var id: String {
         String(describing: self)
@@ -11,6 +13,10 @@ enum NoticeBoardRoute: BaseRoute {
         switch self {
         case .noticeDetail:
             "notice_detail_screen"
+        case .search:
+            "search_screen_noticeBoard"
+        case .notification:
+            "notification_screen_noticeBoard"
         }
     }
     

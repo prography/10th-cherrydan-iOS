@@ -19,7 +19,7 @@ struct PopupViewModifier: ViewModifier {
                             }
                             .animation(.spring(duration: 0.1), value: isAnimating)
                         
-//                        CHPopup(
+//                        CDPopup(
 //                            hidePopup: dismissPopup,
 //                            popupData: popupData
 //                        )

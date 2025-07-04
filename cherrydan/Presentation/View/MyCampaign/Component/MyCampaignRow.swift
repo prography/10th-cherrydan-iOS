@@ -1,10 +1,7 @@
 import SwiftUI
 
-struct CampaignRow: View {
-    let status: String
-    let title: String
-    let platform: SocialPlatform
-    let reviewPlatform: ReviewPlatform
+struct MyCampaignRow: View {
+    let myCampaign: MyCampaign
     let leftButtonTitle: String?
     let rightButtonTitle: String
     let isRightButtonPrimary: Bool
@@ -13,10 +10,7 @@ struct CampaignRow: View {
     let onRightButtonTap: (() -> Void)?
     
     init(
-        status: String,
-        title: String,
-        platform: SocialPlatform,
-        reviewPlatform: ReviewPlatform,
+        myCampaign: MyCampaign,
         leftButtonTitle: String? = nil,
         rightButtonTitle: String,
         isRightButtonPrimary: Bool = false,
@@ -24,10 +18,7 @@ struct CampaignRow: View {
         onLeftButtonTap: (() -> Void)? = nil,
         onRightButtonTap: (() -> Void)? = nil
     ) {
-        self.status = status
-        self.title = title
-        self.platform = platform
-        self.reviewPlatform = reviewPlatform
+        self.myCampaign = myCampaign
         self.leftButtonTitle = leftButtonTitle
         self.rightButtonTitle = rightButtonTitle
         self.isRightButtonPrimary = isRightButtonPrimary
@@ -41,7 +32,7 @@ struct CampaignRow: View {
             HStack(alignment: .top, spacing: 4) {
                 Image("check_circle\(isChecked ? "_filled" : "_empty")")
                 
-                AsyncImage(url: URL(string: "https://picsum.photos/200")) { image in
+                AsyncImage(url: URL(string: myCampaign.imageUrl)) { image in
                     image
                         .resizable()
                         .aspectRatio(contentMode: .fill)
@@ -57,43 +48,57 @@ struct CampaignRow: View {
                 .padding(.trailing, 8)
                 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text(status)
+                    Text(myCampaign.statusLabel)
                         .font(.m5b)
                         .foregroundStyle(.mPink3)
                     
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(title)
+                        Text(myCampaign.title)
                             .font(.m5b)
                             .foregroundStyle(.gray9)
                             .lineLimit(2)
                             .multilineTextAlignment(.leading)
                         
-                        Text("플랫폼: 1박스")
+                        Text(myCampaign.benefit)
+                            .font(.m5r)
                             .foregroundStyle(.gray9)
+                            .lineLimit(1)
                         
                         (
-                            Text("신청 175/")
+                            Text("신청 \(myCampaign.applicantCount)/")
                                 .foregroundStyle(.gray9)
                             +
-                            Text("5명")
+                            Text("\(myCampaign.recruitCount)명")
                                 .foregroundStyle(.gray4)
                         )
+                        .font(.m5r)
                     }
-                    .font(.m5r)
                     
                     VStack(alignment: .leading, spacing: 4) {
-                        HStack(spacing: 4) {
-                            Image(platform.imageName)
-                            
-                            Text(platform.displayName)
-                                .font(.m5r)
-                                .foregroundStyle(.gray9)
+                        ForEach(myCampaign.snsPlatforms.prefix(2), id: \.self) { platform in
+                            HStack(spacing: 4) {
+                                Image(platform.imageName)
+                                    .frame(width: 16, height: 16)
+                                
+                                Text(platform.displayName)
+                                    .font(.m5r)
+                                    .foregroundStyle(.gray9)
+                            }
                         }
                         
                         HStack(spacing: 4) {
-                            Image(reviewPlatform.imageName)
+                            AsyncImage(url: URL(string: myCampaign.campaignPlatformImageUrl)) { image in
+                                image
+                                    .resizable()
+                                    .aspectRatio(1, contentMode: .fill)
+                            } placeholder: {
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(.gray2)
+                            }
+                            .frame(width: 16, height: 16)
+                            .cornerRadius(4)
                             
-                            Text(reviewPlatform.displayName)
+                            Text(myCampaign.campaignSite.displayName)
                                 .font(.m5r)
                                 .foregroundStyle(.gray9)
                         }

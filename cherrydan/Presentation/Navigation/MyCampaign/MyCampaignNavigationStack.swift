@@ -14,7 +14,7 @@ struct MyCampaignNavigationStack: View {
         NavigationStack(path: $router.path) {
             VStack (spacing: 0){
                 MyCampaignView()
-                CHBottomTab(selectedTab: $selectedTab)
+                CDBottomTab(selectedTab: $selectedTab)
             }
             .navigationDestination(for: MyCampaignRoute.self) { route in
                 destinationView(for: route)

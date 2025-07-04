@@ -14,7 +14,7 @@ struct CategoryNavigationStack: View {
         NavigationStack(path: $router.path) {
             VStack (spacing: 0){
                 CategoryView()
-                CHBottomTab(selectedTab: $selectedTab)
+                CDBottomTab(selectedTab: $selectedTab)
             }
             .navigationDestination(for: CategoryRoute.self) { route in
                 destinationView(for: route)
@@ -30,7 +30,12 @@ struct CategoryNavigationStack: View {
     @ViewBuilder
     private func destinationView(for route: CategoryRoute) -> some View {
         switch route {
-        case .categoryDetail: EmptyView()
+        case .categoryDetail(let region, let isSub):
+            CategoryDetailView(region: region, isSub: isSub)
+        case .search:
+            SearchView()
+        case .notification:
+            NotificationView()
         }
     }
 }

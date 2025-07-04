@@ -2,13 +2,12 @@ import SwiftUI
 
 struct NotificationView: View {
     @StateObject var viewModel: NotificationViewModel = NotificationViewModel()
-    @State private var selectedTab: NotificationType = .activity
     @State private var selectedAll: Bool = false
     @State private var isDeleteMode: Bool = false
     @State private var keywordNum = 2
     
     var body: some View {
-        CHScreen(horizontalPadding: 0) {
+        CDScreen(horizontalPadding: 0) {
             CDBackHeaderWithTitle(title:"알림"){
                 Button(action: {
                     isDeleteMode.toggle()
@@ -24,7 +23,7 @@ struct NotificationView: View {
             Divider()
                 .padding(.bottom, 20)
             
-            if selectedTab == .custom {
+            if viewModel.selectedTab == .custom {
                 keywordSection
                     .padding(.horizontal, 16)
             }
@@ -35,22 +34,18 @@ struct NotificationView: View {
             
             ScrollView(.vertical, showsIndicators: false) {
                 LazyVStack(spacing: 12) {
-                    if selectedTab == .activity {
-                        if viewModel.isLoading && viewModel.notifications.isEmpty {
+                    if viewModel.selectedTab == .activity {
+                        if viewModel.isLoading {
                             loadingView
-                        } else if let errorMessage = viewModel.errorMessage {
-                            errorView(errorMessage)
-                        } else if viewModel.notifications.isEmpty {
+                        } else if viewModel.activityNotifications.isEmpty {
                             emptyView
                         } else {
-                            ForEach(viewModel.notifications) { notification in
+                            ForEach(viewModel.activityNotifications) { notification in
                                 NotificationRow(
                                     notification: notification,
                                     isSelected: selectedAll,
                                     onSelect: {
-                                        Task {
-                                            await viewModel.markNotificationAsRead(notificationId: notification.campaignStatusId)
-                                        }
+                                        
                                     }
                                 )
                                 Divider().background(Color.gray2)
@@ -61,10 +56,27 @@ struct NotificationView: View {
                             }
                         }
                     } else {
-                        ForEach(customNotifications) { item in
-                            NotificationRow(notification: item)
-                            Divider().background(Color.gray2)
+                        if viewModel.isLoading {
+                            loadingView
+                        } else if viewModel.activityNotifications.isEmpty {
+                            emptyView
+                        } else {
+//                            ForEach(viewModel.keywordNotifications) { notification in
+//                                NotificationRow(
+//                                    notification: notification,
+//                                    isSelected: selectedAll,
+//                                    onSelect: {
+//                                        
+//                                    }
+//                                )
+//                                Divider().background(Color.gray2)
+//                            }
+                            
+                            if viewModel.hasNextPage && !viewModel.isLoading {
+                                loadMoreButton
+                            }
                         }
+                        
                     }
                 }
                 .padding(.horizontal, 12)
@@ -139,9 +151,9 @@ struct NotificationView: View {
     private var tabSection: some View {
         HStack(spacing: 0) {
             ForEach(NotificationType.allCases, id: \.self) { tab in
-                let isSelected = selectedTab == tab
+                let isSelected = viewModel.selectedTab == tab
                 Button(action: {
-                    selectedTab = tab
+                    viewModel.selectedTab = tab
                 }) {
                     VStack(spacing: 8){
                         Text(tab.title)
@@ -201,14 +213,9 @@ struct NotificationView: View {
             
             Spacer()
             
-            if selectedTab == .activity {
+            if viewModel.selectedTab == .activity {
                 Button(action: {
                     // 모든 알림을 읽음 처리
-                    Task {
-                        for notification in viewModel.notifications where !notification.isRead {
-                            await viewModel.markNotificationAsRead(notificationId: notification.campaignStatusId)
-                        }
-                    }
                 }) {
                     Text("읽음")
                         .font(.m4r)
@@ -239,10 +246,9 @@ struct NotificationView: View {
 
 // MARK: - Dummy Data for Custom Notifications
 private var customNotifications: [ActivityNotification] {
-    // 커스텀 알림용 더미 데이터
     return []
 }
 
 #Preview {
     NotificationView()
-} 
+}

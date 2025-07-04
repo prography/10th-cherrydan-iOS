@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct CHBottomTab: View {
+struct CDBottomTab: View {
     @Binding var selectedTab: Int
     
     let tabBarText = [
@@ -43,5 +43,5 @@ struct CHBottomTab: View {
 }
 
 #Preview {
-    CHBottomTab(selectedTab: .constant(0))
+    CDBottomTab(selectedTab: .constant(0))
 }

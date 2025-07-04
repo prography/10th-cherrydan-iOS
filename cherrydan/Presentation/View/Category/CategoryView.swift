@@ -2,21 +2,23 @@ import SwiftUI
 
 struct CategoryView: View {
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var router: CategoryRouter
     @State private var selectedRegion: Region = .seoul
     @State private var selectedCategory: CategoryType = .interestedRegion
     
     var body: some View {
-        CHScreen(horizontalPadding: 0) {
-            CDHeaderWithLeftContent(){
-                Button(action: {
-                    dismiss()
-                }) {
+        CDScreen(horizontalPadding: 0) {
+            CDHeaderWithLeftContent(
+                onNotificationClick: {
+                    router.push(to: .notification)
+                }, onSearchClick: {
+                    router.push(to: .search)
+                }){
                     Text("카테고리")
                         .font(.t1)
                         .foregroundStyle(.gray9)
                 }
-            }
-            .padding(.horizontal, 16)
+                .padding(.horizontal, 16)
             
             CDTabSection(selectedCategory: $selectedCategory)
                 .padding(.top, 24)
@@ -48,7 +50,7 @@ struct CategoryView: View {
                                 
                                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 0) {
                                     ForEach(region.subregions, id: \.self) { subregion in
-                                        regionDetailButton(subregion)
+                                        regionDetailButton(subregion, region: region.rawValue)
                                     }
                                 }
                                 
@@ -96,7 +98,7 @@ struct CategoryView: View {
     private func regionButton(_ region: Region) -> some View {
         let isSelected = region == selectedRegion
         Button(action: {
-            
+            router.push(to: .categoryDetail(region: region.rawValue, isSub: false))
         }){
             HStack {
                 Text("\(region.rawValue)\(region == .seoul ? " 전체." : ".")")
@@ -114,11 +116,11 @@ struct CategoryView: View {
         }
     }
     
-    private func regionDetailButton(_ region: String) -> some View {
+    private func regionDetailButton(_ subregion: String, region: String) -> some View {
         Button(action: {
-            // 세부 지역 선택 액션
+            router.push(to: .categoryDetail(region: subregion, isSub: true))
         }) {
-            Text(region)
+            Text(subregion)
                 .font(.m5r)
                 .foregroundStyle(.gray9)
                 .frame(width: 110, height: 40, alignment: .leading)
@@ -128,4 +130,5 @@ struct CategoryView: View {
 
 #Preview {
     CategoryView()
+        .environmentObject(CategoryRouter())
 }

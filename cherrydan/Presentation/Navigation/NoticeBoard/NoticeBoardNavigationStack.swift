@@ -14,7 +14,7 @@ struct NoticeBoardNavigationStack: View {
         NavigationStack(path: $router.path) {
             VStack (spacing: 0){
                 NoticeBoardView()
-                CHBottomTab(selectedTab: $selectedTab)
+                CDBottomTab(selectedTab: $selectedTab)
             }
             .navigationDestination(for: NoticeBoardRoute.self) { route in
                 destinationView(for: route)
@@ -31,6 +31,8 @@ struct NoticeBoardNavigationStack: View {
     private func destinationView(for route: NoticeBoardRoute) -> some View {
         switch route {
         case .noticeDetail(let noticeId): NoticeDetailView(noticeId: noticeId)
+        case .notification: NotificationView()
+        case .search: SearchView()
         }
     }
 }

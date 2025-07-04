@@ -18,7 +18,7 @@ struct CDLoginPopup: View {
                 .background(.gray0, in: RoundedRectangle(cornerRadius: 4))
                 .padding(.bottom, 20)
                 
-            CHButton(text: "확인", onConfirm: { dismiss() })
+            CDButton(text: "확인") { dismiss() }
         }
         .frame(maxWidth: .infinity)
         .padding(.horizontal, 16)

@@ -1,10 +1,11 @@
 import SwiftUI
 
 struct NoticeBoardView: View {
+    @EnvironmentObject private var router: NoticeBoardRouter
     @StateObject private var viewModel = NoticeBoardViewModel()
     
     var body: some View {
-        CHScreen(horizontalPadding: 0) {
+        CDScreen(horizontalPadding: 0) {
             header
                 .padding(.horizontal, 16)
                 .padding(.bottom, 10)
@@ -29,17 +30,18 @@ struct NoticeBoardView: View {
     }
     
     private var header: some View {
-        CDHeaderWithLeftContent() {
-            HStack(spacing: 16) {
-                Button(action: {
-                    //
-                }) {
+        CDHeaderWithLeftContent(
+            onNotificationClick: {
+                router.push(to: .notification)
+            }, onSearchClick: {
+                router.push(to: .search)
+            }) {
+                HStack(spacing: 16) {
                     Text("체리단 소식")
                         .font(.t1)
                         .foregroundStyle(.gray9)
                 }
             }
-        }
     }
     
     private var filterSection: some View {

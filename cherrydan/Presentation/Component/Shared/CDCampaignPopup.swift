@@ -31,7 +31,7 @@ struct CDCampaignPopup: View {
                 .frame(height: 296)
                 .padding(.bottom, 16)
                 
-                CHButton(text: "확인하러 가기", onConfirm: onConfirm)
+                CDButton(text: "확인하러 가기"){ onConfirm() }
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 20)
@@ -43,7 +43,7 @@ struct CDCampaignPopup: View {
     @ViewBuilder
     private func campaignRow(_ campaign: Campaign) -> some View {
         HStack(alignment: .center, spacing: 12) {
-            AsyncImage(url: URL(string: campaign.image)) { image in
+            AsyncImage(url: URL(string: campaign.imageUrl)) { image in
                 image
                     .resizable()
                     .aspectRatio(1, contentMode: .fill)
@@ -62,7 +62,7 @@ struct CDCampaignPopup: View {
                     .font(.m5b)
                     .foregroundStyle(.gray9)
                     .lineLimit(2)
-                Text(campaign.description)
+                Text(campaign.benefit)
                     .font(.m5r)
                     .foregroundStyle(.gray9)
                     .lineLimit(1)

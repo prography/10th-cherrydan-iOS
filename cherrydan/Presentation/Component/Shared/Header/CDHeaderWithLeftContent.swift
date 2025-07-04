@@ -3,9 +3,17 @@ import SwiftUI
 struct CDHeaderWithLeftContent<Content: View>: View {
     @Environment(\.dismiss) private var dismiss
     
+    let onNotificationClick: () -> Void
+    let onSearchClick: () -> Void
     let leftContent: (() -> Content)
     
-    init(@ViewBuilder leftContent: @escaping () -> Content) {
+    init(
+        onNotificationClick: @escaping () -> Void,
+        onSearchClick: @escaping () -> Void,
+        @ViewBuilder leftContent: @escaping () -> Content
+    ) {
+        self.onNotificationClick = onNotificationClick
+        self.onSearchClick = onSearchClick
         self.leftContent = leftContent
     }
       
@@ -16,11 +24,11 @@ struct CDHeaderWithLeftContent<Content: View>: View {
             Spacer()
             
             HStack(spacing: 4) {
-                Button(action: {}) {
+                Button(action: onNotificationClick) {
                     Image("notification")
                 }
                 
-                Button(action: {}) {
+                Button(action: onSearchClick) {
                     Image("search_bg")
                 }
             }

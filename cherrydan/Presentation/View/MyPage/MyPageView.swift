@@ -4,13 +4,19 @@ struct MyPageView: View {
     @EnvironmentObject var router: MyPageRouter
     
     var body: some View {
-        CHScreen {
-            CDHeaderWithLeftContent(){
-                Text("마이페이지")
-                    .font(.t1)
-                    .foregroundStyle(.gray9)
-            }
-            .padding(.top, 6)
+        CDScreen(horizontalPadding: 0) {
+            CDHeaderWithLeftContent(
+                onNotificationClick: {
+                    router.push(to: .notification)
+                }, onSearchClick: {
+                    router.push(to: .search)
+                }){
+                    Text("마이페이지")
+                        .font(.t1)
+                        .foregroundStyle(.gray9)
+                }
+                .padding(.top, 6)
+                .padding(.horizontal, 16)
             
             ScrollView {
                 VStack(alignment: .trailing) {
@@ -24,7 +30,7 @@ struct MyPageView: View {
             }
             
             Spacer()
-        }   
+        }
     }
     
     private var menuSection: some View {

@@ -82,7 +82,7 @@ struct OnboardingView: View {
         }) {
             ZStack {
                 HStack {
-                    Image("\(platform.rawName)-login")
+                    Image("\(platform.rawValue)-login")
                         .padding(12)
                     
                     Spacer()

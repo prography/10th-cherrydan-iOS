@@ -2,6 +2,8 @@ enum MyPageRoute: BaseRoute {
     case agreement
     case mediaConnect
     case profileSetting
+    case search
+    case notification
     
     
     var id: String {
@@ -17,6 +19,11 @@ enum MyPageRoute: BaseRoute {
             
         case .profileSetting:
             "profile_setting_screen"
+            
+        case .search:
+            "search_screen_myPage"
+        case .notification:
+            "notification_screen_myPage"
         }
     }
     

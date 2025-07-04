@@ -17,16 +17,16 @@ struct HomeView: View {
     ]
     
     var body: some View {
-        CHScreen(horizontalPadding: 0) {
-            CDHeaderWithLeftContent() {
+        CDScreen(horizontalPadding: 0) {
+            CDHeaderWithLeftContent(onNotificationClick: {
+                router.push(to: .notification)
+            }, onSearchClick: {
+                router.push(to: .search)
+            }) {
                 HStack(spacing: 16) {
-                    Button(action: {
-                        //
-                    }) {
-                        Text("체리단")
-                            .font(.t1)
-                            .foregroundStyle(.gray9)
-                    }
+                    Text("체리단")
+                        .font(.t1)
+                        .foregroundStyle(.gray9)
                 }
             }
             .padding(.horizontal, 16)

@@ -8,22 +8,9 @@ struct MediaConnectView: View {
     @State private var tiktokConnected = false
     
     var body: some View {
-        CHScreen {
-            CDHeaderWithLeftContent(
-                leftContent: {
-                    Button(action: {
-                        dismiss()
-                    }) {
-                        HStack(alignment: .center) {
-                            Image("chevron_left")
-                            
-                            Text("미디어 연결")
-                                .font(.t1)
-                                .foregroundStyle(.gray9)
-                        }
-                    }
-                }
-            )
+        CDScreen(horizontalPadding: 0) {
+            CDBackHeaderWithTitle(title: "미디어 연결")
+                .padding(.horizontal, 16)
             
             ScrollView {
                 VStack(spacing: 24) {
@@ -79,7 +66,7 @@ struct MediaConnectView: View {
     }
     
     private func mediaItem(
-        platformName: SocialPlatform,
+        platformName: SocialPlatformType,
         isConnected: Bool,
         url: String?,
         onButtonTap: @escaping () -> Void
@@ -106,7 +93,7 @@ struct MediaConnectView: View {
             }
             .frame(height: 44, alignment: .center)
             
-            CHSmallButton(
+            CDSmallButton(
                 isConnected ? "연결 해제" : "연결하기",
                 isMinor: isConnected
             ) {

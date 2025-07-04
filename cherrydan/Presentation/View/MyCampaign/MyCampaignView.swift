@@ -13,10 +13,11 @@ struct MyCampaignView: View {
     ]
     
     var body: some View {
-        CHScreen {
+        CDScreen(horizontalPadding: 0) {
             CDHeaderWithRightContent(title: "내 체험단"){
                 Image("trash")
             }
+            .padding(.horizontal, 16)
             
             tabSection
                 .padding(.horizontal, 16)
@@ -51,37 +52,24 @@ struct MyCampaignView: View {
         VStack(spacing: 16) {
             Divider()
             
-            CampaignRow(
-                status: "신청 마감 6일 전",
-                title: "[외모미] 알로에베 10kg 감량 가능! 정말 믿을때 빠지고! 성공율 초초 높수 체험",
-                platform: .youtube,
-                reviewPlatform: .revu,
-                leftButtonTitle: "공고 확인",
-                rightButtonTitle: "방문 완료",
-                isRightButtonPrimary: false,
-                isChecked: false,
-                onLeftButtonTap: {
-                    // 왼쪽 버튼 액션
-                },
-                onRightButtonTap: {
-                    // 오른쪽 버튼 액션
-                }
-            )
-            
-            Divider()
-            
-            CampaignRow(
-                status: "신청 마감 6일",
-                title: "[외모미] 알로에베 10kg 감량 가능! 정말 믿을때 빠지고! 성공율 초초 높수 체험",
-                platform: .youtube,
-                reviewPlatform: .revu,
-                rightButtonTitle: "결과 확인",
-                isRightButtonPrimary: true,
-                isChecked: true,
-                onRightButtonTap: {
-                    // 오른쪽 버튼 액션
-                }
-            )
+            ForEach(MyCampaign.dummy.prefix(2), id: \.id) { campaign in
+                MyCampaignRow(
+                    myCampaign: campaign,
+                    leftButtonTitle: campaign.statusLabel == "선정됨" ? "공고 확인" : nil,
+                    rightButtonTitle: campaign.statusLabel == "선정됨" ? "방문 완료" : 
+                                     campaign.statusLabel == "완료" ? "결과 확인" : "신청 취소",
+                    isRightButtonPrimary: campaign.statusLabel == "완료",
+                    isChecked: campaign.statusLabel == "완료",
+                    onLeftButtonTap: {
+                        // 왼쪽 버튼 액션
+                    },
+                    onRightButtonTap: {
+                        // 오른쪽 버튼 액션
+                    }
+                )
+                
+                Divider()
+            }
         }
     }
     
