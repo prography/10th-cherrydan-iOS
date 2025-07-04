@@ -12,6 +12,7 @@ enum KeychainKeys {
     
     static let accessToken = "accessToken"
     static let refreshToken = "refreshToken"
+    static let fcmToken = "fcmToken"
 }
 
 final class KeychainManager {
@@ -28,11 +29,30 @@ final class KeychainManager {
         }
     }
     
-    func clearToken() {
+   
+    func getFcmToken() -> String? {
         do {
-            try delete(forKey: KeychainKeys.accessToken)
-        } catch{
-            print("clear token Error in KeychainManager")
+            return try retrieve(forKey: KeychainKeys.fcmToken)
+        } catch {
+            print("saveFcmToken Error in KeychainManager")
+            return nil
+        }
+    }
+    
+    func getRefreshToken() -> String? {
+        do {
+            return try retrieve(forKey: KeychainKeys.refreshToken)
+        } catch {
+            print("getRefreshToken Error in KeychainManager")
+            return nil
+        }
+    }
+    
+    func saveFcmToken(_ fcmToken: String){
+        do {
+            try save(token: fcmToken, forKey: KeychainKeys.fcmToken)
+        } catch {
+            print("saveFcmToken Error in KeychainManager")
         }
     }
     
@@ -41,6 +61,23 @@ final class KeychainManager {
             try save(token: accessToken, forKey: KeychainKeys.accessToken)
         } catch {
             print("Save token Error in KeychainManager")
+        }
+    }
+    
+    func saveRefreshToken(_ refreshToken: String) {
+        do{
+            try save(token: refreshToken, forKey: KeychainKeys.refreshToken)
+        } catch {
+            print("Save refreshToken Error in KeychainManager")
+        }
+    }
+    
+    func clearToken() {
+        do {
+            try delete(forKey: KeychainKeys.accessToken)
+            try delete(forKey: KeychainKeys.refreshToken)
+        } catch{
+            print("clear token Error in KeychainManager")
         }
     }
 }
