@@ -26,12 +26,10 @@ class HomeViewModel: ObservableObject {
         defer { isLoading = false }
         Task {
             do {
-                if let response = try await campaignAPI.getCampaignTypes() {
-                    
-                    campaigns = response.content
-                }
+                let response = try await campaignAPI.getCampaignByType(type: .all, sortType: .deadline)
+                campaigns = response.content.map{ Campaign(from: $0) }
             } catch {
-                print(error.localizedDescription)
+                print(error)
                 errorMessage = "Asdf"
             }
         }

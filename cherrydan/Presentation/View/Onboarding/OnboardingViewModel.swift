@@ -113,7 +113,7 @@ class OnboardingViewModel: NSObject, ObservableObject {
     
     private func handleSocialLogin(_ platform: LoginPlatform, _ token: String) async {
         do {
-            let response = try await auth.socialLogin(platform.rawName, token)
+            let response = try await auth.socialLogin(platform.rawValue, token)
             
             if response.code == 200 {
                 AuthManager.shared.login(response.result)
@@ -124,7 +124,7 @@ class OnboardingViewModel: NSObject, ObservableObject {
             }
         } catch {
             errorMessage = "\(platform.title) 로그인 중 오류가 발생했습니다: \(error.localizedDescription)"
-            print("\(platform.rawName) login error: \(error)")
+            print("\(platform.rawValue) login error: \(error)")
             isLoading = false
         }
         
