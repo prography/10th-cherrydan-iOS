@@ -1,6 +1,24 @@
 import Foundation
 
-struct Campaign: Identifiable, Equatable, Codable {
+// API 응답용 DTO
+struct CampaignDTO: Codable {
+    let id: Int
+    let title: String
+    let detailUrl: String
+    let benefit: String?
+    let reviewerAnnouncementStatus: String?
+    let applicantCount: Int
+    let recruitCount: Int
+    let imageUrl: String
+    let campaignPlatformImageUrl: String?
+    let campaignType: String  // 문자열로 받음
+    let competitionRate: Double
+    let campaignSite: String
+    let snsPlatforms: [String]
+}
+
+// 실제 사용할 모델
+struct Campaign: Identifiable, Equatable {
     let id: Int
     let title: String
     let detailUrl: String
@@ -8,26 +26,46 @@ struct Campaign: Identifiable, Equatable, Codable {
     let reviewerAnnouncementStatus: String
     let applicantCount: Int
     let recruitCount: Int
-    let sourceSite: String
     let imageUrl: String
-    let campaignType: CampaignType
-    let address: String
+    let campaignPlatformImageUrl: String
+    let campaignType: CampaignType  // 열거형 사용
     let competitionRate: Double
-    let localCategory: Int
-    let productCategory: Int
-    let platforms: [String]
+    let campaignSite: CampaignPlatformType
+    let snsPlatforms: [SocialPlatformType]
     
-    // Computed properties for backward compatibility
-    var image: String { imageUrl }
-    var description: String { benefit }
-    var totalApplicants: Int { recruitCount }
-    var socialPlatform: SocialPlatform {
-        if platforms.contains("instagram") { return .instagram }
-        if platforms.contains("youtube") { return .youtube }
-        if platforms.contains("naver_blog") { return .naverBlog }
-        return .instagram // default
+    // DTO에서 변환하는 이니셜라이저
+    init(from response: CampaignDTO) {
+        self.id = response.id
+        self.title = response.title
+        self.detailUrl = response.detailUrl
+        self.benefit = response.benefit ?? "혜택 정보 없음"
+        self.reviewerAnnouncementStatus = response.reviewerAnnouncementStatus ?? "발표 예정"
+        self.applicantCount = response.applicantCount
+        self.recruitCount = response.recruitCount
+        self.imageUrl = response.imageUrl
+        self.campaignPlatformImageUrl = response.campaignPlatformImageUrl ?? ""
+        self.campaignType = CampaignType(rawValue: response.campaignType) ?? .product
+        self.competitionRate = response.competitionRate
+        self.campaignSite = CampaignPlatformType(rawValue: response.campaignSite) ?? .revu
+        self.snsPlatforms = response.snsPlatforms.map { SocialPlatformType(rawValue: $0) ?? .instagram }
     }
-    var reviewPlatform: String { benefit }
+    
+    // 직접 생성용 이니셜라이저 (더미 데이터, 테스트 등)
+    init(id: Int, title: String, detailUrl: String, benefit: String, reviewerAnnouncementStatus: String, applicantCount: Int, recruitCount: Int, imageUrl: String, campaignPlatformImageUrl: String, campaignType: CampaignType, competitionRate: Double, campaignSite: CampaignPlatformType, snsPlatforms: [SocialPlatformType]) {
+        self.id = id
+        self.title = title
+        self.detailUrl = detailUrl
+        self.benefit = benefit
+        self.reviewerAnnouncementStatus = reviewerAnnouncementStatus
+        self.applicantCount = applicantCount
+        self.recruitCount = recruitCount
+        self.imageUrl = imageUrl
+        self.campaignPlatformImageUrl = campaignPlatformImageUrl
+        self.campaignType = campaignType
+        self.competitionRate = competitionRate
+        self.campaignSite = campaignSite
+        self.snsPlatforms = snsPlatforms
+    }
     
     static let dummy: [Campaign] = [
         Campaign(
@@ -38,14 +76,12 @@ struct Campaign: Identifiable, Equatable, Codable {
             reviewerAnnouncementStatus: "ANNOUNCED",
             applicantCount: 23,
             recruitCount: 12,
-            sourceSite: "revu",
             imageUrl: "https://picsum.photos/200",
+            campaignPlatformImageUrl: "https://picsum.photos/50",
             campaignType: .region,
-            address: "부산광역시",
             competitionRate: 1.92,
-            localCategory: 1,
-            productCategory: 1,
-            platforms: ["instagram"]
+            campaignSite: .revu,
+            snsPlatforms: [.instagram]
         ),
         Campaign(
             id: 2,
@@ -55,14 +91,12 @@ struct Campaign: Identifiable, Equatable, Codable {
             reviewerAnnouncementStatus: "ANNOUNCED",
             applicantCount: 135,
             recruitCount: 8,
-            sourceSite: "revu",
             imageUrl: "https://picsum.photos/201",
+            campaignPlatformImageUrl: "https://picsum.photos/51",
             campaignType: .product,
-            address: "서울특별시",
             competitionRate: 16.88,
-            localCategory: 2,
-            productCategory: 2,
-            platforms: ["instagram", "youtube"]
+            campaignSite: .revu,
+            snsPlatforms: [.instagram,.youtube]
         ),
         Campaign(
             id: 3,
@@ -72,68 +106,66 @@ struct Campaign: Identifiable, Equatable, Codable {
             reviewerAnnouncementStatus: "ANNOUNCED",
             applicantCount: 100,
             recruitCount: 3,
-            sourceSite: "revu",
             imageUrl: "https://picsum.photos/202",
+            campaignPlatformImageUrl: "https://picsum.photos/52",
             campaignType: .region,
-            address: "경기도 가평군",
             competitionRate: 33.33,
-            localCategory: 3,
-            productCategory: 3,
-            platforms: ["youtube", "naver_blog"]
+            campaignSite: .revu,
+            snsPlatforms: [.youtube, .naverBlog]
         )
     ]
 }
 
-enum CampaignType: String, CaseIterable, Codable {
-    case region = "REGION"
-    case product = "PRODUCT"
-    case service = "SERVICE"
-    
-    var displayName: String {
-        switch self {
-        case .region: return "지역"
-        case .product: return "상품"
-        case .service: return "서비스"
-        }
-    }
-}
-
-enum ReviewPlatform: String, CaseIterable, Codable {
+enum CampaignPlatformType: String, CaseIterable, Codable {
     case revu = "revu"
     case youtube = "youtube"
     case naverBlog = "naver_blog"
+    case chvu = "체험뷰"
     
     var displayName: String {
         switch self {
         case .revu: return "레뷰"
         case .youtube: return "유튜브"
         case .naverBlog: return "네이버 블로그"
+        case .chvu: return "체험뷰"
         }
     }
     
     var imageName: String {
-        String(describing: self)
+        switch self {
+        case .chvu: return "revu" // 체험뷰도 revu 이미지 사용
+        default: return String(describing: self)
+        }
     }
 }
 
-enum SocialPlatform: String, CaseIterable, Codable {
-    case instagram = "instagram"
+enum SocialPlatformType: String, CaseIterable, Codable {
+    case all = "all"
+    case naverBlog = "네이버 블로그"
+    case instagram = "insta"
     case youtube = "youtube"
-    case naverBlog = "naver_blog"
+    case tiktok = "tiktok"
+    case etc = "etc"
     
     var displayName: String {
         switch self {
+        case .naverBlog: return "네이버 블로그"
         case .instagram: return "인스타그램"
         case .youtube: return "유튜브"
-        case .naverBlog: return "네이버 블로그"
+        case .tiktok: return "틱톡"
+        case .etc: return "기타"
+        default: return ""
         }
     }
     
     var imageName: String {
         switch self {
-        case .instagram: return "instagram"
-        case .youtube: return "youtube"
         case .naverBlog: return "naver"
+        case .instagram: return "insta"
+        case .youtube: return "youtube"
+        case .tiktok: return "tiktok"
+        case .etc: return "etc"
+        default: return ""
         }
     }
 }
