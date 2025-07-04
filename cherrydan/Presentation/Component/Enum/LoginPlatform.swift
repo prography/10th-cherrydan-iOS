@@ -1,15 +1,10 @@
 import SwiftUI
 
-enum LoginPlatform {
-    case naver
-    case kakao
-    case google
-    case apple
-    
-    var rawName: String {
-        String(describing: self)
-    }
-    
+enum LoginPlatform: String {
+    case naver = "naver"
+    case kakao = "kakao"
+    case google = "google"
+    case apple = "apple"
     
     var title: String {
         switch self{
