@@ -35,6 +35,7 @@ struct MyPageNavigationStack: View {
         case .profileSetting: ProfileSettingView()
         case .search: SearchView()
         case .notification: NotificationView()
+        case .withdrawal: WithdrawalView()
         }
     }
 } 

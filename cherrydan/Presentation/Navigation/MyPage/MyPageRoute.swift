@@ -4,6 +4,7 @@ enum MyPageRoute: BaseRoute {
     case profileSetting
     case search
     case notification
+    case withdrawal
     
     
     var id: String {
@@ -24,6 +25,8 @@ enum MyPageRoute: BaseRoute {
             "search_screen_myPage"
         case .notification:
             "notification_screen_myPage"
+        case .withdrawal:
+            "withdrawal_screen"
         }
     }
     
