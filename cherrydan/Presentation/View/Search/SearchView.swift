@@ -2,42 +2,55 @@ import SwiftUI
 
 struct SearchView: View {
     @Environment(\.dismiss) private var dismiss
-    
-    @State private var searchText = ""
-    @State private var selectedTab = 0
-    @State private var recentSearches: [RecentSearchResult] = RecentSearchResult.dummyList
-    @State private var searchResults: [SearchResult] = SearchResult.dummy
-    
-    var filteredSearchResults: [SearchResult] {
-        if searchText.isEmpty {
-            return []
-        }
-        
-        return searchResults.filter { $0.text.contains(searchText) }
-    }
+    @StateObject private var viewModel = SearchViewModel()
+    @State private var showSortBottomSheet = false
+    @State private var showFilterSideMenu = false
     
     var body: some View {
-        VStack(spacing: 0) {
-            headerSection
-            
-            ScrollView {
-                if searchText.isEmpty {
-                    VStack(spacing: 36) {
-                        recommendedCategorySection
-                        
-                        recentSearchSection
+        ZStack {
+            CDScreen(horizontalPadding: 0) {
+                headerSection
+                
+                ScrollView {
+                    if viewModel.searchText.isEmpty {
+                        VStack(spacing: 36) {
+//                        recommendedCategorySection
+                            recentSearchSection
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.top, 24)
+                    } else if viewModel.isSubmitted {
+                        // 제출 후 그리드 표시
+                        campaignGridSection
+                    } else {
+                        // 텍스트 입력 중 세로 리스트 표시
+                        searchResultsSection
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 24)
-                } else {
-                    searchResultsSection
                 }
+                
+                Spacer()
             }
             
-            Spacer()
+            // 필터 사이드 메뉴
+            if showFilterSideMenu {
+                SearchFilterSideMenu(
+                    viewModel: viewModel,
+                    isPresented: $showFilterSideMenu
+                )
+            }
         }
-        .background(.gray0)
+        .sheet(isPresented: $showSortBottomSheet) {
+            SortBottomSheet(
+                isPresented: $showSortBottomSheet,
+                selectedSortType: $viewModel.selectedSortType,
+                onSortTypeSelected: viewModel.selectSortType
+            )
+        }
+        .onAppear {
+            viewModel.loadRecentSearches()
+        }
     }
+    
     
     private var headerSection: some View {
         HStack(alignment: .center, spacing: 0) {
@@ -47,7 +60,9 @@ struct SearchView: View {
                 Image("chevron_left")
             }
             
-            CDTextField(text: $searchText, placeholder: "검색어를 입력해주세요", onSubmit: {})
+            CDTextField(text: $viewModel.searchText, placeholder: "검색어를 입력해주세요", onSubmit: {
+                viewModel.submitSearch()
+            })
             
             Button(action: {
                 dismiss()
@@ -64,10 +79,79 @@ struct SearchView: View {
     
     private var searchResultsSection: some View {
         LazyVStack(spacing: 0) {
-            ForEach(filteredSearchResults) { result in
+            ForEach(viewModel.autoCompleteResults) { result in
                 searchResultRow(result)
             }
         }
+    }
+    
+    private var campaignGridSection: some View {
+        LazyVStack(spacing: 16) {
+            // 검색 결과 헤더
+            HStack(spacing: 0) {
+                Text("검색 결과")
+                    .font(.m5b)
+                    .foregroundStyle(.gray9)
+                
+                Text("총 \(viewModel.totalCount)개")
+                    .font(.m5r)
+                    .foregroundStyle(.gray5)
+                
+                Spacer()
+                
+                Button(action: {
+                    showFilterSideMenu = true
+                }) {
+                    Image("filter")
+                        .padding(.trailing, 16)
+                }
+                
+                Button(action: {
+                    showSortBottomSheet = true
+                }) {
+                    HStack(spacing: 4) {
+                        Text(viewModel.selectedSortType.displayName)
+                            .font(.m5r)
+                            .foregroundStyle(.gray5)
+                        
+                        Image("chevron_down")
+                    }
+                }
+            }
+            .padding(.horizontal, 16)
+            
+            // 캠페인 그리드
+            LazyVGrid(columns: [
+                GridItem(.flexible(), spacing: 8),
+                GridItem(.flexible(), spacing: 8)
+            ], spacing: 16) {
+                ForEach(viewModel.searchResults) { campaign in
+                    CampaignCardView(campaign: campaign)
+                        .frame(maxHeight: 320, alignment: .top)
+                }
+            }
+            .padding(.horizontal, 16)
+            
+            // 더 보기 버튼
+            if viewModel.hasMorePages {
+                Button(action: {
+                    viewModel.loadNextPage()
+                }) {
+                    if viewModel.isLoading {
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle())
+                            .scaleEffect(0.8)
+                    } else {
+                        Text("더 보기")
+                            .font(.m4r)
+                            .foregroundStyle(.gray5)
+                    }
+                }
+                .frame(height: 40)
+                .padding(.horizontal, 16)
+            }
+        }
+        .padding(.top, 24)
     }
     
     private var recommendedCategorySection: some View {
@@ -114,7 +198,7 @@ struct SearchView: View {
                 Spacer()
                 
                 Button(action: {
-                    //
+                    viewModel.deleteAllSearchRecords()
                 }) {
                     Text("전체 삭제")
                         .font(.m5r)
@@ -123,18 +207,23 @@ struct SearchView: View {
             }
             
             VStack(spacing: 0) {
-                ForEach(recentSearches) {searchItem in
-                    recentSearchItem(searchItem)
+                if viewModel.recentSearches.isEmpty {
+                    Text("검색기록이 비어있어요.")
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                } else {
+                    ForEach(viewModel.recentSearches) { searchItem in
+                        recentSearchItem(searchItem)
+                    }
                 }
             }
         }
     }
     
-    private func searchResultRow(_ result: SearchResult) -> some View {
+    private func searchResultRow(_ result: SearchRecord) -> some View {
         HStack(spacing: 4) {
             Image("search_sm")
             
-            highlightedText(text: result.text, searchTerm: searchText)
+            highlightedText(text: result.text, searchTerm: viewModel.searchText)
                 .font(.m5r)
             
             Spacer()
@@ -143,11 +232,11 @@ struct SearchView: View {
         .padding(.vertical, 12)
         .contentShape(Rectangle())
         .onTapGesture {
-            // 검색 결과 선택 액션
+            viewModel.selectAutoCompleteResult(result)
         }
     }
     
-    private func recentSearchItem(_ searchItem: RecentSearchResult) -> some View {
+    private func recentSearchItem(_ searchItem: SearchRecord) -> some View {
         HStack(spacing: 12) {
             Image("clock")
             
@@ -158,7 +247,7 @@ struct SearchView: View {
             Spacer()
             
             Button(action: {
-                //
+                viewModel.deleteSearchRecord(searchItem.id)
             }) {
                 Image("close")
             }
@@ -166,7 +255,7 @@ struct SearchView: View {
         .padding(.bottom, 16)
         .contentShape(Rectangle())
         .onTapGesture {
-            // 검색어 선택 액션
+            viewModel.selectRecentSearch(searchItem.text)
         }
     }
     
