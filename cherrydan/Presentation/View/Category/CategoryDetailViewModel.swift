@@ -30,23 +30,47 @@ class CategoryDetailViewModel: ObservableObject {
         
         Task {
             do {
-                let localCategory = LocalCategory.from(displayName: categoryTabs[selectedTabIndex])
-                let response: PageableResponse<CampaignDTO>
-                if isSub {
-                    response = try await campaignRepository.getCampaignByCategory(
-                        subRegion: [region] ,
-                        local: [localCategory],
-                        sort: selectedSortType
-                    )
+                let localCategories: [LocalCategory]
+                if categoryTabs[selectedTabIndex] == "전체" {
+                    localCategories = []
                 } else {
-                    response = try await campaignRepository.getCampaignByCategory(
-                        regionGroup: [region] ,
-                        local: [localCategory],
-                        sort: selectedSortType
-                    )
+                    localCategories = [LocalCategory.from(displayName: categoryTabs[selectedTabIndex])].compactMap { $0 }
                 }
                 
-                campaigns = response.content.map { Campaign(from: $0) }
+                let response: PageableResponse<CampaignDTO>
+                if isSub {
+                    // 서브 지역 처리
+                    if let subRegion = SubRegion.from(displayName: region) {
+                        response = try await campaignRepository.getCampaignByCategory(
+                            subRegion: [subRegion],
+                            local: localCategories,
+                            sort: selectedSortType
+                        )
+                    } else {
+                        // 서브 지역을 찾지 못한 경우 기본 검색
+                        response = try await campaignRepository.getCampaignByCategory(
+                            local: localCategories,
+                            sort: selectedSortType
+                        )
+                    }
+                } else {
+                    // 지역 그룹 처리
+                    if let regionGroup = RegionGroup.from(displayName: region) {
+                        response = try await campaignRepository.getCampaignByCategory(
+                            regionGroup: [regionGroup],
+                            local: localCategories,
+                            sort: selectedSortType
+                        )
+                    } else {
+                        // 지역 그룹을 찾지 못한 경우 기본 검색
+                        response = try await campaignRepository.getCampaignByCategory(
+                            local: localCategories,
+                            sort: selectedSortType
+                        )
+                    }
+                }
+                
+                campaigns = response.content.map { $0.toCampaign() }
                 totalCount = response.totalElements
                 isLoading = false
             } catch {

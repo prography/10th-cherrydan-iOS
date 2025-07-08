@@ -4,11 +4,8 @@ import AuthenticationServices
 struct HomeView: View {
     @EnvironmentObject var router: HomeRouter
     @StateObject private var viewModel = HomeViewModel()
-    @State private var selectedCategory: CategoryType = .interestedRegion
-    @State private var selectedTab: Int = 0
     @State private var showCampaignPopup = false
-    
-    let sortArr = ["인기순", "최신순", "마감임박순", "경쟁률 낮은순",]
+    @State private var showSortBottomSheet = false
     
     let campaigns = [
         ["체험단 캠페인 여기 다 모았다!", "지금 최고의 체험단에 신청해 보세요.", "1"],
@@ -37,42 +34,88 @@ struct HomeView: View {
                         .padding(.top, 8)
                         .padding(.bottom, 16)
                     
-                    CDTabSection(selectedCategory: $selectedCategory)
+                    CDTabSection(
+                        selectedCategory: $viewModel.selectedCategory,
+                        onCategoryChanged: viewModel.selectCategory
+                    )
                     
                     Divider()
                         .padding(.bottom, 16)
                     
-                    HStack(spacing: 0) {
-                        ForEach(0..<sortArr.count, id: \.self) { index in
-                            tabItem(index)
-                                .onTapGesture { selectedTab = index }
-                        }
-                    }
-                    .padding(.horizontal, 6)
+                    sortSection
                     
-                    Divider()
+                    tagSection
                     
                     campaignGridSection
                 }
             }
         }
-        .animation(.fastEaseInOut, value: selectedTab)
-        //        .presentPopup(
-        //            isPresented: $showCampaignPopup,
-        //            campaigns: CampaignRequest.sampleData,
-        //            onConfirm: { campaign in
-        //                print("선택된 캠페인: \(campaign.title)")
-        //                // 여기에 확인 버튼을 눌렀을 때의 액션을 추가할 수 있습니다.
-        //            }
-        //        )
+        .sheet(isPresented: $showSortBottomSheet) {
+            SortBottomSheet(
+                isPresented: $showSortBottomSheet,
+                selectedSortType: $viewModel.selectedSortType,
+                onSortTypeSelected: viewModel.selectSortType
+            )
+        }
+        .animation(.fastEaseInOut, value: viewModel.selectedSortType)
     }
     
-    private func tabItem(_ index:Int) -> some View {
-        Text(sortArr[index])
-            .font(selectedTab == index ? .m4b : .m4r)
-            .foregroundStyle(selectedTab == index ? .mPink3 : .gray4)
-            .padding(.horizontal, 10)
-            .padding(.bottom, 8)
+    private var sortSection: some View {
+        HStack {
+            Text("총 \(viewModel.totalCnt)개")
+                .font(.m5r)
+                .foregroundStyle(.gray4)
+            
+            Spacer()
+            
+            Button(action: {
+                showSortBottomSheet = true
+            }) {
+                HStack(spacing: 4) {
+                    Text(viewModel.selectedSortType.displayName)
+                        .font(.m5r)
+                        .foregroundStyle(.gray5)
+                    
+                    Image("chevron_down")
+                }
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.bottom, 8)
+    }
+    
+    private var tagSection: some View {
+        let tags = viewModel.getTagsForCurrentCategory()
+        
+        return VStack(alignment: .leading, spacing: 0) {
+            if !tags.isEmpty {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(tags, id: \.self) { tag in
+                            tagButton(tag)
+                        }
+                    }
+                    .padding(.horizontal, 16)
+                }
+                .padding(.top, 12)
+            }
+        }
+    }
+    
+    private func tagButton(_ tag: String) -> some View {
+        let isSelected = viewModel.selectedTags.contains(tag)
+        
+        return Button(action: {
+            viewModel.toggleTag(tag)
+        }) {
+            Text(tag)
+                .font(.m5r)
+                .foregroundStyle(isSelected ? .gray9 : .gray5)
+                .frame(height: 28, alignment: .center)
+                .padding(.horizontal, 12)
+                .background(isSelected ? .pBlue : .gray2, in: RoundedRectangle(cornerRadius: 20))
+        }
+        .animation(.fastEaseInOut, value: isSelected)
     }
     
     private var campaignGridSection: some View {
@@ -82,12 +125,18 @@ struct HomeView: View {
         ], spacing: 32) {
             ForEach(viewModel.campaigns) { campaign in
                 CampaignCardView(campaign: campaign)
-                    .frame(maxHeight: 290, alignment: .top)
+                    .frame(maxHeight: 320, alignment: .top)
+                    .onTapGesture {
+                        router.push(to: .campaignWeb(
+                            campaignSite: campaign.campaignSite,
+                            campaignSiteUrl: campaign.detailUrl
+                        ))
+                    }
             }
         }
-        .padding(.top, 24)
+        .padding(.top, 16)
     
-        .padding(.horizontal)
+        .padding(.horizontal, 16)
     }
 }
 
