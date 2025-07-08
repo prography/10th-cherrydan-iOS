@@ -11,7 +11,7 @@ struct SortBottomSheet: View {
     
     var body: some View {
         CDBottomSheet(type: .titleLeading(title: "정렬", buttonConfig: nil)) {
-            VStack(spacing: 0) {
+            VStack(spacing: 4) {
                 ForEach(sortTypes, id: \.self) { sortType in
                     sortOptionRow(sortType)
                 }
@@ -24,19 +24,17 @@ struct SortBottomSheet: View {
             onSortTypeSelected(sortType)
             dismiss()
         }) {
-            HStack(spacing: 12) {
+            HStack(spacing: 0) {
                 Image("check_circle\(selectedSortType == sortType ? "_filled" : "_empty")")
                 
                 Text(sortType.displayName)
-                    .font(.m3r)
+                    .font(.m4r)
                     .foregroundStyle(.gray9)
                 
                 Spacer()
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 16)
+            .padding(.vertical, 8)
         }
-        .buttonStyle(PlainButtonStyle())
     }
 }
 

@@ -53,5 +53,6 @@ struct CDButton: View {
             }
         }
         .disabled(isDisabled)
+        .animation(.mediumSpring, value: isDisabled)
     }
 }

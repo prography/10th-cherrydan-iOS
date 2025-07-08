@@ -69,6 +69,8 @@ struct CDBottomSheet<Content: View>: View {
                     if let onClose = onClose { onClose() } else { dismiss() }
                 }) {
                     Image("close_white_big")
+                        .renderingMode(.template)
+                        .foregroundStyle(.gray9)
                 }
             }
         case .titleCenter(let title, _):
@@ -85,6 +87,7 @@ struct CDBottomSheet<Content: View>: View {
                     }
                 }
             }
+            .padding(.horizontal, 16)
         case .titleCenterWithBackButton(let title, _):
             ZStack {
                 Text(title)
@@ -101,6 +104,7 @@ struct CDBottomSheet<Content: View>: View {
                     Spacer()
                 }
             }
+            .padding(.horizontal, 16)
         }
     }
     

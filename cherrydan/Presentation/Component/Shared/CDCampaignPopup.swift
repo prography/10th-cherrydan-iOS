@@ -71,16 +71,3 @@ struct CDCampaignPopup: View {
         }
     }
 }
-
-#Preview {
-    ZStack {
-        Color.black
-            .edgesIgnoringSafeArea(.all)
-            .opacity(0.3)
-        
-        CDCampaignPopup(
-            campaigns: Campaign.dummy,
-            onConfirm: {}
-        )
-    }
-}
