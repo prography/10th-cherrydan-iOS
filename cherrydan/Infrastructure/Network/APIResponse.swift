@@ -45,5 +45,18 @@ struct LoginResult: Codable {
     let refreshToken: String
 }
 
+// 사용자 정보 구조체
+struct UserInfo: Codable {
+    let name: String?
+    let email: String?
+    let platform: String
+    
+    init(name: String?, email: String?, platform: String) {
+        self.name = name
+        self.email = email
+        self.platform = platform
+    }
+}
+
 struct EmptyResult: Codable {}
 

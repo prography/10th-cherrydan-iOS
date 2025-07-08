@@ -1,11 +1,3 @@
-//
-//  APIConstants.swift
-//  cherrydan
-//
-//  Created by Neoself on 7/3/25.
-//
-
-
 struct APIConstants {
     static let isServerDevelopment = true
     static let isUserDevelopment = true
