@@ -9,7 +9,7 @@ import GoogleSignIn
 class OnboardingViewModel: NSObject, ObservableObject {
     @Published var isLoading: Bool = false
     @Published var errorMessage: String? = nil
-    @Published var recentLoggedInPlatform: LoginPlatform? = .apple
+    @Published var recentLoggedInPlatform: LoginPlatform?
     
     let instance = NaverThirdPartyLoginConnection.getSharedInstance()
     
@@ -19,16 +19,22 @@ class OnboardingViewModel: NSObject, ObservableObject {
         self.auth = AuthRepository()
         super.init()
         setupNaverLogin()
+        loadRecentLoggedInPlatform()
     }
     
     init(auth: AuthRepository) {
         self.auth = auth
         super.init()
         setupNaverLogin()
+        loadRecentLoggedInPlatform()
     }
     
     private func setupNaverLogin() {
         instance?.delegate = self
+    }
+    
+    private func loadRecentLoggedInPlatform() {
+        recentLoggedInPlatform = AuthManager.shared.lastLoggedInPlatform
     }
     
     func performNaverLogin() async {
@@ -59,7 +65,35 @@ class OnboardingViewModel: NSObject, ObservableObject {
                         return
                     }
                     
-                    await self.handleSocialLogin(.kakao, oauthToken.accessToken)
+                    // 카카오 사용자 정보 수집
+                    await self.fetchKakaoUserInfo(token: oauthToken.accessToken)
+                }
+            }
+        }
+    }
+    
+    private func fetchKakaoUserInfo(token: String) async {
+        UserApi.shared.me { [weak self] (user, error) in
+            guard let self = self else { return }
+            
+            if let error = error {
+                print("Kakao user info error: \(error)")
+                Task { @MainActor in
+                    // 사용자 정보 수집 실패해도 토큰으로 로그인 진행
+                    await self.handleSocialLogin(.kakao, token, userInfo: nil)
+                }
+            } else {
+                Task { @MainActor in
+                    let userName = user?.kakaoAccount?.profile?.nickname
+                    let userEmail = user?.kakaoAccount?.email
+                    
+                    let userInfo = UserInfo(
+                        name: userName,
+                        email: userEmail,
+                        platform: "kakao"
+                    )
+                    
+                    await self.handleSocialLogin(.kakao, token, userInfo: userInfo)
                 }
             }
         }
@@ -89,8 +123,18 @@ class OnboardingViewModel: NSObject, ObservableObject {
                     return
                 }
                 
+                // 구글 사용자 정보 수집
+                let userName = signInResult.user.profile?.name
+                let userEmail = signInResult.user.profile?.email
+                
+                let userInfo = UserInfo(
+                    name: userName,
+                    email: userEmail,
+                    platform: "google"
+                )
+                
                 Task {
-                    await self.handleSocialLogin(.google, idToken)
+                    await self.handleSocialLogin(.google, idToken, userInfo: userInfo)
                 }
             }
         }
@@ -108,17 +152,40 @@ class OnboardingViewModel: NSObject, ObservableObject {
             return
         }
         
-        await handleSocialLogin(.apple, idToken)
+        // 애플 사용자 정보 수집
+        let userName = appleIDCredential.fullName?.formatted()
+        let userEmail = appleIDCredential.email
+        
+        let userInfo = UserInfo(
+            name: userName,
+            email: userEmail,
+            platform: "apple"
+        )
+        
+        await handleSocialLogin(.apple, idToken, userInfo: userInfo)
     }
     
-    private func handleSocialLogin(_ platform: LoginPlatform, _ token: String) async {
+    private func handleSocialLogin(_ platform: LoginPlatform, _ token: String, userInfo: UserInfo?) async {
         do {
-            let response = try await auth.socialLogin(platform.rawValue, token)
+            let response = try await auth.socialLogin(platform.rawValue, token, userInfo: userInfo)
             
             if response.code == 200 {
-                AuthManager.shared.login(response.result)
+                // 사용자 닉네임 추출 (이름이 없으면 "회원"으로 설정)
+                let nickname = userInfo?.name?.isEmpty == false ? userInfo?.name : "회원"
+                
+                AuthManager.shared.login(response.result, platform: platform, nickname: nickname)
                 
                 recentLoggedInPlatform = platform
+                
+                // 사용자 정보 로그 출력 (개발용)
+                if let userInfo = userInfo {
+                    print("[\(platform.title)] 사용자 정보 수집 성공")
+                    print("이름: \(userInfo.name ?? "없음")")
+                    print("이메일: \(userInfo.email ?? "없음")")
+                    print("저장된 닉네임: \(nickname ?? "회원")")
+                } else {
+                    print("[\(platform.title)] 사용자 정보 수집 실패 - 기본 닉네임 '회원'으로 설정")
+                }
             } else {
                 errorMessage = response.message
             }
@@ -165,8 +232,44 @@ extension OnboardingViewModel: NaverThirdPartyLoginConnectionDelegate {
                     return
                 }
                 
-                await self.handleSocialLogin(.naver, accessToken)
+                // 네이버 사용자 정보 수집
+                await self.fetchNaverUserInfo(token: accessToken)
             }
+        }
+    }
+    
+    private func fetchNaverUserInfo(token: String) async {
+        guard let url = URL(string: "https://openapi.naver.com/v1/nid/me") else {
+            await handleSocialLogin(.naver, token, userInfo: nil)
+            return
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        
+        do {
+            let (data, _) = try await URLSession.shared.data(for: request)
+            
+            if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+               let response = json["response"] as? [String: Any] {
+                
+                let userName = response["name"] as? String
+                let userEmail = response["email"] as? String
+                
+                let userInfo = UserInfo(
+                    name: userName,
+                    email: userEmail,
+                    platform: "naver"
+                )
+                
+                await handleSocialLogin(.naver, token, userInfo: userInfo)
+            } else {
+                await handleSocialLogin(.naver, token, userInfo: nil)
+            }
+        } catch {
+            print("Naver user info error: \(error)")
+            await handleSocialLogin(.naver, token, userInfo: nil)
         }
     }
 }
