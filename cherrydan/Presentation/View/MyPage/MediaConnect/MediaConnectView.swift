@@ -28,7 +28,7 @@ struct MediaConnectView: View {
     private var mediaItemSection: some View {
         VStack(spacing: 24) {
             mediaItem(
-                platformName: .naverBlog,
+                platformName: .blog,
                 isConnected: naverBlogConnected,
                 url: "https://www.naver.com",
                 onButtonTap: {
@@ -55,7 +55,7 @@ struct MediaConnectView: View {
             )
             
             mediaItem(
-                platformName: .naverBlog,
+                platformName: .blog,
                 isConnected: tiktokConnected,
                 url: nil,
                 onButtonTap: {
@@ -75,7 +75,7 @@ struct MediaConnectView: View {
             HStack(spacing: 4) {
                 Image(platformName.imageName)
                 
-                Text(platformName.displayName)
+                Text(platformName.rawValue)
                     .font(.m5r)
                     .foregroundStyle(.gray9)
             }

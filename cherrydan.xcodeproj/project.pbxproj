@@ -16,6 +16,7 @@
 		E56E167D2E10200C007932B4 /* NaverThirdPartyLogin in Frameworks */ = {isa = PBXBuildFile; productRef = E56E167C2E10200C007932B4 /* NaverThirdPartyLogin */; };
 		E56E16802E1024C1007932B4 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = E56E167F2E1024C1007932B4 /* GoogleSignIn */; };
 		E56E16822E1024C1007932B4 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = E56E16812E1024C1007932B4 /* GoogleSignInSwift */; };
+		E5D64EFE2E1808BC0093EFD3 /* cherrydan.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E5D64EFC2E1808BC0093EFD3 /* cherrydan.xcdatamodeld */; };
 		E5E506A22DE969790075264B /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = E5E506A12DE969730075264B /* .gitignore */; };
 /* End PBXBuildFile section */
 
@@ -40,6 +41,7 @@
 		601A23C92DE42E8300ED0FE1 /* cherrydan.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = cherrydan.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		601A23DE2DE42E8500ED0FE1 /* cherrydanTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = cherrydanTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		601A23E82DE42E8500ED0FE1 /* cherrydanUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = cherrydanUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E5D64EFD2E1808BC0093EFD3 /* cherrydan.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = cherrydan.xcdatamodel; sourceTree = "<group>"; };
 		E5E506A12DE969730075264B /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -111,6 +113,7 @@
 		601A23C02DE42E8300ED0FE1 = {
 			isa = PBXGroup;
 			children = (
+				E5D64EFC2E1808BC0093EFD3 /* cherrydan.xcdatamodeld */,
 				E5E506A12DE969730075264B /* .gitignore */,
 				E59A2B412DF0286C00B7610C /* cherrydan */,
 				601A23E12DE42E8500ED0FE1 /* cherrydanTests */,
@@ -289,6 +292,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E5D64EFE2E1808BC0093EFD3 /* cherrydan.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -698,6 +702,19 @@
 			productName = GoogleSignInSwift;
 		};
 /* End XCSwiftPackageProductDependency section */
+
+/* Begin XCVersionGroup section */
+		E5D64EFC2E1808BC0093EFD3 /* cherrydan.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				E5D64EFD2E1808BC0093EFD3 /* cherrydan.xcdatamodel */,
+			);
+			currentVersion = E5D64EFD2E1808BC0093EFD3 /* cherrydan.xcdatamodel */;
+			path = cherrydan.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 601A23C12DE42E8300ED0FE1 /* Project object */;
 }
