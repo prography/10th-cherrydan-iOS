@@ -20,11 +20,15 @@ struct NoticeBoardView: View {
                         NoticeBoardRow(notice: notice)
                             .padding(.horizontal, 16)
                             .onTapGesture {
+                                router.push(to: .noticeDetail(noticeId: String(notice.id)))
                             }
                         
                         Divider().background(Color.gray2)
                     }
                 }
+            }
+            .refreshable {
+                await viewModel.refreshNoticeBoard()
             }
         }
     }
