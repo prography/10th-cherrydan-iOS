@@ -78,9 +78,8 @@ struct MyCampaignRow: View {
                         ForEach(myCampaign.snsPlatforms.prefix(2), id: \.self) { platform in
                             HStack(spacing: 4) {
                                 Image(platform.imageName)
-                                    .frame(width: 16, height: 16)
                                 
-                                Text(platform.displayName)
+                                Text(platform.rawValue)
                                     .font(.m5r)
                                     .foregroundStyle(.gray9)
                             }
@@ -98,7 +97,7 @@ struct MyCampaignRow: View {
                             .frame(width: 16, height: 16)
                             .cornerRadius(4)
                             
-                            Text(myCampaign.campaignSite.displayName)
+                            Text(myCampaign.campaignSite.rawValue)
                                 .font(.m5r)
                                 .foregroundStyle(.gray9)
                         }

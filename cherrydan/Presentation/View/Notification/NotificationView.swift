@@ -224,7 +224,7 @@ struct NotificationView: View {
             } else {
                 HStack(spacing: 4){
                     Button(action: {}) {
-                        Text("삭재")
+                        Text("삭제")
                             .foregroundColor(.mPink3)
                     }
                     

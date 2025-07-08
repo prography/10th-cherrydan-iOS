@@ -24,7 +24,7 @@ struct MyCampaignView: View {
             
             ScrollView {
                 VStack(spacing: 16) {
-                    campaignListSection
+//                    campaignListSection
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 16)
@@ -48,30 +48,30 @@ struct MyCampaignView: View {
         }
     }
     
-    private var campaignListSection: some View {
-        VStack(spacing: 16) {
-            Divider()
-            
-            ForEach(MyCampaign.dummy.prefix(2), id: \.id) { campaign in
-                MyCampaignRow(
-                    myCampaign: campaign,
-                    leftButtonTitle: campaign.statusLabel == "선정됨" ? "공고 확인" : nil,
-                    rightButtonTitle: campaign.statusLabel == "선정됨" ? "방문 완료" : 
-                                     campaign.statusLabel == "완료" ? "결과 확인" : "신청 취소",
-                    isRightButtonPrimary: campaign.statusLabel == "완료",
-                    isChecked: campaign.statusLabel == "완료",
-                    onLeftButtonTap: {
-                        // 왼쪽 버튼 액션
-                    },
-                    onRightButtonTap: {
-                        // 오른쪽 버튼 액션
-                    }
-                )
-                
-                Divider()
-            }
-        }
-    }
+//    private var campaignListSection: some View {
+//        VStack(spacing: 16) {
+//            Divider()
+//            
+//            ForEach(MyCampaign.dummy.prefix(2), id: \.id) { campaign in
+//                MyCampaignRow(
+//                    myCampaign: campaign,
+//                    leftButtonTitle: campaign.statusLabel == "선정됨" ? "공고 확인" : nil,
+//                    rightButtonTitle: campaign.statusLabel == "선정됨" ? "방문 완료" : 
+//                                     campaign.statusLabel == "완료" ? "결과 확인" : "신청 취소",
+//                    isRightButtonPrimary: campaign.statusLabel == "완료",
+//                    isChecked: campaign.statusLabel == "완료",
+//                    onLeftButtonTap: {
+//                        // 왼쪽 버튼 액션
+//                    },
+//                    onRightButtonTap: {
+//                        // 오른쪽 버튼 액션
+//                    }
+//                )
+//                
+//                Divider()
+//            }
+//        }
+//    }
     
     private func tabItem(_ index: Int) -> some View {
         Button(action: {

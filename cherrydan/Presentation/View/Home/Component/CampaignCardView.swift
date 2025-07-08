@@ -5,6 +5,7 @@ struct CampaignCardView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
+            // 이미지 영역
             ZStack(alignment: .topLeading) {
                 AsyncImage(url: URL(string: campaign.imageUrl)) { image in
                     image
@@ -17,12 +18,13 @@ struct CampaignCardView: View {
                             ProgressView()
                         )
                 }
-                .frame(height: 168)
+                .frame(width: 168, height: 168)
                 .cornerRadius(4)
+                .clipped()
                 
-                Text(campaign.benefit)
+                Text(campaign.campaignSite.rawValue)
                     .font(.m6r)
-                    .foregroundStyle(.gray0)
+                    .foregroundStyle(.pBlue)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
                     .background(.gray5)
@@ -36,54 +38,53 @@ struct CampaignCardView: View {
                     )
             }
             
-            HStack {
-                Text(campaign.campaignType.displayName)
+            VStack(alignment: .leading, spacing: 6) {
+                Text(campaign.reviewerAnnouncementStatus)
                     .font(.m5b)
                     .foregroundStyle(.mPink3)
-                
-                Spacer()
-                
-                Text(String(format: "%.1f:1", campaign.competitionRate))
-                    .font(.m5b)
-                    .foregroundStyle(.mPink3)
-            }
-            
-            VStack(alignment: .leading, spacing: 4) {
-                Text(campaign.title)
-                    .font(.m5b)
                     .lineLimit(1)
                 
-                Text(campaign.benefit)
-                    .font(.m5r)
-                    .foregroundStyle(.gray9)
-                    .lineLimit(2)
-                
-                Text(campaign.address)
-                    .font(.m5r)
-                    .foregroundStyle(.gray4)
-                
-                HStack(spacing: 0) {
-                    Text("신청 \(campaign.applicantCount)/")
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(campaign.title)
+                        .font(.m5b)
+                        .foregroundStyle(.gray9)
+                        .lineLimit(2)
+                        .multilineTextAlignment(.leading)
+                    
+                    Text(campaign.benefit)
                         .font(.m5r)
                         .foregroundStyle(.gray9)
-                    
-                    Text("\(campaign.recruitCount)명")
-                        .font(.m5r)
-                        .foregroundStyle(.gray4)
-                }
-            }
-            
-            HStack(spacing: 4) {
-                ForEach(campaign.platforms.prefix(2), id: \.self) { platform in
-                    if let socialPlatform = SocialPlatform(rawValue: platform) {
-                        Image(socialPlatform.imageName)
-                    }
+                        .lineLimit(2)
+                        .multilineTextAlignment(.leading)
                 }
                 
-                if campaign.platforms.count > 2 {
-                    Text("+\(campaign.platforms.count - 2)")
-                        .font(.m5r)
-                        .foregroundStyle(.gray4)
+                (
+                    Text("신청 \(campaign.applicantCount)/")
+                        .foregroundColor(.gray9)
+                    +
+                    Text("\(campaign.recruitCount)명")
+                        .foregroundColor(.gray4)
+                )
+                .font(.m5r)
+                
+                HStack(spacing: 8) {
+                    ForEach(Array(campaign.snsPlatforms.prefix(2)), id: \.self) { sns in
+                        HStack(spacing: 4) {
+                            Image(sns.imageName)
+                            
+                            Text(sns.rawValue)
+                                .font(.m6r)
+                                .foregroundStyle(.gray9)
+                        }
+                    }
+                    
+                    if campaign.snsPlatforms.count > 2 {
+                        Text("+\(campaign.snsPlatforms.count - 2)")
+                            .font(.m6r)
+                            .foregroundStyle(.gray5)
+                    }
+                    
+                    Spacer()
                 }
             }
         }

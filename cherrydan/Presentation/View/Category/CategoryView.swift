@@ -4,7 +4,7 @@ struct CategoryView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var router: CategoryRouter
     @State private var selectedRegion: Region = .seoul
-    @State private var selectedCategory: CategoryType = .interestedRegion
+    @State private var selectedCategory: CampaignType = .all
     
     var body: some View {
         CDScreen(horizontalPadding: 0) {
