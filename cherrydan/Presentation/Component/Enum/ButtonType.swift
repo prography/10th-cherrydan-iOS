@@ -50,7 +50,7 @@ enum ButtonType {
         }
     }
     
-    var disabledBackgroundColor: Color { .gray0 }
-    var disabledForegroundColor: Color { .gray5 }
+    var disabledBackgroundColor: Color { .mPink1 }
+    var disabledForegroundColor: Color { .gray0 }
     var disabledStrokeColor: Color { .gray3 }
 }
