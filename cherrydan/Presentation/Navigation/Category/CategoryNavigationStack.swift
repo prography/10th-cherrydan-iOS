@@ -36,6 +36,8 @@ struct CategoryNavigationStack: View {
             SearchView()
         case .notification:
             NotificationView()
+        case .campaignWeb(let campaignSite, let campaignSiteUrl):
+            CampaignWebView(campaignSite: campaignSite, campaignSiteUrl: campaignSiteUrl)
         }
     }
 }
