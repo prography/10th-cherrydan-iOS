@@ -1,15 +1,19 @@
 import SwiftUI
 
 struct CDTabSection: View {
-    @Binding var selectedCategory: CategoryType
+    @Binding var selectedCategory: CampaignType
+    var onCategoryChanged: ((CampaignType) -> Void)? = nil
     
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 0) {
-                ForEach(CategoryType.allCases, id: \.self) { category in
+                ForEach(CampaignType.allCases, id: \.self) { category in
                     tabItem(category)
                     .padding(.horizontal, 12)
-                        .onTapGesture { selectedCategory = category }
+                        .onTapGesture { 
+                            selectedCategory = category
+                            onCategoryChanged?(category)
+                        }
                 }
                 .padding(.horizontal, 2)
             }
@@ -17,7 +21,7 @@ struct CDTabSection: View {
         .animation(.fastEaseInOut, value: selectedCategory)
     }
     
-    private func tabItem(_ category: CategoryType) -> some View {
+    private func tabItem(_ category: CampaignType) -> some View {
         VStack(spacing: 8){
             Text(category.title)
                 .font(selectedCategory == category ? .m3b : .m3r)
