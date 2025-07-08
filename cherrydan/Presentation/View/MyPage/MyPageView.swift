@@ -2,6 +2,7 @@ import SwiftUI
 
 struct MyPageView: View {
     @EnvironmentObject var router: MyPageRouter
+    @StateObject private var viewModel = MyPageViewModel()
     
     var body: some View {
         CDScreen(horizontalPadding: 0) {
@@ -38,6 +39,10 @@ struct MyPageView: View {
             Text("내 정보 관리")
                 .foregroundStyle(.mPink2)
                 .font(.m5b)
+            
+            if let user = viewModel.user {
+                Text(user.name)
+            }
             
             menuItem("내 정보") {
                 router.push(to: .profileSetting)
@@ -84,9 +89,9 @@ struct MyPageView: View {
     private var bottomButtonSection: some View {
         HStack(spacing: 8) {
             Button(action: {
-                AuthManager.shared.logout()
+                router.push(to: .withdrawal)
             }) {
-                Text("로그아웃")
+                Text("회원 탈퇴")
                     .font(.m5r)
                     .foregroundStyle(.gray5)
                     .padding(.horizontal, 16)
@@ -95,8 +100,10 @@ struct MyPageView: View {
                     .cornerRadius(2)
             }
             
-            Button(action: {}) {
-                Text("회원 탈퇴")
+            Button(action: {
+                AuthManager.shared.logout()
+            }) {
+                Text("로그아웃")
                     .font(.m5r)
                     .foregroundStyle(.gray5)
                     .padding(.horizontal, 16)
