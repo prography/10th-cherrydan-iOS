@@ -17,7 +17,7 @@ class NotificationRepository {
         ]
         
         do {
-            return try await networkAPI.request(.getActivityNotification, queryParameters: query)
+            return try await networkAPI.request(ActivityEndpoint.getActivityNotification, queryParameters: query)
         } catch {
             print("NotificationRepository Error: \(error)")
             throw error
@@ -32,7 +32,7 @@ class NotificationRepository {
         ]
         
         do {
-            return try await networkAPI.request(.getKeywordNotification, queryParameters: query)
+            return try await networkAPI.request(ActivityEndpoint.getKeywordNotification, queryParameters: query)
         } catch {
             print("NotificationRepository Error: \(error)")
             throw error
