@@ -1,12 +1,13 @@
-import Foundation
-
 struct ActivityNotification: Identifiable, Equatable, Codable {
-    let campaignStatusId: Int
+    let id: Int
     let notificationType: String
     let notificationBoldText: String
     let fullText: String
-    var isRead: Bool
+    let isRead: Bool
     let createdDate: String
     
-    var id: Int { campaignStatusId }
+    enum CodingKeys: String, CodingKey {
+        case id = "campaignStatusId"
+        case notificationType, notificationBoldText, fullText, isRead, createdDate
+    }
 }
