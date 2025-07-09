@@ -20,9 +20,9 @@ struct MyPageView: View {
                 .padding(.horizontal, 16)
             
             ScrollView {
-                VStack(alignment: .trailing) {
+                VStack(alignment: .leading, spacing: 24) {
+                    profileSection
                     menuSection
-                    
                     bottomButtonSection
                 }
                 .padding(.top, 24)
@@ -34,60 +34,76 @@ struct MyPageView: View {
         }
     }
     
+    private var profileSection: some View {
+        Text("\(viewModel.user.name)님 안녕하세요")
+            .font(.t4)
+            .foregroundStyle(.gray9)
+    }
+    
     private var menuSection: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text("내 정보 관리")
-                .foregroundStyle(.mPink2)
-                .font(.m5b)
+//            Text("내 정보 관리")
+//                .foregroundStyle(.mPink2)
+//                .font(.m5b)
+//            
+//            if let user = viewModel.user {
+//                Text(user.name)
+//            }
+//            
+//            menuItem("내 정보") {
+//                router.push(to: .profileSetting)
+//            }
+//            menuItem("SNS 연결") {
+//                router.push(to: .manageSNS)
+//            }
+//            menuItem("체험단 연결"){
+//                router.push(to: .mediaConnect)
+//            }
+//            
+//            Divider()
+//                .padding(.top, 4)
+//                .padding(.bottom, 16)
+//            
+//            Text("환경 설정")
+//                .foregroundStyle(.mPink2)
+//                .font(.m5b)
+//            
+//            menuItem("알림 설정") {
+//                
+//            }
             
-            if let user = viewModel.user {
-                Text(user.name)
-            }
-            
-            menuItem("내 정보") {
-                router.push(to: .profileSetting)
-            }
-            menuItem("SNS 연결") {
-                
-            }
-            menuItem("체험단 연결"){
-                router.push(to: .mediaConnect)
-            }
-            
-            Divider()
-                .padding(.top, 4)
-                .padding(.bottom, 16)
-            
-            Text("환경 설정")
-                .foregroundStyle(.mPink2)
-                .font(.m5b)
-            
-            menuItem("알림 설정") {
-                
-            }
-            
-            Divider()
-                .padding(.top, 4)
-                .padding(.bottom, 16)
+//            Divider()
+//                .padding(.top, 4)
+//                .padding(.bottom, 16)
             
             Text("고객 센터")
                 .foregroundStyle(.mPink2)
                 .font(.m5b)
+            HStack {
+                Text("버전 정보")
+                    .font(.m3r)
+                    .foregroundStyle(.gray9)
+                
+                Spacer()
+                
+                Text(viewModel.version)
+                    .font(.m3b)
+                    .foregroundStyle(.gray5)
+            }
+            .padding(.vertical, 8)
             
-            menuItem("자주 묻는 질문") {}
-            menuItem("이용 가이드") {}
-            menuItem("약관 및 이용 동의") {
+            menuItem("개인정보 처리방침") {}
+            menuItem("이용약관") {
                 router.push(to: .agreement)
             }
-            
-            Divider()
-                .padding(.top, 4)
-                .padding(.bottom, 16)
+            menuItem("운영정책") {}
         }
     }
     
     private var bottomButtonSection: some View {
         HStack(spacing: 8) {
+            Spacer()
+            
             Button(action: {
                 router.push(to: .withdrawal)
             }) {
