@@ -9,9 +9,7 @@ struct CategoryView: View {
     var body: some View {
         CDScreen(horizontalPadding: 0) {
             CDHeaderWithLeftContent(
-                onNotificationClick: {
-                    router.push(to: .notification)
-                }, onSearchClick: {
+                onSearchClick: {
                     router.push(to: .search)
                 }){
                     Text("카테고리")

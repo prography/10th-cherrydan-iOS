@@ -12,8 +12,12 @@ struct CategoryDetailView: View {
     var body: some View {
         ZStack {
             CDScreen(horizontalPadding: 0) {
-                CDBackHeaderWithTitle(title: viewModel.region)
-                    .padding(.horizontal, 16)
+                CDBackHeaderWithTitle(title: viewModel.region){
+                    Button(action: {router.push(to: .search)}) {
+                        Image("search_bg")
+                    }
+                }
+                .padding(.horizontal, 16)
                 
                 tabSection
                     .padding(.top, 24)
