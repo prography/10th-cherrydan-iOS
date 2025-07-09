@@ -60,19 +60,11 @@ struct CDBottomSheet<Content: View>: View {
         case .none:
             EmptyView()
         case .titleLeading(let title, _):
-            HStack {
-                Text(title)
-                    .font(.m3b)
-                    .foregroundStyle(.gray9)
-                Spacer()
-                Button(action: {
-                    if let onClose = onClose { onClose() } else { dismiss() }
-                }) {
-                    Image("close_white_big")
-                        .renderingMode(.template)
-                        .foregroundStyle(.gray9)
-                }
-            }
+            Text(title)
+                .font(.m3b)
+                .foregroundStyle(.gray9)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            
         case .titleCenter(let title, _):
             ZStack {
                 Text(title)
