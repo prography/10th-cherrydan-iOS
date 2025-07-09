@@ -31,11 +31,12 @@ struct MyPageNavigationStack: View {
     private func destinationView(for route: MyPageRoute) -> some View {
         switch route {
         case .agreement: AgreementView()
-        case .mediaConnect: MediaConnectView()
+        case .mediaConnect: ManageSNSView()
         case .profileSetting: ProfileSettingView()
         case .search: SearchView()
         case .notification: NotificationView()
         case .withdrawal: WithdrawalView()
+        case .manageSNS: ManageSNSView()
         }
     }
 } 

@@ -1,6 +1,7 @@
 enum MyPageRoute: BaseRoute {
     case agreement
     case mediaConnect
+    case manageSNS
     case profileSetting
     case search
     case notification
@@ -21,6 +22,8 @@ enum MyPageRoute: BaseRoute {
         case .profileSetting:
             "profile_setting_screen"
             
+        case .manageSNS:
+            "manage_sns_screen"
         case .search:
             "search_screen_myPage"
         case .notification:

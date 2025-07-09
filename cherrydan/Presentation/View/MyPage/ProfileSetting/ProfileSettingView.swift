@@ -88,7 +88,7 @@ struct ProfileSettingView: View {
             .foregroundStyle(.gray9)
             .padding(.vertical, 10)
             
-            CDSmallButton("변경") {}
+            CDRoundButton("변경", type: .gray) {}
                 .frame(maxWidth: .infinity, alignment: .trailing)
                 .padding(.bottom, 8)
             
@@ -139,7 +139,7 @@ struct ProfileSettingView: View {
                         tagButton(tag, onRemove: { onRemove(tag) })
                     }
                     
-                    CDSmallButton("추가") {}
+                    CDRoundButton("추가", type: .primary) {}
                 }
                 .padding(.vertical, 10)
             }
