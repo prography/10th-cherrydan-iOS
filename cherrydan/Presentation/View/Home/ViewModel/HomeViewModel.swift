@@ -31,21 +31,13 @@ class HomeViewModel: ObservableObject {
         
         Task {
             do {
-                let response: PageableResponse<CampaignDTO>
-                
-                // 태그가 선택된 경우 searchCampaignsByCategory API 호출
-                if !selectedTags.isEmpty && selectedTags != ["전체"] {
-                    response = try await campaignAPI.searchCampaignsByCategory(
-                        local: getSelectedLocalCategories(),
-                        product: getSelectedProductCategories(),
-                        snsPlatform: getSelectedSocialPlatforms(),
-                        campaignPlatform: getSelectedCampaignPlatforms(),
-                        sort: selectedSortType
-                    )
-                } else {
-                    // 태그가 없거나 "전체"만 선택된 경우 기본 API 호출
-                    response = try await campaignAPI.getCampaignByType(type: selectedCategory, sortType: selectedSortType)
-                }
+                let response = try await campaignAPI.searchCampaignsByCategory(
+                    local: getLocalCategoriesForCurrentCategory(),
+                    product: getProductCategoriesForCurrentCategory(),
+                    snsPlatform: getSocialPlatformsForCurrentCategory(),
+                    campaignPlatform: getCampaignPlatformsForCurrentCategory(),
+                    sort: selectedSortType
+                )
                 
                 campaigns = response.content.map { $0.toCampaign() }
                 totalCnt = response.totalElements
@@ -118,32 +110,62 @@ class HomeViewModel: ObservableObject {
     
     // MARK: - Private Helper Methods
     
-    private func getSelectedLocalCategories() -> [LocalCategory] {
+    /// 현재 카테고리와 선택된 태그에 따른 지역 카테고리 반환
+    private func getLocalCategoriesForCurrentCategory() -> [LocalCategory] {
         guard selectedCategory == .region else { return [] }
+        
+        // "전체" 태그가 선택되었거나 태그가 없는 경우 빈 배열 반환 (모든 지역)
+        if selectedTags.isEmpty || selectedTags.contains("전체") {
+            return []
+        }
+        
         return selectedTags.compactMap { tag in
             LocalCategory.from(displayName: tag)
         }
     }
     
-    private func getSelectedProductCategories() -> [ProductCategory] {
+    /// 현재 카테고리와 선택된 태그에 따른 제품 카테고리 반환
+    private func getProductCategoriesForCurrentCategory() -> [ProductCategory] {
         guard selectedCategory == .product else { return [] }
+        
+        // "전체" 태그가 선택되었거나 태그가 없는 경우 빈 배열 반환 (모든 제품)
+        if selectedTags.isEmpty || selectedTags.contains("전체") {
+            return []
+        }
+        
         return selectedTags.compactMap { tag in
             ProductCategory.from(displayName: tag)
         }
     }
     
-    private func getSelectedSocialPlatforms() -> [SocialPlatformType] {
+    /// 현재 카테고리와 선택된 태그에 따른 SNS 플랫폼 반환
+    private func getSocialPlatformsForCurrentCategory() -> [SocialPlatformType] {
         guard selectedCategory == .reporter || selectedCategory == .snsPlatform else { return [] }
+        
+        // "전체" 태그가 선택되었거나 태그가 없는 경우 빈 배열 반환 (모든 플랫폼)
+        if selectedTags.isEmpty || selectedTags.contains("전체") {
+            return []
+        }
+        
         return selectedTags.compactMap { tag in
             SocialPlatformType.from(displayName: tag)
         }
     }
     
-    private func getSelectedCampaignPlatforms() -> [CampaignPlatformType] {
+    /// 현재 카테고리와 선택된 태그에 따른 캠페인 플랫폼 반환
+    private func getCampaignPlatformsForCurrentCategory() -> [CampaignPlatformType] {
         guard selectedCategory == .campaignPlatform else { return [] }
+        
+        // "전체" 태그가 선택되었거나 태그가 없는 경우 빈 배열 반환 (모든 플랫폼)
+        if selectedTags.isEmpty || selectedTags.contains("전체") {
+            return []
+        }
+        
         return selectedTags.compactMap { tag in
             CampaignPlatformType.from(displayName: tag)
         }
     }
+
+
 }
 

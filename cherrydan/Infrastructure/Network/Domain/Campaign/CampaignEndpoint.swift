@@ -2,8 +2,8 @@ enum CampaignEndpoint: APIEndpoint {
     case getCampaignByType
     case getCampaignBySNSPlatform
     case getCampaignByCampaignPlatform
-    case getCampainByCategory
-    case searchCampaign
+    case getCampaignByCategory
+    case getMyCampaignByStatus
     
     var path: String {
         switch self {
@@ -13,10 +13,11 @@ enum CampaignEndpoint: APIEndpoint {
             "/campaigns/sns-platforms"
         case .getCampaignByCampaignPlatform:
             "/campaigns/campaign-platforms"
-        case .searchCampaign:
-            "/campaigns/search"
-        case .getCampainByCategory:
+            
+        case .getCampaignByCategory:
             "/campaigns/categories/search"
+        case .getMyCampaignByStatus:
+            "/api/campaigns/my-status"
         }
     }
     
@@ -28,9 +29,9 @@ enum CampaignEndpoint: APIEndpoint {
                 .get
         case .getCampaignByCampaignPlatform:
                 .get
-        case .getCampainByCategory:
+        case .getCampaignByCategory:
                 .get
-        case .searchCampaign:
+        case .getMyCampaignByStatus:
                 .get
         }
     }

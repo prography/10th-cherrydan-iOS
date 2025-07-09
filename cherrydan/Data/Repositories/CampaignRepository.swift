@@ -68,7 +68,7 @@ class CampaignRepository {
         
         do {
             let response: APIResponse<PageableResponse<CampaignDTO>> = try await networkAPI.request(
-                CampaignEndpoint.getCampainByCategory,
+                CampaignEndpoint.getCampaignByCategory,
                 queryParameters: queryParameters
             )
             return response.result
@@ -122,26 +122,6 @@ class CampaignRepository {
         }
     }
     
-    func searchCampaigns(query: String, page: Int = 0, size: Int = 20) async throws -> PageableResponse<CampaignDTO> {
-        let queryParameters: [String: String] = [
-            "keyword": query,
-            "page": "\(page)",
-            "size": "\(size)"
-        ]
-        
-        do {
-            let response: APIResponse<PageableResponse<CampaignDTO>> = try await networkAPI.request(
-                CampaignEndpoint.getCampainByCategory,
-                queryParameters: queryParameters
-            )
-            return response.result
-        } catch {
-            print("CampaignRepository Search Error: \(error)")
-            throw error
-        }
-    }
-    
-    // 고도화된 검색 메서드
     func searchCampaignsByCategory(
         query: String? = nil,
         regionGroup: [RegionGroup] = [],
@@ -209,7 +189,7 @@ class CampaignRepository {
         
         do {
             let response: APIResponse<PageableResponse<CampaignDTO>> = try await networkAPI.request(
-                CampaignEndpoint.getCampainByCategory,
+                CampaignEndpoint.getCampaignByCategory,
                 queryParameters: queryParameters
             )
             return response.result
@@ -217,5 +197,9 @@ class CampaignRepository {
             print("CampaignRepository Enhanced Search Error: \(error)")
             throw error
         }
+    }
+    
+    func getMyCampaignsByStatus() async throws -> APIResponse<MyCampaignsResponse>  {
+        return try await networkAPI.request(CampaignEndpoint.getMyCampaignByStatus)
     }
 }

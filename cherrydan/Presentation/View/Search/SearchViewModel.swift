@@ -74,7 +74,7 @@ class SearchViewModel: ObservableObject {
         errorMessage = nil
         
         do {
-            let response = try await campaignRepository.searchCampaigns(
+            let response = try await campaignRepository.searchCampaignsByCategory(
                 query: query,
                 page: 0,
                 size: 10
