@@ -3,13 +3,13 @@ import Foundation
 enum CategoryRoute: BaseRoute {
     case search
     case notification
-    case categoryDetail(region: String, isSub: Bool)
+    case categoryDetail(regionGroup: RegionGroup?, subRegion: SubRegion?)
     case campaignWeb(campaignSite: CampaignPlatformType, campaignSiteUrl: String)
     
     var id: String {
         switch self {
-        case .categoryDetail(let region, _):
-            "categoryDetail_\(region)"
+        case .categoryDetail(let regionGroup, let subRegion):
+            "categoryDetail_\(regionGroup?.displayName ?? subRegion?.displayName ?? "error")"
         case .campaignWeb(let campaignSite, _):
             "campaignWeb_\(campaignSite.rawValue)"
         default:

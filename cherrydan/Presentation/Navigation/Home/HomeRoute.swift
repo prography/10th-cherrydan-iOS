@@ -4,6 +4,7 @@ enum HomeRoute: BaseRoute {
     case search
     case notification
     case campaignWeb(campaignSite: CampaignPlatformType, campaignSiteUrl: String)
+    case selectRegion(viewModel: HomeViewModel)
     
     var id: String {
         switch self {
@@ -22,6 +23,8 @@ enum HomeRoute: BaseRoute {
             "notification_screen"
         case .campaignWeb:
             "campaign_web_screen"
+        case .selectRegion:
+            "select_region_screen"
         }
     }
     

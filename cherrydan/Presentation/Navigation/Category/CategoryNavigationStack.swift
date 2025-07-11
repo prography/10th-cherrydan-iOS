@@ -30,8 +30,8 @@ struct CategoryNavigationStack: View {
     @ViewBuilder
     private func destinationView(for route: CategoryRoute) -> some View {
         switch route {
-        case .categoryDetail(let region, let isSub):
-            CategoryDetailView(region: region, isSub: isSub)
+        case .categoryDetail(let regionGroup, let subRegion):
+            CategoryDetailView(regionGroup: regionGroup, subRegion: subRegion)
         case .search:
             SearchView()
         case .notification:

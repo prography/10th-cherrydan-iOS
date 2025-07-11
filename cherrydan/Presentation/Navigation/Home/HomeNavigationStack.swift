@@ -32,6 +32,7 @@ struct HomeNavigationStack: View {
         switch route {
         case .search: SearchView()
         case .notification: NotificationView()
+        case .selectRegion(let viewModel): SelectRegionView(viewModel: viewModel)
         case .campaignWeb(let campaignSite, let campaignSiteUrl):
             CampaignWebView(campaignSite: campaignSite, campaignSiteUrl: campaignSiteUrl)
         }

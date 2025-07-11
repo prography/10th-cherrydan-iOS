@@ -5,14 +5,17 @@ struct CategoryDetailView: View {
     @StateObject private var viewModel: CategoryDetailViewModel
     @State private var isFilterPresent: Bool = false
     
-    init(region: String, isSub: Bool) {
-        self._viewModel = StateObject(wrappedValue: CategoryDetailViewModel(region: region, isSub: isSub))
+    @State private var headerTitle: String = ""
+    init(regionGroup: RegionGroup?, subRegion: SubRegion?) {
+        self._viewModel = StateObject(wrappedValue: CategoryDetailViewModel(regionGroup: regionGroup, subRegion: subRegion))
+        headerTitle = regionGroup?.displayName ?? subRegion?.displayName ?? "지역"
     }
+    
     
     var body: some View {
         ZStack {
             CDScreen(horizontalPadding: 0) {
-                CDBackHeaderWithTitle(title: viewModel.region){
+                CDBackHeaderWithTitle(title: headerTitle){
                     Button(action: {router.push(to: .search)}) {
                         Image("search_bg")
                     }
@@ -107,8 +110,3 @@ struct CategoryDetailView: View {
         }
     }
 }
-
-#Preview {
-    CategoryDetailView(region: "서울", isSub: false)
-        .environmentObject(CategoryRouter())
-} 
