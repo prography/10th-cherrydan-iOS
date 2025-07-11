@@ -2,10 +2,10 @@ import SwiftUI
 
 struct MyCampaignView: View {
     @State private var selectedTab = 1 // 신청 탭이 기본 선택
-    @State private var isEditMode = false
-    
+    @State private var isEditPresent = false
+    @StateObject private var viewModel = MyCampaignViewModel()
     private let tabData = [
-        ("전체", 2),
+        ("찜", 2),
         ("신청", 3),
         ("선정", 2),
         ("등록", 1),
@@ -48,10 +48,10 @@ struct MyCampaignView: View {
         }
     }
     
-//    private var campaignListSection: some View {
-//        VStack(spacing: 16) {
-//            Divider()
-//            
+    private var campaignListSection: some View {
+        VStack(spacing: 16) {
+            Divider()
+            
 //            ForEach(MyCampaign.dummy.prefix(2), id: \.id) { campaign in
 //                MyCampaignRow(
 //                    myCampaign: campaign,
@@ -70,8 +70,8 @@ struct MyCampaignView: View {
 //                
 //                Divider()
 //            }
-//        }
-//    }
+        }
+    }
     
     private func tabItem(_ index: Int) -> some View {
         Button(action: {

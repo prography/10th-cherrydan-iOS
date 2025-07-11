@@ -14,6 +14,7 @@ class MyCampaignViewModel: ObservableObject {
     
     init(campaignRepository: CampaignRepository = CampaignRepository()) {
         self.campaignRepository = campaignRepository
+        loadCampaigns()
     }
     
     func loadCampaigns() {
@@ -22,6 +23,7 @@ class MyCampaignViewModel: ObservableObject {
         Task {
             do {
                 let response = try await campaignRepository.getMyCampaignsByStatus()
+                print(response)
                 let campaigns = response.result
                 appliedCampaigns = campaigns.apply.map { $0.toMyCampaign() }
                 nonSelectedCampaigns = campaigns.nonSelected.map { $0.toMyCampaign() }
