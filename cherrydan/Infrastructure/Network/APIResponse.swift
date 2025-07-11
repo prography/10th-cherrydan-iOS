@@ -58,5 +58,12 @@ struct UserInfo: Codable {
     }
 }
 
+struct VersionResult: Codable {
+    let id: Int
+    let version: String
+    let description: String
+    let createdAt: String?
+}
+
 struct EmptyResult: Codable {}
 
