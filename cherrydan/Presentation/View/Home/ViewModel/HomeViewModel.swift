@@ -18,7 +18,21 @@ class HomeViewModel: ObservableObject {
     @Published var totalCnt: Int = 0
     @Published var selectedTags: Set<String> = []
     
+    @Published var selectedRegionGroup: RegionGroup? = nil
+    @Published var selectedSubRegion: SubRegion? = nil
+    
     private let campaignAPI: CampaignRepository
+    
+    var selectedRegion: String {
+        if let selectedRegionGroup {
+            return selectedRegionGroup.displayName
+        }
+        if let selectedSubRegion {
+            return selectedSubRegion.displayName
+        }
+        
+        return "지역 전체"
+    }
     
     init(campaignAPI: CampaignRepository = CampaignRepository()) {
         self.campaignAPI = campaignAPI
@@ -66,6 +80,19 @@ class HomeViewModel: ObservableObject {
         }
         
         fetchCampaigns()
+    }
+    
+    /// 지역 변경
+    func selectRegion(_ regionGroup: RegionGroup? = nil, _ subRegion: SubRegion? = nil) {
+        if let regionGroup {
+            selectedRegionGroup = regionGroup
+            fetchCampaigns()
+        }
+        
+        if let subRegion {
+            selectedSubRegion = subRegion
+            fetchCampaigns()
+        }
     }
     
     /// 태그 선택/해제

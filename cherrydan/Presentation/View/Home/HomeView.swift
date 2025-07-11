@@ -60,12 +60,31 @@ struct HomeView: View {
         .animation(.fastEaseInOut, value: viewModel.selectedSortType)
     }
     
+    
     private var sortSection: some View {
         HStack {
-            Text("총 \(viewModel.totalCnt)개")
-                .font(.m5r)
-                .foregroundStyle(.gray4)
-            
+            if viewModel.selectedCategory == .region {
+                HStack(spacing: 0) {
+                    Button(action: {
+                        router.push(to: .selectRegion(viewModel: viewModel))
+                    }) {
+                        HStack(spacing: 4) {
+                            Text(viewModel.selectedRegion)
+                                .font(.m2b)
+                                .foregroundStyle(.gray9)
+                            
+                            Text("\(viewModel.totalCnt)개")
+                                .font(.m4r)
+                                .foregroundStyle(.gray9)
+                            Image("chevron_right")
+                        }
+                    }
+                }
+            } else {
+                Text("총 \(viewModel.totalCnt)개")
+                    .font(.m5r)
+                    .foregroundStyle(.gray4)
+            }
             Spacer()
             
             Button(action: {
