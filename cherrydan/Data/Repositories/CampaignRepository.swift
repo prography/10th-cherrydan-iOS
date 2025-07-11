@@ -146,7 +146,7 @@ class CampaignRepository {
         
         // 검색어
         if let query = query, !query.isEmpty {
-            queryParameters["query"] = query
+            queryParameters["title"] = query
         }
         
         // 배열 파라미터들 처리
