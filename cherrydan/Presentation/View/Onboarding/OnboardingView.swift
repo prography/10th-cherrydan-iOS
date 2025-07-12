@@ -28,6 +28,15 @@ struct OnboardingView: View {
                         appleButton
                         socialButton(.google)
                     }
+                    
+                    Button(action: {
+                        AuthManager.shared.enterGuestMode()
+                    }){
+                        Text("게스트모드로 시작하기")
+                            .font(.m4r)
+                            .foregroundStyle(.mPink2)
+                            .underline(.mPink2)
+                    }
                 }
             }
             .padding(.top, 280)
@@ -50,15 +59,6 @@ struct OnboardingView: View {
                         .font(.m3r)
                         .foregroundStyle(.white)
                 }
-            }
-        }
-        .alert("로그인 오류", isPresented: .constant(viewModel.errorMessage != nil)) {
-            Button("확인") {
-                viewModel.errorMessage = nil
-            }
-        } message: {
-            if let errorMessage = viewModel.errorMessage {
-                Text(errorMessage)
             }
         }
     }

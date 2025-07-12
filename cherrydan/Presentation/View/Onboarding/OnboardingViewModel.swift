@@ -190,7 +190,7 @@ class OnboardingViewModel: NSObject, ObservableObject {
                 errorMessage = response.message
             }
         } catch {
-            errorMessage = "\(platform.title) 로그인 중 오류가 발생했습니다: \(error.localizedDescription)"
+            PopupManager.shared.show(.loginWithDeletedAccount(account: userInfo?.email ?? ""))
             print("\(platform.rawValue) login error: \(error)")
             isLoading = false
         }

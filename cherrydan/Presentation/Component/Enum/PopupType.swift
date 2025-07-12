@@ -4,6 +4,7 @@ enum PopupType {
     case updateMandatory(onClick:() -> Void)
     case updateOptional(onClick:() -> Void)
     case loginNeeded(onClick:() -> Void)
+    case loginWithDeletedAccount(account: String)
     case custom(PopupConfig)
     
     var config: PopupConfig {
@@ -40,6 +41,17 @@ enum PopupType {
                 buttons: [
                     ButtonConfig(text: "닫기", type: .largeGray, onClick: {}),
                     ButtonConfig(text: "로그인", type: .largePrimary, onClick: onClick)
+                ],
+                buttonLayout: .horizontal
+            )
+        case .loginWithDeletedAccount(let account):
+            PopupConfig(
+                image: nil,
+                title: "이미 가입된 계정이 있습니다.\n로그인 해주세요.",
+                description: account,
+                isOptional: true,
+                buttons: [
+                    ButtonConfig(text: "확인", type: .largePrimary, onClick: {})
                 ],
                 buttonLayout: .horizontal
             )

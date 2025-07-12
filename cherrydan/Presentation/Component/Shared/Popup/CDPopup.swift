@@ -18,12 +18,23 @@ struct CDPopup: View {
             Text(config.title)
                 .font(.t2)
                 .foregroundColor(.gray9)
-            
-            Text(config.description)
-                .font(.t5)
-                .foregroundColor(.gray5)
                 .multilineTextAlignment(.center)
-                .padding(.bottom, 20)
+            if case .loginWithDeletedAccount(let account) = type {
+                Text(account)
+                    .font(.m3r)
+                    .foregroundColor(.gray9)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .frame(height: 56)
+                    .padding(.leading, 16)
+                    .background(.gray0, in: RoundedRectangle(cornerRadius: 4))
+                    .padding(.vertical, 20)
+            } else {
+                Text(config.description)
+                    .font(.t5)
+                    .foregroundColor(.gray5)
+                    .multilineTextAlignment(.center)
+                    .padding(.bottom, 20)
+            }
             
             buttonSection
         }
