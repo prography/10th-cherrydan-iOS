@@ -28,27 +28,25 @@ struct SearchFilterSideMenu: View {
                         Button(action: {
                             viewModel.resetFilters()
                         }) {
-                            Text("초기화")
-                                .font(.m4r)
-                                .foregroundStyle(.gray5)
+                            Image("return")
+                                .padding(8)
                         }
                         
                         Button(action: {
                             isPresented = false
                         }) {
                             Image("close")
-                                .padding(.leading, 16)
+                                .padding(8)
                         }
                     }
                     .padding(.horizontal, 16)
                     .padding(.vertical, 16)
-                    .padding(.top, 44) // SafeArea top 고려
+                    .padding(.top, 44)
                     
                     Divider()
                     
                     ScrollView {
                         VStack(spacing: 0) {
-                            // 지역명
                             filterSection(
                                 title: "지역명",
                                 sectionKey: "region",
@@ -103,13 +101,13 @@ struct SearchFilterSideMenu: View {
                             )
                             
                             // 마감일
-                            filterSection(
-                                title: "마감일",
-                                sectionKey: "deadline",
-                                content: {
-                                    deadlineFilterContent
-                                }
-                            )
+//                            filterSection(
+//                                title: "마감일",
+//                                sectionKey: "deadline",
+//                                content: {
+//                                    deadlineFilterContent
+//                                }
+//                            )
                         }
                         .padding(.bottom, 34) // SafeArea bottom 고려
                     }
