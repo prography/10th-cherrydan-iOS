@@ -4,13 +4,15 @@ struct MyPageView: View {
     @EnvironmentObject var router: MyPageRouter
     @StateObject private var viewModel = MyPageViewModel()
     
+    private var currentAppVersion: String {
+        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.2.5"
+    }
+    
     var body: some View {
         CDScreen(horizontalPadding: 0) {
             CDHeaderWithLeftContent(
                 onNotificationClick: {
                     router.push(to: .notification)
-                }, onSearchClick: {
-                    router.push(to: .search)
                 }){
                     Text("마이페이지")
                         .font(.t1)
@@ -35,9 +37,16 @@ struct MyPageView: View {
     }
     
     private var profileSection: some View {
-        Text("\(viewModel.user.name)님 안녕하세요")
-            .font(.t4)
-            .foregroundStyle(.gray9)
+        HStack(alignment: .center){
+            Text("\(viewModel.user.name)님 안녕하세요")
+                .font(.t4)
+                .foregroundStyle(.gray9)
+            
+            Spacer()
+        }
+        .frame(height: 120)
+        .padding(.leading, 12)
+        .background(.pBeige, in: RoundedRectangle(cornerRadius: 4))
     }
     
     private var menuSection: some View {
@@ -79,6 +88,7 @@ struct MyPageView: View {
             Text("고객 센터")
                 .foregroundStyle(.mPink2)
                 .font(.m5b)
+            
             HStack {
                 Text("버전 정보")
                     .font(.m3r)
@@ -86,17 +96,21 @@ struct MyPageView: View {
                 
                 Spacer()
                 
-                Text(viewModel.version)
+                Text(currentAppVersion)
                     .font(.m3b)
                     .foregroundStyle(.gray5)
             }
             .padding(.vertical, 8)
             
-            menuItem("개인정보 처리방침") {}
-            menuItem("이용약관") {
-                router.push(to: .agreement)
+            menuItem("개인정보 처리방침") {
+                router.push(to: .myPageDetail(type: .privacyPolicy))
             }
-            menuItem("운영정책") {}
+            menuItem("이용약관") {
+                router.push(to: .myPageDetail(type: .termsOfService))
+            }
+            menuItem("운영정책") {
+                router.push(to: .myPageDetail(type: .operationalPolicy))
+            }
         }
     }
     
