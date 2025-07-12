@@ -15,6 +15,7 @@ public enum UserDefaultKeys {
 final class AuthManager: ObservableObject {
     static let shared = AuthManager()
     @Published private(set) var isLoggedIn: Bool = true
+    @Published private(set) var isGuestMode: Bool = false
     @Published private(set) var lastLoggedInPlatform: LoginPlatform?
     @Published private(set) var userNickname: String = "회원"
     
@@ -28,6 +29,16 @@ final class AuthManager: ObservableObject {
         
         // 사용자 닉네임 불러오기
         self.userNickname = UserDefaults.standard.string(forKey: UserDefaultKeys.userNickname) ?? "회원"
+    }
+    
+    func enterGuestMode() {
+        isLoggedIn = true
+        isGuestMode = true
+    }
+    
+    func leaveGuestMode(){
+        isGuestMode = false
+        isLoggedIn = false
     }
     
     func login(_ result: SocialLoginResult, platform: LoginPlatform, nickname: String? = nil) {

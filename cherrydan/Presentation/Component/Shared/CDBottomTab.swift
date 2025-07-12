@@ -4,10 +4,10 @@ struct CDBottomTab: View {
     @Binding var selectedTab: Int
     
     let tabBarText = [
-        ("category","카테고리"),
-        ("notice_board","체리단 소식"),
+//        ("category","카테고리"),
+//        ("notice_board","체리단 소식"),
         ("home","홈"),
-        ("my_campaign","내 체험단"),
+//        ("my_campaign","내 체험단"),
         ("my","마이페이지")
     ]
     
@@ -22,7 +22,13 @@ struct CDBottomTab: View {
                     let isFocused = selectedTab == index
                     
                     Button(action: {
-                        selectedTab = index
+                        if AuthManager.shared.isGuestMode, index == 1 {
+                            PopupManager.shared.show(.loginNeeded(onClick: {
+                                AuthManager.shared.leaveGuestMode()
+                            }))
+                        } else {
+                            selectedTab = index
+                        }
                     } ) {
                         VStack(spacing: 4) {
                             Image("\(tabBarText[index].0)\(isFocused ? "_focused": "")")

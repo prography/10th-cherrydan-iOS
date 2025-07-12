@@ -9,10 +9,14 @@ struct HomeView: View {
     
     var body: some View {
         CDScreen(horizontalPadding: 0) {
-            CDHeaderWithLeftContent(onNotificationClick: {
-                router.push(to: .notification)
-            }, onSearchClick: {
-                router.push(to: .search)
+            CDHeaderWithLeftContent(onSearchClick: {
+                if AuthManager.shared.isGuestMode {
+                    PopupManager.shared.show(.loginNeeded(onClick: {
+                        AuthManager.shared.leaveGuestMode()
+                    }))
+                } else {
+                    router.push(to: .search)
+                }
             }) {
                 HStack(spacing: 16) {
                     Text("체리단")

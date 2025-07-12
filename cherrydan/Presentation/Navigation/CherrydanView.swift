@@ -10,30 +10,24 @@ struct CherrydanView: View {
     @StateObject private var myCampaignRouter = MyCampaignRouter()
     @StateObject private var myPageRouter = MyPageRouter()
     
-    @State private var selectedTab = 2
+    
+    @StateObject private var viewModel = CherrydanViewModel()
+    @State private var selectedTab = 0
     
     var body: some View {
         Group {
             if authManager.isLoggedIn {
-                ZStack {
-                    VStack(spacing: 0) {
-                        switch(selectedTab) {
-                        case 0:
-                            CategoryNavigationStack(selectedTab: $selectedTab)
-                                .environmentObject(categoryRouter)
-                        case 1:
-                            NoticeBoardNavigationStack(selectedTab: $selectedTab)
-                                .environmentObject(noticeBoardRouter)
-                        case 2:
-                            HomeNavigationStack(selectedTab: $selectedTab)
-                                .environmentObject(homeRouter)
-                        case 3:
-                            MyCampaignNavigationStack(selectedTab: $selectedTab)
-                                .environmentObject(myCampaignRouter)
-                        default:
-                            MyPageNavigationStack(selectedTab: $selectedTab)
-                                .environmentObject(myPageRouter)
-                        }
+                VStack(spacing: 0) {
+                    switch(selectedTab) {
+                    case 0:
+                        HomeNavigationStack(selectedTab: $selectedTab)
+                            .environmentObject(homeRouter)
+                    case 1:
+                        MyPageNavigationStack(selectedTab: $selectedTab)
+                            .environmentObject(myPageRouter)
+                    default:
+                        MyPageNavigationStack(selectedTab: $selectedTab)
+                            .environmentObject(myPageRouter)
                     }
                 }
             } else {
@@ -42,10 +36,9 @@ struct CherrydanView: View {
         }
         .background(.gray0)
         .ignoresSafeArea(.container, edges: .bottom)
-        
         .presentPopup(
             isPresented: $popupManager.popupPresented,
-            data: popupManager.currentPopupData
+            data: popupManager.currentPopupType
         )
         .onChange(of: authManager.isLoggedIn) { _, isLoggedIn in
             if !isLoggedIn {
@@ -53,7 +46,7 @@ struct CherrydanView: View {
                 noticeBoardRouter.reset()
                 myPageRouter.reset()
                 
-                selectedTab = 2
+                selectedTab = 0
             }
         }
     }

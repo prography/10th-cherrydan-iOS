@@ -24,47 +24,52 @@ struct CampaignBanner: View {
     
     private func campainBannerItem(_ bannerData: NoticeBoardBanner, index: Int) -> some View {
         ZStack {
-            AsyncImage(url: URL(string: bannerData.imageUrl)) { image in
-                image
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-            } placeholder: {
-                RoundedRectangle(cornerRadius: 4)
-                    .fill(Color.gray.opacity(0.3))
-                    .overlay(
-                        ProgressView()
-                    )
-            }
-            .frame(height: 120)
-            .clipped()
-            
-            // 페이지 인디케이터
             if banners.count > 1 {
                 Text("\(index + 1)/\(banners.count)")
                     .font(.m6r)
-                    .foregroundStyle(.gray1)
+                    .foregroundStyle(.gray0)
                     .padding(.horizontal, 12)
                     .frame(height: 24)
                     .background(
                         RoundedRectangle(cornerRadius: 16)
-                        .fill(.mPink3)
+                            .fill(.mPink3)
                     )
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
                     .padding(.bottom, 12)
                     .padding(.trailing, 12)
             }
             
-            // 배너 텍스트 컨텐츠
-            VStack(alignment: .leading, spacing: 4) {
-                Text(bannerData.title)
-                    .font(.t4)
-                    .foregroundStyle(.gray1)
-                    .lineLimit(2)
-                    .multilineTextAlignment(.leading)
+            HStack(alignment: .center, spacing: 12) {
+                AsyncImage(url: URL(string: bannerData.imageUrl)) { image in
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                } placeholder: {
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(Color.gray.opacity(0.3))
+                        .overlay(
+                            ProgressView()
+                        )
+                }
+                .frame(width: 48, height: 48)
+                .cornerRadius(4)
+                .clipped()
+                
+                VStack(alignment:.leading, spacing: 4){
+                    Text(bannerData.title)
+                        .font(.t4)
+                        .foregroundStyle(.gray0)
+                    
+                    Text("지금 최고의 체험단에 신청해 보세요.")
+                        .font(.t5)
+                        .foregroundStyle(.gray0)
+                        .lineLimit(2)
+                        .multilineTextAlignment(.leading)
+                }
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(height: 80)
             .padding(.leading, 12)
-            .padding(.top, 12)
         }
         .background(.mPink2, in: RoundedRectangle(cornerRadius: 4))
     }

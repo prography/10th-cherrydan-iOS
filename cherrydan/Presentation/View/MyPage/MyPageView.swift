@@ -10,10 +10,7 @@ struct MyPageView: View {
     
     var body: some View {
         CDScreen(horizontalPadding: 0) {
-            CDHeaderWithLeftContent(
-                onNotificationClick: {
-                    router.push(to: .notification)
-                }){
+            CDHeaderWithLeftContent {
                     Text("마이페이지")
                         .font(.t1)
                         .foregroundStyle(.gray9)

@@ -37,7 +37,12 @@ enum CampaignEndpoint: APIEndpoint {
     }
     
     var tokenType: TokenType {
-        .accessToken
+        switch self {
+        case .getCampaignByCategory:
+                .none
+        default:
+                .accessToken
+        }
     }
 }
 
