@@ -45,7 +45,6 @@ struct LoginResult: Codable {
     let refreshToken: String
 }
 
-// 사용자 정보 구조체
 struct UserInfo: Codable {
     let name: String?
     let email: String?
@@ -59,10 +58,8 @@ struct UserInfo: Codable {
 }
 
 struct VersionResult: Codable {
-    let id: Int
-    let version: String
-    let description: String
-    let createdAt: String?
+    let minSupportedVersion: String
+    let latestVersion: String
 }
 
 struct EmptyResult: Codable {}

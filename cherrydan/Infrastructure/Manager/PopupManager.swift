@@ -7,10 +7,10 @@ final class PopupManager: ObservableObject {
     
     @Published var popupPresented = false
     
-    private(set) var currentPopupData: PopupData?
+    private(set) var currentPopupType: PopupType?
     
-    func show(type: PopupType, action: @escaping () -> Void) {
-        currentPopupData = PopupData(type: type, action: action)
+    func show(_ type: PopupType) {
+        currentPopupType = type
         popupPresented = true
     }
 }

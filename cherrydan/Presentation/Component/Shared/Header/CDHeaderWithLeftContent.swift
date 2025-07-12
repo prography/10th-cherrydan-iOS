@@ -4,12 +4,12 @@ struct CDHeaderWithLeftContent<Content: View>: View {
     @Environment(\.dismiss) private var dismiss
     
     let onNotificationClick: (() -> Void)?
-    let onSearchClick: () -> Void
+    let onSearchClick: (() -> Void)?
     let leftContent: (() -> Content)
     
     init(
         onNotificationClick: (() -> Void)? = nil,
-        onSearchClick: @escaping () -> Void,
+        onSearchClick: (() -> Void)? = nil,
         @ViewBuilder leftContent: @escaping () -> Content
     ) {
         self.onNotificationClick = onNotificationClick
@@ -29,11 +29,11 @@ struct CDHeaderWithLeftContent<Content: View>: View {
                 }
                 .padding(.trailing, 4)
             }
-            
-            Button(action: onSearchClick) {
-                Image("search_bg")
+            if let onSearchClick {
+                Button(action: onSearchClick) {
+                    Image("search_bg")
+                }
             }
-            
         }
         .frame(height: 52)
     }

@@ -21,7 +21,6 @@ struct SNSBottomSheet: View {
             horizontalPadding: 16
         ) {
             VStack(alignment: .leading, spacing: 20) {
-                // 플랫폼별 보조문구
                 VStack(alignment: .leading, spacing: 12) {
                     ForEach(Array(platformType.connectGuideMessages.enumerated()), id: \.offset) { index, message in
                         guideMessageView(message: message)
