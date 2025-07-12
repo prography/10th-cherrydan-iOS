@@ -35,4 +35,13 @@ class NoticeBoardRepository {
             throw error
         }
     }
-} 
+    
+    func getNoticeBoardBanner() async throws -> APIResponse<[NoticeBoardBannerDTO]> {
+        do {
+            return try await networkAPI.request(NoticeBoardEndpoint.getNoticeBoardBanner)
+        } catch {
+            print("NoticeBoardRepository Banner Error: \(error)")
+            throw error
+        }
+    }
+}

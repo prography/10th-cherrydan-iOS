@@ -7,6 +7,7 @@ enum ButtonType {
     
     case middlePrimary
     
+    case largeGray
     case largePrimary
     
     
@@ -27,6 +28,8 @@ enum ButtonType {
                 .gray2
         case .smallPrimary, .middlePrimary, .largePrimary:
                 .mPink3
+        case .largeGray:
+                .clear
         }
     }
     
@@ -34,7 +37,7 @@ enum ButtonType {
         switch self {
         case .smallWhite:
                 .gray5
-        case .smallGray:
+        case .smallGray, .largeGray:
                 .gray5
         case .smallPrimary, .middlePrimary, .largePrimary:
                 .gray0

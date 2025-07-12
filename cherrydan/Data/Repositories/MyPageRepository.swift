@@ -7,9 +7,9 @@ class MyPageRepository {
         self.networkAPI = networkAPI
     }
     
-    func getVersion() async throws -> String {
+    func getVersion() async throws -> VersionResult {
         let response: APIResponse<VersionResult> = try await networkAPI.request(MyPageEndpoint.getVersion)
         
-        return response.result.version
+        return response.result
     }
 }

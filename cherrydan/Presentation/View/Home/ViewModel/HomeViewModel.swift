@@ -3,16 +3,12 @@ import Combine
 import SwiftUI
 import AuthenticationServices
 
-enum HomeDestination: Hashable {
-    case category
-    case search
-}
-
 @MainActor
 class HomeViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var errorMessage: String? = nil
     @Published var campaigns: [Campaign] = []
+    @Published var banners: [NoticeBoardBanner] = []
     @Published var selectedSortType: SortType = .popular
     @Published var selectedCategory: CampaignType = .all
     @Published var totalCnt: Int = 0
@@ -22,6 +18,7 @@ class HomeViewModel: ObservableObject {
     @Published var selectedSubRegion: SubRegion? = nil
     
     private let campaignAPI: CampaignRepository
+    private let noticeBoardAPI: NoticeBoardRepository
     
     var selectedRegion: String {
         if let selectedRegionGroup {
@@ -34,14 +31,34 @@ class HomeViewModel: ObservableObject {
         return "지역 전체"
     }
     
-    init(campaignAPI: CampaignRepository = CampaignRepository()) {
+    init(
+        campaignAPI: CampaignRepository = CampaignRepository(),
+        noticeBoardAPI: NoticeBoardRepository = NoticeBoardRepository()
+    ) {
         self.campaignAPI = campaignAPI
+        self.noticeBoardAPI = noticeBoardAPI
         fetchCampaigns()
+    }
+    
+    func fetchBannerData() {
+        isLoading = true
+        
+        Task {
+            do {
+                let response = try await noticeBoardAPI.getNoticeBoardBanner()
+                
+                banners = response.result.map{$0.toNoticeBoardBanner()}
+            } catch {
+                print("Error fetching banners: \(error)")
+                errorMessage = "캠페인을 불러오는 중 오류가 발생했습니다."
+            }
+            
+            isLoading = false
+        }
     }
     
     func fetchCampaigns() {
         isLoading = true
-        errorMessage = nil
         
         Task {
             do {

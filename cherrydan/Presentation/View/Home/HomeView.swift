@@ -7,12 +7,6 @@ struct HomeView: View {
     @State private var showCampaignPopup = false
     @State private var showSortBottomSheet = false
     
-    let campaigns = [
-        ["체험단 캠페인 여기 다 모았다!", "지금 최고의 체험단에 신청해 보세요.", "1"],
-        ["체험단 캠페인 여기 다 모았다!", "지금 최고의 체험단에 신청해 보세요.", "2"],
-        ["체험단 캠페인 여기 다 모았다!", "지금 최고의 체험단에 신청해 보세요.", "3"]
-    ]
-    
     var body: some View {
         CDScreen(horizontalPadding: 0) {
             CDHeaderWithLeftContent(onNotificationClick: {
@@ -30,7 +24,7 @@ struct HomeView: View {
             
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 0) {
-                    CampaignBanner(campaigns: campaigns)
+                    CampaignBanner(banners: viewModel.banners)
                         .padding(.top, 8)
                         .padding(.bottom, 16)
                     
@@ -58,6 +52,9 @@ struct HomeView: View {
             )
         }
         .animation(.fastEaseInOut, value: viewModel.selectedSortType)
+        .onAppear {
+            viewModel.fetchBannerData()
+        }
     }
     
     

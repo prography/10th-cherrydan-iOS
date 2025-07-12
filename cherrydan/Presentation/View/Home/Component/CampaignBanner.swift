@@ -1,13 +1,13 @@
 import SwiftUI
 
 struct CampaignBanner: View {
-    let campaigns: [[String]]
+    let banners: [NoticeBoardBanner]
     
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 0) {
-                ForEach(campaigns, id: \.self) { campaign in
-                    campainBannerItem(campaign)
+                ForEach(Array(banners.enumerated()), id: \.offset) { index, bannerData in
+                    campainBannerItem(bannerData, index: index)
                         .padding(.horizontal, 16)
                         .frame(width: UIScreen.main.bounds.width)
                         .scrollTransition { content, phase in
@@ -22,31 +22,50 @@ struct CampaignBanner: View {
         .scrollTargetBehavior(.viewAligned)
     }
     
-    private func campainBannerItem(_ campaign:[String])-> some View {
+    private func campainBannerItem(_ bannerData: NoticeBoardBanner, index: Int) -> some View {
         ZStack {
-            Text("\(campaign[2])/3")
-                .font(.m6r)
-                .foregroundStyle(.gray1)
-                .padding(.horizontal,12)
-                .frame(height: 24)
-                .background(
-                    RoundedRectangle(cornerRadius: 16)
-                    .fill(.mPink3)
-                )
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+            AsyncImage(url: URL(string: bannerData.imageUrl)) { image in
+                image
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+            } placeholder: {
+                RoundedRectangle(cornerRadius: 4)
+                    .fill(Color.gray.opacity(0.3))
+                    .overlay(
+                        ProgressView()
+                    )
+            }
+            .frame(height: 120)
+            .clipped()
             
+            // 페이지 인디케이터
+            if banners.count > 1 {
+                Text("\(index + 1)/\(banners.count)")
+                    .font(.m6r)
+                    .foregroundStyle(.gray1)
+                    .padding(.horizontal, 12)
+                    .frame(height: 24)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                        .fill(.mPink3)
+                    )
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+                    .padding(.bottom, 12)
+                    .padding(.trailing, 12)
+            }
+            
+            // 배너 텍스트 컨텐츠
             VStack(alignment: .leading, spacing: 4) {
-                Text(campaign[0])
+                Text(bannerData.title)
                     .font(.t4)
                     .foregroundStyle(.gray1)
-                
-                Text(campaign[1])
-                    .font(.t5)
-                    .foregroundStyle(.gray1)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.leading)
             }
-            .frame(maxWidth: .infinity, maxHeight: 80, alignment: .leading)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+            .padding(.leading, 12)
+            .padding(.top, 12)
         }
-        .padding(12)
-        .background(.mPink2, in : RoundedRectangle(cornerRadius: 4))
+        .background(.mPink2, in: RoundedRectangle(cornerRadius: 4))
     }
 }

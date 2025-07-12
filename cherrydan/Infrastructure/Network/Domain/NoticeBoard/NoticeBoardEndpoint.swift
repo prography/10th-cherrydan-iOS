@@ -1,34 +1,28 @@
 import Foundation
 
 enum NoticeBoardEndpoint: APIEndpoint {
-    var tokenType: TokenType { .accessToken }
-    
     case getNoticeBoard
     case getNoticeBoardDetail(id: Int)
+    case getNoticeBoardBanner
     
     var path: String {
         switch self {
         case .getNoticeBoard:
-            return "/notice-board"
+            return "/noticeboard"
         case .getNoticeBoardDetail(let id):
-            return "/notice-board/\(id)"
+            return "/noticeboard/\(id)"
+        case .getNoticeBoardBanner:
+            return "/noticeboard/banners"
+            
         }
     }
     
     var method: HTTPMethod {
         switch self {
-        case .getNoticeBoard, .getNoticeBoardDetail:
+        case .getNoticeBoard, .getNoticeBoardDetail, .getNoticeBoardBanner:
             return .get
         }
     }
     
-    var headers: [String: String]? {
-        return [
-            "Content-Type": "application/json"
-        ]
-    }
-    
-    var body: Data? {
-        return nil
-    }
-} 
+    var tokenType: TokenType { .accessToken }
+}

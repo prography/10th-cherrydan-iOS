@@ -1,63 +1,80 @@
-struct PopupData {
-    let type: PopupType
-    let action: () -> Void
+import SwiftUI
+
+enum PopupType {
+    case updateMandatory(onClick:() -> Void)
+    case updateOptional(onClick:() -> Void)
+    case loginNeeded(onClick:() -> Void)
+    case custom(PopupConfig)
+    
+    var config: PopupConfig {
+        switch self {
+        case .updateMandatory(let onClick):
+            PopupConfig(
+                image: nil,
+                title: "새로운 버전 안내",
+                description: "더 나은 서비스 제공을 위해\n새로운 기능과 개선사항이 추가되었어요",
+                isOptional: false,
+                buttons: [
+                    ButtonConfig(text: "지금 업데이트하기", type: .largePrimary, onClick: onClick)
+                ],
+                buttonLayout: .horizontal
+            )
+        case .updateOptional(let onClick):
+            PopupConfig(
+                image: nil,
+                title: "새로운 버전 안내",
+                description: "더 나은 서비스 제공을 위해\n새로운 기능과 개선사항이 추가되었어요",
+                isOptional: true,
+                buttons: [
+                    ButtonConfig(text: "닫기", type: .largeGray, onClick: {}),
+                    ButtonConfig(text: "업데이트하기", type: .largePrimary, onClick: onClick)
+                ],
+                buttonLayout: .horizontal
+            )
+        case .loginNeeded(let onClick):
+            PopupConfig(
+                image: nil,
+                title: "로그인 필요",
+                description: "로그인이 필요한 기능입니다!",
+                isOptional: true,
+                buttons: [
+                    ButtonConfig(text: "닫기", type: .largeGray, onClick: {}),
+                    ButtonConfig(text: "로그인", type: .largePrimary, onClick: onClick)
+                ],
+                buttonLayout: .horizontal
+            )
+        case .custom(let config):
+            config
+        }
+    }
 }
 
-enum PopupType: Equatable {
-    case updateMandatory
-    case updateOptional
-//    case acceptFriend(username: String)
-//    case loginRequired
-//    case logout
-//    case deleteAccount
+struct PopupConfig {
+    let image: String?
+    let title: String
+    let description: String
+    let isOptional: Bool
+    let buttons: [ButtonConfig]
+    let buttonLayout: ButtonLayout
     
-    var image: String {
-        switch self {
-        case .updateMandatory, .updateOptional:
-            "celebrate"
-//        default:
-//            ""
-        }
+    init(
+        image: String? = nil,
+        title: String,
+        description: String,
+        isOptional: Bool = true,
+        buttons: [ButtonConfig],
+        buttonLayout: ButtonLayout = .vertical
+    ) {
+        self.image = image
+        self.title = title
+        self.description = description
+        self.isOptional = isOptional
+        self.buttons = buttons
+        self.buttonLayout = buttonLayout
     }
-    
-    var isOptional: Bool {
-        switch self {
-        case .updateMandatory: false
-        default: true
-        }
-    }
-    
-    var isBtnHorizontal: Bool {
-        switch self { default: false }
-    }
-    
-    var title: String {
-        switch self {
-        case .updateOptional, .updateMandatory:
-            "휴머니아 새 버전 출시!"
-        }
-    }
-    
-    var description: String {
-        switch self {
-        case .updateOptional, .updateMandatory:
-            "서비스를 이용하기 위해\n업데이트가 필요해요 "
-        }
-    }
-    
-    var primaryButtonText: String {
-        switch self {
-        case .updateOptional, .updateMandatory:
-            "업데이트 하기"
-        }
-    }
-    
-    var secondaryButtonText: String {
-        switch self {
-        case .updateOptional:
-            "나중에 하기"
-        default:
-            ""
-        }
-    }
+}
+
+enum ButtonLayout {
+    case vertical
+    case horizontal
 }
