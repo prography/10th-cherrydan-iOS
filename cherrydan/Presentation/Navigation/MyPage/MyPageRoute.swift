@@ -6,7 +6,7 @@ enum MyPageRoute: BaseRoute {
     case search
     case notification
     case withdrawal
-    
+    case myPageDetail(type: MyPageWebType)
     
     var id: String {
         String(describing: self)
@@ -30,6 +30,9 @@ enum MyPageRoute: BaseRoute {
             "notification_screen_myPage"
         case .withdrawal:
             "withdrawal_screen"
+            
+        case .myPageDetail(let type):
+            "privacy_policy_screen\(type.rawValue)"
         }
     }
     

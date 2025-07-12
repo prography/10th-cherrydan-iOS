@@ -1,6 +1,5 @@
 import Foundation
 
-// API 응답용 DTO
 struct NoticeBoardDTO: Codable {
     let id: Int
     let title: String

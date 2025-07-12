@@ -4,8 +4,6 @@ import Foundation
 class MyPageViewModel: ObservableObject {
     @Published var user: User = User(email: "test@naver.com", name: "회원", nickname: "회원", birthYear: 2000)
     @Published var isLoading: Bool = false
-    @Published var version: String = ""
-    @Published var isVersionLoading: Bool = false
     
     private let userRepository: UserRepository
     private let myPageRepository: MyPageRepository
@@ -17,7 +15,6 @@ class MyPageViewModel: ObservableObject {
         self.userRepository = userRepository
         self.myPageRepository = myPageRepository
         loadUser()
-        loadVersion()
     }
     
     func loadUser() {
@@ -32,20 +29,6 @@ class MyPageViewModel: ObservableObject {
             } catch {
                 print(error)
                 isLoading = false
-            }
-        }
-    }
-    
-    func loadVersion() {
-        isVersionLoading = true
-        
-        Task {
-            do {
-                version = try await myPageRepository.getVersion()
-                isVersionLoading = false
-            } catch {
-                print(error)
-                isVersionLoading = false
             }
         }
     }

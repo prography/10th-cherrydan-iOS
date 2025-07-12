@@ -37,6 +37,7 @@ struct MyPageNavigationStack: View {
         case .notification: NotificationView()
         case .withdrawal: WithdrawalView()
         case .manageSNS: ManageSNSView()
+        case .myPageDetail(let type): WebDetailView(myPageWebType: type)
         }
     }
 } 
