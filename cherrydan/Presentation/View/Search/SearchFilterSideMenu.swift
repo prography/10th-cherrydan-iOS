@@ -64,9 +64,9 @@ struct SearchFilterSideMenu: View {
                                 }
                             )
                             
-                            // 제품(배송명)
+                            // 제품(배송형)
                             filterSection(
-                                title: "제품(배송명)",
+                                title: "제품(배송형)",
                                 sectionKey: "product",
                                 content: {
                                     productCategoryFilterContent
@@ -231,11 +231,7 @@ struct SearchFilterSideMenu: View {
                 GridItem(.flexible(), spacing: 0),
                 GridItem(.flexible(), spacing: 0)
             ], spacing: 0) {
-                ForEach(ReporterType.allCases, id: \.self) { reporter in
-                    filterButton(reporter.displayName, isSelected: viewModel.selectedReporterType == reporter) {
-                        viewModel.updateReporterType(reporter)
-                    }
-                }
+                filterButton("전체", isSelected: true) {}
             }
         }
     }
