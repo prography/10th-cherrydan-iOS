@@ -38,7 +38,7 @@ struct WithdrawalView: View {
                     
                     CDButton(text: "체리단 떠나기",
                              isLoading: isLoading,
-                             isDisabled: !isChecked && selectedReasons.isEmpty
+                             isDisabled: !(isChecked && !selectedReasons.isEmpty)
                     ){
                         Task {
                             do {
@@ -73,7 +73,7 @@ struct WithdrawalView: View {
                 HStack(alignment: .top, spacing: 8) {
                     Image("check_circle\(isChecked ? "_filled" : "_empty")")
                     
-                    Text("비밀정보 재가입 이용을 막기 위해 회원정보 및 패턴의 내역은 1년간 보관하고 있어요.")
+                    Text("반복적인 재가입 악용을 막기 위해 회원정보 및 패널티 내역은 1년간 보관하고 있어요.")
                         .font(.m5r)
                         .foregroundStyle(.gray9)
                         .multilineTextAlignment(.leading)
@@ -88,7 +88,7 @@ struct WithdrawalView: View {
                 .font(.m3b)
                 .foregroundStyle(.gray9)
             
-            Text("더 나은 서비스를 위하여 위해서 탈퇴 전 정보 수집하고 있어요.\n복수 선택 가능")
+            Text("더 나은 서비스를 제공하기 위해서 탈퇴 정보를 수집하고 있어요.")
                 .font(.m5r)
                 .foregroundStyle(.gray4)
                 .multilineTextAlignment(.leading)
@@ -149,9 +149,9 @@ enum WithdrawalReason: CaseIterable, Hashable {
         case .serviceIssue:
             return "서비스 이용 방법을 잘 모르겠어요."
         case .lackOfContent:
-            return "콘텐츠를 확인하고, 관리하기 어려워요."
+            return "캠페인을 확인하고, 관리하기 어려워요."
         case .difficultyOfUse:
-            return "콘텐츠에 잘 선정되지 않아요."
+            return "캠페인에 잘 선정되지 않아요."
         }
     }
 }
