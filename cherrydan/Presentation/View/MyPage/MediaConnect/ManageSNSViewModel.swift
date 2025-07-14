@@ -94,7 +94,7 @@ class ManageSNSViewModel: ObservableObject {
                 selectedPlatformType = .tiktok
                 showSNSBottomSheet = true
             }
-        case .etc:
+        default:
             break
         }
     }
@@ -185,7 +185,7 @@ class ManageSNSViewModel: ObservableObject {
             youtubeConnected = isConnected
         case .tiktok:
             tiktokConnected = isConnected
-        case .etc:
+        default:
             break
         }
     }
@@ -201,7 +201,7 @@ class ManageSNSViewModel: ObservableObject {
             return youtubeConnected
         case .tiktok:
             return tiktokConnected
-        case .etc:
+        default:
             return false
         }
     }
@@ -219,7 +219,7 @@ class ManageSNSViewModel: ObservableObject {
             return "https://www.youtube.com/channel/example"
         case .tiktok:
             return "https://www.tiktok.com/@example"
-        case .etc:
+        default:
             return nil
         }
     }

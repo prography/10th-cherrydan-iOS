@@ -1,9 +1,9 @@
 import Foundation
 
 enum CampaignPlatformType: String, CaseIterable, Codable {
+    case all = "전체"
     case chvu = "체험뷰"
     case revu = "레뷰"
-    case mibl = "미블"
     case reviewnote = "리뷰노트"
     case dailyview = "데일리뷰"
     case fourblog = "포블로그"
@@ -14,18 +14,14 @@ enum CampaignPlatformType: String, CaseIterable, Codable {
     case gangnam = "강남맛집"
     case etc = "기타"
     
-    static var allCasesWithAll: [String] {
-        return ["전체"] + CampaignPlatformType.allCases.map { $0.rawValue }
-    }
-    
     var imageName: String {
         switch self {
-        case .chvu: "revu" // 체험뷰도 revu 이미지 사용
+        case .all: "all"
+        case .chvu: "chvu"
         case .revu: "revu"
-        case .mibl: "mibl"
         case .reviewnote: "reviewnote"
         case .dailyview: "dailyview"
-        case .fourblog: "fourblog"
+        case .fourblog: "4blog"
         case .popomon: "popomon"
         case .dinnerqueen: "dinnerqueen"
         case .seoulouba: "seoulouba"
@@ -37,9 +33,9 @@ enum CampaignPlatformType: String, CaseIterable, Codable {
     
     static func from(displayName: String) -> CampaignPlatformType {
         switch displayName {
+        case "전체": return .all
         case "체험뷰": return .chvu
         case "레뷰": return .revu
-        case "미블": return .mibl
         case "리뷰노트": return .reviewnote
         case "데일리뷰": return .dailyview
         case "포블로그": return .fourblog
