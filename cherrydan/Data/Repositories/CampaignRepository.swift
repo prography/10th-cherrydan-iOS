@@ -128,7 +128,6 @@ class CampaignRepository {
         subRegion: [SubRegion] = [],
         local: [LocalCategory] = [],
         product: [ProductCategory] = [],
-        reporter: ReporterType = .all,
         snsPlatform: [SocialPlatformType] = [],
         campaignPlatform: [CampaignPlatformType] = [],
         applyStart: String? = nil,
@@ -174,10 +173,7 @@ class CampaignRepository {
             queryParameters["campaignPlatform"] = campaignPlatform.map { $0.imageName }.joined(separator: ",")
         }
         
-        // 단일 파라미터들 처리
-        if reporter != .all {
-            queryParameters["reporter"] = reporter.rawValue
-        }
+        queryParameters["reporter"] = "all"
         
         if let applyStart = applyStart {
             queryParameters["applyStart"] = applyStart

@@ -41,12 +41,15 @@ struct HomeView: View {
                         .padding(.bottom, 16)
                     
                     sortSection
-                    
                     tagSection
-                    
                     campaignGridSection
+                    
+                    if viewModel.isLoadingMore {
+                        loadingIndicator
+                    }
                 }
             }
+            .coordinateSpace(name: "scrollView")
         }
         .sheet(isPresented: $showSortBottomSheet) {
             SortBottomSheet(
@@ -61,31 +64,30 @@ struct HomeView: View {
         }
     }
     
-    
     private var sortSection: some View {
         HStack {
-            if viewModel.selectedCategory == .region {
-                HStack(spacing: 0) {
-                    Button(action: {
-                        router.push(to: .selectRegion(viewModel: viewModel))
-                    }) {
-                        HStack(spacing: 4) {
-                            Text(viewModel.selectedRegion)
-                                .font(.m2b)
-                                .foregroundStyle(.gray9)
-                            
-                            Text("\(viewModel.totalCnt)개")
-                                .font(.m4r)
-                                .foregroundStyle(.gray9)
-                            Image("chevron_right")
-                        }
-                    }
-                }
-            } else {
-                Text("총 \(viewModel.totalCnt)개")
-                    .font(.m5r)
-                    .foregroundStyle(.gray4)
-            }
+            //            if viewModel.selectedCategory == .region {
+            //                HStack(spacing: 0) {
+            //                    Button(action: {
+            //                        router.push(to: .selectRegion(viewModel: viewModel))
+            //                    }) {
+            //                        HStack(spacing: 4) {
+            //                            Text(viewModel.selectedRegion)
+            //                                .font(.m2b)
+            //                                .foregroundStyle(.gray9)
+            //
+            //                            Text("\(viewModel.totalCnt)개")
+            //                                .font(.m4r)
+            //                                .foregroundStyle(.gray9)
+            //                            Image("chevron_right")
+            //                        }
+            //                    }
+            //                }
+            //            } else {
+            Text("총 \(viewModel.totalCnt)개")
+                .font(.m5r)
+                .foregroundStyle(.gray4)
+            //            }
             Spacer()
             
             Button(action: {
@@ -143,19 +145,39 @@ struct HomeView: View {
             GridItem(.flexible(), spacing: 8),
             GridItem(.flexible(), spacing: 8)
         ], spacing: 32) {
-            ForEach(viewModel.campaigns) { campaign in
+            ForEach(Array(viewModel.campaigns.enumerated()), id: \.1.id) { index, campaign in
                 CampaignCardView(campaign: campaign)
-                    .frame(maxHeight: 320, alignment: .top)
                     .onTapGesture {
                         router.push(to: .campaignWeb(
                             campaignSite: campaign.campaignSite,
                             campaignSiteUrl: campaign.detailUrl
                         ))
                     }
+                    .infiniteScrolling(
+                        hasMoreData: viewModel.hasMorePages,
+                        isLoading: viewModel.isLoadingMore,
+                        onLoadMore: {
+                            // 마지막 10개 아이템 중 하나가 나타날 때 다음 페이지 로드
+                            if index >= viewModel.campaigns.count - 10 {
+                                viewModel.loadNextPage()
+                            }
+                        }
+                    )
             }
         }
         .padding(.top, 16)
+        .padding(.horizontal, 16)
+    }
     
+    private var loadingIndicator: some View {
+        HStack {
+            Spacer()
+            ProgressView()
+                .progressViewStyle(CircularProgressViewStyle())
+                .scaleEffect(0.8)
+            Spacer()
+        }
+        .frame(height: 60)
         .padding(.horizontal, 16)
     }
 }

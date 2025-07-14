@@ -17,6 +17,10 @@ class HomeViewModel: ObservableObject {
     @Published var selectedRegionGroup: RegionGroup? = nil
     @Published var selectedSubRegion: SubRegion? = nil
     
+    @Published var currentPage: Int = 0
+    @Published var hasMorePages: Bool = true
+    @Published var isLoadingMore: Bool = false
+    
     private let campaignAPI: CampaignRepository
     private let noticeBoardAPI: NoticeBoardRepository
     
@@ -59,6 +63,9 @@ class HomeViewModel: ObservableObject {
     
     func fetchCampaigns() {
         isLoading = true
+        currentPage = 0
+        campaigns = []
+        hasMorePages = true
         
         Task {
             do {
@@ -67,16 +74,53 @@ class HomeViewModel: ObservableObject {
                     product: getProductCategoriesForCurrentCategory(),
                     snsPlatform: getSocialPlatformsForCurrentCategory(),
                     campaignPlatform: getCampaignPlatformsForCurrentCategory(),
-                    sort: selectedSortType
+                    sort: selectedSortType,
+                    page: currentPage,
+                    size: 20
                 )
                 
                 campaigns = response.content.map { $0.toCampaign() }
                 totalCnt = response.totalElements
+                hasMorePages = response.hasNext
             } catch {
                 print("Error fetching campaigns: \(error)")
                 errorMessage = "캠페인을 불러오는 중 오류가 발생했습니다."
             }
             isLoading = false
+        }
+    }
+    
+    /// 다음 페이지 로드 (무한 스크롤용)
+    func loadNextPage() {
+        guard hasMorePages && !isLoadingMore else { return }
+        
+        isLoadingMore = true
+        currentPage += 1
+        
+        Task {
+            do {
+                let response = try await campaignAPI.searchCampaignsByCategory(
+                    local: getLocalCategoriesForCurrentCategory(),
+                    product: getProductCategoriesForCurrentCategory(),
+                    snsPlatform: getSocialPlatformsForCurrentCategory(),
+                    campaignPlatform: getCampaignPlatformsForCurrentCategory(),
+                    sort: selectedSortType,
+                    page: currentPage,
+                    size: 20
+                )
+                
+                let newCampaigns = response.content.map { $0.toCampaign() }
+                campaigns.append(contentsOf: newCampaigns)
+                hasMorePages = response.hasNext
+                totalCnt = response.totalElements
+            } catch {
+                print("Error loading next page: \(error)")
+                errorMessage = "추가 캠페인을 불러오는 중 오류가 발생했습니다."
+                // 에러 발생 시 currentPage를 다시 원래대로 복원
+                currentPage -= 1
+            }
+            
+            isLoadingMore = false
         }
     }
     
@@ -90,11 +134,7 @@ class HomeViewModel: ObservableObject {
     func selectCategory(_ category: CampaignType) {
         selectedCategory = category
         selectedTags.removeAll() // 카테고리 변경 시 태그 초기화
-        
-        // 태그가 있는 카테고리인 경우 "전체" 자동 선택
-        if !getTagsForCurrentCategory().isEmpty {
-            selectedTags.insert("전체")
-        }
+        getTagsForCurrentCategory()
         
         fetchCampaigns()
     }
@@ -140,15 +180,15 @@ class HomeViewModel: ObservableObject {
         case .all:
             return []
         case .region:
-            return LocalCategory.allCasesWithAll
+            return LocalCategory.allCases.map{$0.displayName}
         case .product:
-            return ProductCategory.allCasesWithAll
-        case .reporter:
-            return SocialPlatformType.allCasesWithAll
+            return ProductCategory.allCases.map{$0.displayName}
+//        case .reporter:
+//            return []
         case .snsPlatform:
-            return SocialPlatformType.allCasesWithAll
+            return SocialPlatformType.allCases.map{$0.rawValue}
         case .campaignPlatform:
-            return CampaignPlatformType.allCasesWithAll
+            return CampaignPlatformType.allCases.map{$0.rawValue}
         }
     }
     
@@ -157,11 +197,6 @@ class HomeViewModel: ObservableObject {
     /// 현재 카테고리와 선택된 태그에 따른 지역 카테고리 반환
     private func getLocalCategoriesForCurrentCategory() -> [LocalCategory] {
         guard selectedCategory == .region else { return [] }
-        
-        // "전체" 태그가 선택되었거나 태그가 없는 경우 빈 배열 반환 (모든 지역)
-        if selectedTags.isEmpty || selectedTags.contains("전체") {
-            return []
-        }
         
         return selectedTags.compactMap { tag in
             LocalCategory.from(displayName: tag)
@@ -172,11 +207,6 @@ class HomeViewModel: ObservableObject {
     private func getProductCategoriesForCurrentCategory() -> [ProductCategory] {
         guard selectedCategory == .product else { return [] }
         
-        // "전체" 태그가 선택되었거나 태그가 없는 경우 빈 배열 반환 (모든 제품)
-        if selectedTags.isEmpty || selectedTags.contains("전체") {
-            return []
-        }
-        
         return selectedTags.compactMap { tag in
             ProductCategory.from(displayName: tag)
         }
@@ -184,12 +214,7 @@ class HomeViewModel: ObservableObject {
     
     /// 현재 카테고리와 선택된 태그에 따른 SNS 플랫폼 반환
     private func getSocialPlatformsForCurrentCategory() -> [SocialPlatformType] {
-        guard selectedCategory == .reporter || selectedCategory == .snsPlatform else { return [] }
-        
-        // "전체" 태그가 선택되었거나 태그가 없는 경우 빈 배열 반환 (모든 플랫폼)
-        if selectedTags.isEmpty || selectedTags.contains("전체") {
-            return []
-        }
+        guard selectedCategory == .snsPlatform else { return [] }
         
         return selectedTags.compactMap { tag in
             SocialPlatformType.from(displayName: tag)
@@ -200,16 +225,9 @@ class HomeViewModel: ObservableObject {
     private func getCampaignPlatformsForCurrentCategory() -> [CampaignPlatformType] {
         guard selectedCategory == .campaignPlatform else { return [] }
         
-        // "전체" 태그가 선택되었거나 태그가 없는 경우 빈 배열 반환 (모든 플랫폼)
-        if selectedTags.isEmpty || selectedTags.contains("전체") {
-            return []
-        }
-        
         return selectedTags.compactMap { tag in
             CampaignPlatformType.from(displayName: tag)
         }
     }
-
-
 }
 

@@ -1,8 +1,13 @@
 import SwiftUI
 
 struct SearchView: View {
+    @EnvironmentObject var router: HomeRouter
     @Environment(\.dismiss) private var dismiss
+    
     @StateObject private var viewModel = SearchViewModel()
+    
+    @FocusState private var isFocused: Bool
+    
     @State private var showSortBottomSheet = false
     @State private var showFilterSideMenu = false
     
@@ -14,19 +19,18 @@ struct SearchView: View {
                 ScrollView {
                     if viewModel.searchText.isEmpty {
                         VStack(spacing: 36) {
-//                        recommendedCategorySection
+//                            recommendedCategorySection
                             recentSearchSection
                         }
                         .padding(.horizontal, 16)
                         .padding(.top, 24)
                     } else if viewModel.isSubmitted {
-                        // 제출 후 그리드 표시
                         campaignGridSection
                     } else {
-                        // 텍스트 입력 중 세로 리스트 표시
                         searchResultsSection
                     }
                 }
+                .coordinateSpace(name: "scrollView")
                 
                 Spacer()
             }
@@ -63,6 +67,7 @@ struct SearchView: View {
             CDTextField(text: $viewModel.searchText, placeholder: "검색어를 입력해주세요", onSubmit: {
                 viewModel.submitSearch()
             })
+            .focused($isFocused)
             
             Button(action: {
                 dismiss()
@@ -75,6 +80,7 @@ struct SearchView: View {
             }
         }
         .padding(.horizontal, 16)
+        .padding(.bottom, 16)
     }
     
     private var searchResultsSection: some View {
@@ -87,12 +93,7 @@ struct SearchView: View {
     
     private var campaignGridSection: some View {
         LazyVStack(spacing: 16) {
-            // 검색 결과 헤더
             HStack(spacing: 0) {
-                Text("검색 결과")
-                    .font(.m5b)
-                    .foregroundStyle(.gray9)
-                
                 Text("총 \(viewModel.totalCount)개")
                     .font(.m5r)
                     .foregroundStyle(.gray5)
@@ -120,34 +121,42 @@ struct SearchView: View {
             }
             .padding(.horizontal, 16)
             
-            // 캠페인 그리드
             LazyVGrid(columns: [
                 GridItem(.flexible(), spacing: 8),
                 GridItem(.flexible(), spacing: 8)
-            ], spacing: 16) {
-                ForEach(viewModel.searchResults) { campaign in
+            ], spacing: 32) {
+                ForEach(Array(viewModel.searchResults.enumerated()), id: \.1.id) { index, campaign in
                     CampaignCardView(campaign: campaign)
-                        .frame(maxHeight: 320, alignment: .top)
+                        .onTapGesture {
+                            router.push(to: .campaignWeb(
+                                campaignSite: campaign.campaignSite,
+                                campaignSiteUrl: campaign.detailUrl
+                            ))
+                        }
+                        .infiniteScrolling(
+                            hasMoreData: viewModel.hasMorePages,
+                            isLoading: viewModel.isLoading,
+                            onLoadMore: {
+                                // 마지막 10개 아이템 중 하나가 나타날 때 다음 페이지 로드
+                                if index >= viewModel.searchResults.count - 10 {
+                                    viewModel.loadNextPage()
+                                }
+                            }
+                        )
                 }
             }
             .padding(.horizontal, 16)
             
-            // 더 보기 버튼
-            if viewModel.hasMorePages {
-                Button(action: {
-                    viewModel.loadNextPage()
-                }) {
-                    if viewModel.isLoading {
-                        ProgressView()
-                            .progressViewStyle(CircularProgressViewStyle())
-                            .scaleEffect(0.8)
-                    } else {
-                        Text("더 보기")
-                            .font(.m4r)
-                            .foregroundStyle(.gray5)
-                    }
+            // 무한 스크롤 로딩 인디케이터
+            if viewModel.isLoading && viewModel.currentPage > 0 {
+                HStack {
+                    Spacer()
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle())
+                        .scaleEffect(0.8)
+                    Spacer()
                 }
-                .frame(height: 40)
+                .frame(height: 60)
                 .padding(.horizontal, 16)
             }
         }
@@ -256,6 +265,7 @@ struct SearchView: View {
         .contentShape(Rectangle())
         .onTapGesture {
             viewModel.selectRecentSearch(searchItem.text)
+            isFocused = false
         }
     }
     

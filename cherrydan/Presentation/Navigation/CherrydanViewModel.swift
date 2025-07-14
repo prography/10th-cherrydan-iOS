@@ -13,7 +13,6 @@ class CherrydanViewModel: ObservableObject {
     
     init(myPageRepository: MyPageRepository =  MyPageRepository()) {
         self.myPageRepository = myPageRepository
-        
         checkAppVersion()
     }
     
