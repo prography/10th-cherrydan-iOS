@@ -20,7 +20,6 @@ class SearchViewModel: ObservableObject {
     @Published var selectedSubRegions: [SubRegion] = []
     @Published var selectedLocalCategories: [LocalCategory] = []
     @Published var selectedProductCategories: [ProductCategory] = []
-    @Published var selectedReporterType: ReporterType = .all
     @Published var selectedSnsPlatforms: [SocialPlatformType] = []
     @Published var selectedCampaignPlatforms: [CampaignPlatformType] = []
     @Published var selectedApplyStart: String? = nil
@@ -126,7 +125,6 @@ class SearchViewModel: ObservableObject {
                 subRegion: selectedSubRegions,
                 local: selectedLocalCategories,
                 product: selectedProductCategories,
-                reporter: selectedReporterType,
                 snsPlatform: selectedSnsPlatforms,
                 campaignPlatform: selectedCampaignPlatforms,
                 applyStart: selectedApplyStart,
@@ -268,12 +266,12 @@ class SearchViewModel: ObservableObject {
         }
     }
     
-    func updateReporterType(_ reporterType: ReporterType) {
-        selectedReporterType = reporterType
-        if isSubmitted {
-            refreshSearch()
-        }
-    }
+//    func updateReporterType(_ reporterType: ReporterType) {
+//        selectedReporterType = reporterType
+//        if isSubmitted {
+//            refreshSearch()
+//        }
+//    }
     
     func updateSnsPlatforms(_ snsPlatforms: [SocialPlatformType]) {
         selectedSnsPlatforms = snsPlatforms
@@ -319,7 +317,6 @@ class SearchViewModel: ObservableObject {
         selectedSubRegions = []
         selectedLocalCategories = []
         selectedProductCategories = []
-        selectedReporterType = .all
         selectedSnsPlatforms = []
         selectedCampaignPlatforms = []
         selectedApplyStart = nil
