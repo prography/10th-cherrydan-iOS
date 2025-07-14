@@ -35,8 +35,7 @@ struct CategoryDetailView: View {
                         GridItem(.flexible(), spacing: 8)
                     ], spacing: 16) {
                         ForEach(viewModel.campaigns) { campaign in
-                            CampaignCardView(campaign: campaign)
-                                .frame(maxHeight: 320) // 카드 최대 높이 제한
+                            CampaignCardView(campaign: campaign) // 카드 최대 높이 제한
                                 .onTapGesture {
                                     router.push(to: .campaignWeb(
                                         campaignSite: campaign.campaignSite,

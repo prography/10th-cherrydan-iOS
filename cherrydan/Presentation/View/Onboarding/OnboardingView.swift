@@ -11,6 +11,7 @@ struct OnboardingView: View {
                     
                     Text("체험단\n리뷰 쓰는\n사람들")
                         .font(.t1)
+                        .foregroundStyle(.gray9)
                         .multilineTextAlignment(.leading)
                 }
                 
