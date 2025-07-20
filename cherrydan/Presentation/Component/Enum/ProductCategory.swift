@@ -1,7 +1,6 @@
 import Foundation
 
 enum ProductCategory: String, CaseIterable, Codable {
-    case all = "all"
     case food = "food"
     case living = "living"
     case digital = "digital"
@@ -16,7 +15,6 @@ enum ProductCategory: String, CaseIterable, Codable {
     
     var id: Int {
         switch self {
-        case .all: return 0
         case .food: return 1
         case .living: return 2
         case .digital: return 3
@@ -33,7 +31,6 @@ enum ProductCategory: String, CaseIterable, Codable {
     
     var displayName: String {
         switch self {
-        case .all: return "전체"
         case .food: return "🍎식품"
         case .living: return "🧺생활"
         case .digital: return "📱디지털"
@@ -50,7 +47,6 @@ enum ProductCategory: String, CaseIterable, Codable {
     
     static func from(displayName: String) -> ProductCategory? {
         switch displayName {
-        case "전체": return .all
         case "🍎식품": return .food
         case "🧺생활": return .living
         case "📱디지털": return .digital
@@ -68,7 +64,6 @@ enum ProductCategory: String, CaseIterable, Codable {
     
     static func from(id: Int) -> ProductCategory {
         switch id {
-        case 0: return .all
         case 1: return .food
         case 2: return .living
         case 3: return .digital

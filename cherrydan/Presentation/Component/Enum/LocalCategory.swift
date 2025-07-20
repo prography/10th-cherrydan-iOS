@@ -1,7 +1,6 @@
 import Foundation
 
 enum LocalCategory: String, CaseIterable, Codable {
-    case all
     case restaurant
     case beauty
     case accommodation
@@ -12,7 +11,6 @@ enum LocalCategory: String, CaseIterable, Codable {
     
     var id: Int {
         switch self {
-        case .all: return 0
         case .restaurant: return 1
         case .beauty: return 2
         case .accommodation: return 3
@@ -25,7 +23,6 @@ enum LocalCategory: String, CaseIterable, Codable {
     
     var displayName: String {
         switch self {
-        case .all: return "전체"
         case .restaurant: return "🍴맛집"
         case .beauty: return "💄뷰티"
         case .accommodation: return "⛺️숙박"
@@ -38,7 +35,6 @@ enum LocalCategory: String, CaseIterable, Codable {
     
     static func from(displayName: String) -> LocalCategory? {
         switch displayName {
-        case "전체": return .all
         case "🍴맛집": return .restaurant
         case "💄뷰티": return .beauty
         case "⛺️숙박": return .accommodation
@@ -52,7 +48,6 @@ enum LocalCategory: String, CaseIterable, Codable {
     
     static func from(id: Int) -> LocalCategory {
         switch id {
-        case 0: return .all
         case 1: return .restaurant
         case 2: return .beauty
         case 3: return .accommodation

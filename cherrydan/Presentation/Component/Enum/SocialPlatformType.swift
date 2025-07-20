@@ -1,7 +1,6 @@
 import Foundation
 
 enum SocialPlatformType: String, CaseIterable, Codable {
-    case all = "전체"
     case blog = "네이버 블로그"
     case instagram = "인스타그램"
     case youtube = "유튜브"
@@ -10,8 +9,7 @@ enum SocialPlatformType: String, CaseIterable, Codable {
     
     var imageName: String {
         switch self {
-        case .all: return "all"
-        case .blog: return "naver_blog"
+        case .blog: return "blog"
         case .instagram: return "insta"
         case .youtube: return "youtube"
         case .tiktok: return "tiktok"
@@ -85,12 +83,14 @@ enum SocialPlatformType: String, CaseIterable, Codable {
     
     static func from(displayName: String) -> SocialPlatformType? {
         switch displayName {
-        case "전체": return .all
         case "네이버 블로그": return .blog
+        case "클립": return .blog
         case "인스타그램": return .instagram
         case "유튜브": return .youtube
         case "틱톡": return .tiktok
         case "기타": return .etc
+        case "릴스": return .instagram
+        case "쇼츠": return .youtube
         default: return nil
         }
     }

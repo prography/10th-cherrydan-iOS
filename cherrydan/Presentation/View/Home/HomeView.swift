@@ -27,10 +27,10 @@ struct HomeView: View {
             .padding(.horizontal, 16)
             
             ScrollView(.vertical, showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 0) {
-                    CampaignBanner(banners: viewModel.banners)
-                        .padding(.top, 8)
-                        .padding(.bottom, 16)
+                LazyVStack(alignment: .leading, spacing: 0) {
+//                    CampaignBanner(banners: viewModel.banners)
+//                        .padding(.top, 8)
+//                        .padding(.bottom, 16)
                     
                     CDTabSection(
                         selectedCategory: $viewModel.selectedCategory,
@@ -49,7 +49,6 @@ struct HomeView: View {
                     }
                 }
             }
-            .coordinateSpace(name: "scrollView")
         }
         .sheet(isPresented: $showSortBottomSheet) {
             SortBottomSheet(
@@ -59,35 +58,35 @@ struct HomeView: View {
             )
         }
         .animation(.fastEaseInOut, value: viewModel.selectedSortType)
-        .onAppear {
+        .onViewDidLoad {
             viewModel.fetchBannerData()
         }
     }
     
     private var sortSection: some View {
         HStack {
-            //            if viewModel.selectedCategory == .region {
-            //                HStack(spacing: 0) {
-            //                    Button(action: {
-            //                        router.push(to: .selectRegion(viewModel: viewModel))
-            //                    }) {
-            //                        HStack(spacing: 4) {
-            //                            Text(viewModel.selectedRegion)
-            //                                .font(.m2b)
-            //                                .foregroundStyle(.gray9)
-            //
-            //                            Text("\(viewModel.totalCnt)개")
-            //                                .font(.m4r)
-            //                                .foregroundStyle(.gray9)
-            //                            Image("chevron_right")
-            //                        }
-            //                    }
-            //                }
-            //            } else {
-            Text("총 \(viewModel.totalCnt)개")
-                .font(.m5r)
-                .foregroundStyle(.gray4)
-            //            }
+            if viewModel.selectedCategory == .region {
+                HStack(spacing: 0) {
+                    Button(action: {
+                        router.push(to: .selectRegion(viewModel: viewModel))
+                    }) {
+                        HStack(spacing: 4) {
+                            Text(viewModel.selectedRegion)
+                                .font(.m2b)
+                                .foregroundStyle(.gray9)
+                            
+                            Text("\(viewModel.totalCnt)개")
+                                .font(.m4r)
+                                .foregroundStyle(.gray9)
+                            Image("chevron_right")
+                        }
+                    }
+                }
+            } else {
+                Text("총 \(viewModel.totalCnt)개")
+                    .font(.m5r)
+                    .foregroundStyle(.gray4)
+            }
             Spacer()
             
             Button(action: {
@@ -145,24 +144,21 @@ struct HomeView: View {
             GridItem(.flexible(), spacing: 8),
             GridItem(.flexible(), spacing: 8)
         ], spacing: 32) {
-            ForEach(Array(viewModel.campaigns.enumerated()), id: \.1.id) { index, campaign in
-                CampaignCardView(campaign: campaign)
-                    .onTapGesture {
-                        router.push(to: .campaignWeb(
-                            campaignSite: campaign.campaignSite,
-                            campaignSiteUrl: campaign.detailUrl
-                        ))
+            ForEach(Array(zip(viewModel.campaigns.indices, viewModel.campaigns)), id: \.1.id) { index, campaign in
+                Button(action:{
+                    router.push(to: .campaignWeb(
+                        campaignSite: campaign.campaignSite,
+                        campaignSiteUrl: campaign.detailUrl
+                    ))
+                }){
+                    CampaignCardView(campaign: campaign)
+                }
+                .onAppear {
+                    // 마지막에서 10번째 아이템이 나타날 때 다음 페이지 로드 (더 자연스러운 스크롤)
+                    if index == viewModel.campaigns.count - 10 && viewModel.hasMorePages && !viewModel.isLoadingMore {
+                        viewModel.loadNextPage()
                     }
-                    .infiniteScrolling(
-                        hasMoreData: viewModel.hasMorePages,
-                        isLoading: viewModel.isLoadingMore,
-                        onLoadMore: {
-                            // 마지막 10개 아이템 중 하나가 나타날 때 다음 페이지 로드
-                            if index >= viewModel.campaigns.count - 10 {
-                                viewModel.loadNextPage()
-                            }
-                        }
-                    )
+                }
             }
         }
         .padding(.top, 16)
@@ -184,4 +180,5 @@ struct HomeView: View {
 
 #Preview {
     HomeView()
+        .environmentObject(HomeRouter())
 }

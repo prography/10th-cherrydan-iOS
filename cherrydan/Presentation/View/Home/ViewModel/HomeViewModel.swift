@@ -24,6 +24,22 @@ class HomeViewModel: ObservableObject {
     private let campaignAPI: CampaignRepository
     private let noticeBoardAPI: NoticeBoardRepository
     
+    var regionGroups: [RegionGroup] {
+        if let selectedRegionGroup {
+            return [selectedRegionGroup]
+        } else {
+            return []
+        }
+    }
+    
+    var subRegions: [SubRegion] {
+        if let selectedSubRegion {
+            return [selectedSubRegion]
+        } else {
+            return []
+        }
+    }
+    
     var selectedRegion: String {
         if let selectedRegionGroup {
             return selectedRegionGroup.displayName
@@ -70,13 +86,16 @@ class HomeViewModel: ObservableObject {
         Task {
             do {
                 let response = try await campaignAPI.searchCampaignsByCategory(
+                    regionGroups: regionGroups,
+                    subRegions: subRegions,
                     local: getLocalCategoriesForCurrentCategory(),
                     product: getProductCategoriesForCurrentCategory(),
                     snsPlatform: getSocialPlatformsForCurrentCategory(),
                     campaignPlatform: getCampaignPlatformsForCurrentCategory(),
                     sort: selectedSortType,
                     page: currentPage,
-                    size: 20
+                    size: 20,
+                    focusedCategory: selectedCategory
                 )
                 
                 campaigns = response.content.map { $0.toCampaign() }
@@ -100,13 +119,16 @@ class HomeViewModel: ObservableObject {
         Task {
             do {
                 let response = try await campaignAPI.searchCampaignsByCategory(
+                    regionGroups: regionGroups,
+                    subRegions: subRegions,
                     local: getLocalCategoriesForCurrentCategory(),
                     product: getProductCategoriesForCurrentCategory(),
                     snsPlatform: getSocialPlatformsForCurrentCategory(),
                     campaignPlatform: getCampaignPlatformsForCurrentCategory(),
                     sort: selectedSortType,
                     page: currentPage,
-                    size: 20
+                    size: 20,
+                    focusedCategory: selectedCategory
                 )
                 
                 let newCampaigns = response.content.map { $0.toCampaign() }
@@ -133,9 +155,14 @@ class HomeViewModel: ObservableObject {
     /// 카테고리 변경
     func selectCategory(_ category: CampaignType) {
         selectedCategory = category
-        selectedTags.removeAll() // 카테고리 변경 시 태그 초기화
-        getTagsForCurrentCategory()
+        if category != .region {
+            selectedRegionGroup = nil
+            selectedSubRegion = nil
+        }
         
+        selectedTags.removeAll()
+        getTagsForCurrentCategory()
+        selectedTags.insert("전체")
         fetchCampaigns()
     }
     
@@ -155,15 +182,12 @@ class HomeViewModel: ObservableObject {
     /// 태그 선택/해제
     func toggleTag(_ tag: String) {
         if tag == "전체" {
-            // "전체" 선택 시 다른 모든 태그 해제
             selectedTags = ["전체"]
         } else {
-            // 다른 태그 선택 시 "전체" 해제
             selectedTags.remove("전체")
             
             if selectedTags.contains(tag) {
                 selectedTags.remove(tag)
-                // 모든 태그가 해제되면 "전체" 자동 선택
                 if selectedTags.isEmpty {
                     selectedTags.insert("전체")
                 }
@@ -174,21 +198,18 @@ class HomeViewModel: ObservableObject {
         fetchCampaigns()
     }
     
-    /// 현재 카테고리에 해당하는 태그 목록 반환
     func getTagsForCurrentCategory() -> [String] {
         switch selectedCategory {
         case .all:
             return []
         case .region:
-            return LocalCategory.allCases.map{$0.displayName}
+            return ["전체"] + LocalCategory.allCases.map{$0.displayName}
         case .product:
-            return ProductCategory.allCases.map{$0.displayName}
-//        case .reporter:
-//            return []
+            return ["전체"] + ProductCategory.allCases.map{$0.displayName}
         case .snsPlatform:
-            return SocialPlatformType.allCases.map{$0.rawValue}
+            return ["전체"] + SocialPlatformType.allCases.map{$0.rawValue}
         case .campaignPlatform:
-            return CampaignPlatformType.allCases.map{$0.rawValue}
+            return ["전체"] + CampaignPlatformType.allCases.map{$0.rawValue}
         }
     }
     

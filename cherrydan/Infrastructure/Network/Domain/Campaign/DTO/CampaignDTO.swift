@@ -27,7 +27,7 @@ struct CampaignDTO: Codable {
             campaignType: CampaignType(rawValue: campaignType ?? "REGION") ?? .product,
             competitionRate: competitionRate ?? 0.0,
             campaignSite: CampaignPlatformType(rawValue: campaignSite ?? "레뷰") ?? .chvu,
-            snsPlatforms: snsPlatforms.map { SocialPlatformType(rawValue: $0) ?? .instagram }
+            snsPlatforms: snsPlatforms.compactMap { SocialPlatformType.from(displayName: $0) }
         )
     }
 }
