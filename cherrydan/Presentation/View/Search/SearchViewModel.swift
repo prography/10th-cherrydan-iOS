@@ -9,13 +9,11 @@ class SearchViewModel: ObservableObject {
     @Published var searchResults: [Campaign] = []
     @Published var recentSearches: [SearchRecord] = []
     @Published var isLoading: Bool = false
-    @Published var errorMessage: String? = nil
     @Published var isSubmitted: Bool = false
     @Published var totalCount: Int = 0
     @Published var currentPage: Int = 0
     @Published var hasMorePages: Bool = false
     
-    // 고도화된 검색 필터들
     @Published var selectedRegionGroups: [RegionGroup] = []
     @Published var selectedSubRegions: [SubRegion] = []
     @Published var selectedLocalCategories: [LocalCategory] = []
@@ -70,25 +68,16 @@ class SearchViewModel: ObservableObject {
     // MARK: - 자동완성 검색 (세로 리스트용)
     private func searchForAutoComplete(_ query: String) async {
         isLoading = true
-        errorMessage = nil
         
         do {
-            let response = try await campaignRepository.searchCampaignsByCategory(
-                query: query,
-                page: 0,
-                size: 10
-            )
+            let response = try await campaignRepository.searchCampaigns(query)
             
-            // Campaign 결과를 SearchRecord로 변환
-            autoCompleteResults = response.content.map { campaign in
+            autoCompleteResults = response.map { campaign in
                 SearchRecord(id: "\(campaign.id)", text: campaign.title ?? "", createdAt: "")
             }
-            
         } catch {
             print("Auto complete search error: \(error)")
-            errorMessage = "검색 중 오류가 발생했습니다."
         }
-        
         isLoading = false
     }
     
@@ -116,22 +105,21 @@ class SearchViewModel: ObservableObject {
     // MARK: - 실제 검색 수행
     private func performSearch() async {
         isLoading = true
-        errorMessage = nil
         
         do {
             let response = try await campaignRepository.searchCampaignsByCategory(
                 query: searchText,
-                regionGroup: selectedRegionGroups,
-                subRegion: selectedSubRegions,
+                regionGroups: selectedRegionGroups,
+                subRegions: selectedSubRegions,
                 local: selectedLocalCategories,
                 product: selectedProductCategories,
                 snsPlatform: selectedSnsPlatforms,
                 campaignPlatform: selectedCampaignPlatforms,
-                applyStart: selectedApplyStart,
-                applyEnd: selectedApplyEnd,
                 sort: selectedSortType,
                 page: currentPage,
-                size: 20
+                size: 20,
+                focusedCategory: .all,
+                isReporter: false
             )
             
             let campaigns = response.content.map { $0.toCampaign() }
@@ -144,10 +132,8 @@ class SearchViewModel: ObservableObject {
             
             totalCount = response.totalElements
             hasMorePages = response.hasNext
-            
         } catch {
             print("Search error: \(error)")
-            errorMessage = "검색 중 오류가 발생했습니다."
         }
         
         isLoading = false
@@ -234,7 +220,6 @@ class SearchViewModel: ObservableObject {
         currentPage = 0
         totalCount = 0
         hasMorePages = false
-        errorMessage = nil
     }
     
     // MARK: - 필터 관련 메서드들
@@ -254,6 +239,7 @@ class SearchViewModel: ObservableObject {
     
     func updateLocalCategories(_ localCategories: [LocalCategory]) {
         selectedLocalCategories = localCategories
+        print(selectedLocalCategories)
         if isSubmitted {
             refreshSearch()
         }
@@ -266,13 +252,6 @@ class SearchViewModel: ObservableObject {
         }
     }
     
-//    func updateReporterType(_ reporterType: ReporterType) {
-//        selectedReporterType = reporterType
-//        if isSubmitted {
-//            refreshSearch()
-//        }
-//    }
-    
     func updateSnsPlatforms(_ snsPlatforms: [SocialPlatformType]) {
         selectedSnsPlatforms = snsPlatforms
         if isSubmitted {
@@ -282,6 +261,7 @@ class SearchViewModel: ObservableObject {
     
     func updateCampaignPlatforms(_ campaignPlatforms: [CampaignPlatformType]) {
         selectedCampaignPlatforms = campaignPlatforms
+        
         if isSubmitted {
             refreshSearch()
         }

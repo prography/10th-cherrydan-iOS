@@ -19,7 +19,7 @@ struct SearchView: View {
                 ScrollView {
                     if viewModel.searchText.isEmpty {
                         VStack(spacing: 36) {
-//                            recommendedCategorySection
+                            //                            recommendedCategorySection
                             recentSearchSection
                         }
                         .padding(.horizontal, 16)
@@ -30,17 +30,20 @@ struct SearchView: View {
                         searchResultsSection
                     }
                 }
-                .coordinateSpace(name: "scrollView")
                 
                 Spacer()
             }
             
-            // 필터 사이드 메뉴
             if showFilterSideMenu {
                 SearchFilterSideMenu(
                     viewModel: viewModel,
                     isPresented: $showFilterSideMenu
                 )
+            }
+            
+            if viewModel.isLoading {
+                ProgressView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
             }
         }
         .sheet(isPresented: $showSortBottomSheet) {
@@ -50,7 +53,7 @@ struct SearchView: View {
                 onSortTypeSelected: viewModel.selectSortType
             )
         }
-        .onAppear {
+        .onViewDidLoad {
             viewModel.loadRecentSearches()
         }
     }
@@ -85,8 +88,16 @@ struct SearchView: View {
     
     private var searchResultsSection: some View {
         LazyVStack(spacing: 0) {
-            ForEach(viewModel.autoCompleteResults) { result in
-                searchResultRow(result)
+            if viewModel.autoCompleteResults.isEmpty {
+                Text("검색결과가 없습니다.")
+                    .font(.m5r)
+                    .foregroundColor(.gray5)
+                    .padding(.top, 160)
+                    .frame(maxWidth: .infinity, alignment: .center)
+            } else {
+                ForEach(viewModel.autoCompleteResults) { result in
+                    searchResultRow(result)
+                }
             }
         }
     }
@@ -125,7 +136,7 @@ struct SearchView: View {
                 GridItem(.flexible(), spacing: 8),
                 GridItem(.flexible(), spacing: 8)
             ], spacing: 32) {
-                ForEach(Array(viewModel.searchResults.enumerated()), id: \.1.id) { index, campaign in
+                ForEach(Array(zip(viewModel.searchResults.indices, viewModel.searchResults)), id: \.1.id) { index, campaign in
                     CampaignCardView(campaign: campaign)
                         .onTapGesture {
                             router.push(to: .campaignWeb(
@@ -133,21 +144,16 @@ struct SearchView: View {
                                 campaignSiteUrl: campaign.detailUrl
                             ))
                         }
-                        .infiniteScrolling(
-                            hasMoreData: viewModel.hasMorePages,
-                            isLoading: viewModel.isLoading,
-                            onLoadMore: {
-                                // 마지막 10개 아이템 중 하나가 나타날 때 다음 페이지 로드
-                                if index >= viewModel.searchResults.count - 10 {
-                                    viewModel.loadNextPage()
-                                }
+                        .onAppear {
+                            // 마지막에서 10번째 아이템이 나타날 때 다음 페이지 로드 (더 자연스러운 스크롤)
+                            if index == viewModel.searchResults.count - 10 && viewModel.hasMorePages && !viewModel.isLoading {
+                                viewModel.loadNextPage()
                             }
-                        )
+                        }
                 }
             }
             .padding(.horizontal, 16)
             
-            // 무한 스크롤 로딩 인디케이터
             if viewModel.isLoading && viewModel.currentPage > 0 {
                 HStack {
                     Spacer()
@@ -218,7 +224,10 @@ struct SearchView: View {
             VStack(spacing: 0) {
                 if viewModel.recentSearches.isEmpty {
                     Text("검색기록이 비어있어요.")
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                        .font(.m5r)
+                        .foregroundColor(.gray5)
+                        .padding(.top, 160)
+                        .frame(maxWidth: .infinity, alignment: .center)
                 } else {
                     ForEach(viewModel.recentSearches) { searchItem in
                         recentSearchItem(searchItem)
