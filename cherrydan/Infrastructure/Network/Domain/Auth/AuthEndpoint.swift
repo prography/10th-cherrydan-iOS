@@ -27,7 +27,7 @@ enum AuthEndpoint: APIEndpoint {
     
     var tokenType: TokenType {
         switch self {
-        case .socialLogin:
+        case .socialLogin, .refresh:
                 .none
         default:
                 .accessToken
