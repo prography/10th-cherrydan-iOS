@@ -117,7 +117,6 @@ class SearchViewModel: ObservableObject {
                 campaignPlatform: selectedCampaignPlatforms,
                 sort: selectedSortType,
                 page: currentPage,
-                size: 20,
                 focusedCategory: .all,
                 isReporter: false
             )

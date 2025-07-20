@@ -6,3 +6,9 @@ struct MyCampaignsResponse: Codable {
     let ended: [MyCampaignDTO]
     let count: String
 }
+
+struct CampaignPlatform: Codable {
+    let siteNameKr: String
+    let siteNameEn: String
+    let cdnUrl: String
+}

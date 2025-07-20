@@ -3,6 +3,7 @@ enum CampaignEndpoint: APIEndpoint {
     case getCampaignBySNSPlatform
     case getCampaignByCampaignPlatform
     case getCampaign
+    case getCampaignPlatform
     case getCampaignByCategory
     case getMyCampaignByStatus
     
@@ -17,6 +18,8 @@ enum CampaignEndpoint: APIEndpoint {
             
         case .getCampaign:
             "/campaigns/search"
+        case .getCampaignPlatform:
+            "/campaigns/site"
         case .getCampaignByCategory:
             "/campaigns/categories/search"
         case .getMyCampaignByStatus:
@@ -31,6 +34,7 @@ enum CampaignEndpoint: APIEndpoint {
                 .getCampaignByCampaignPlatform,
                 .getCampaignByCategory,
                 .getCampaign,
+                .getCampaignPlatform,
                 .getMyCampaignByStatus:
                 .get
         }

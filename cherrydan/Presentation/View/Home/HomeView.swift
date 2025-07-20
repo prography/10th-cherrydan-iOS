@@ -1,5 +1,5 @@
 import SwiftUI
-import AuthenticationServices
+import Kingfisher
 
 struct HomeView: View {
     @EnvironmentObject var router: HomeRouter
@@ -106,14 +106,12 @@ struct HomeView: View {
     }
     
     private var tagSection: some View {
-        let tags = viewModel.getTagsForCurrentCategory()
-        
-        return VStack(alignment: .leading, spacing: 0) {
-            if !tags.isEmpty {
+        VStack(alignment: .leading, spacing: 0) {
+            if !viewModel.tagDatas.isEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 8) {
-                        ForEach(tags, id: \.self) { tag in
-                            tagButton(tag)
+                        ForEach(viewModel.tagDatas, id: \.self) { tagData in
+                            tagButton(tagData)
                         }
                     }
                     .padding(.horizontal, 16)
@@ -123,18 +121,29 @@ struct HomeView: View {
         }
     }
     
-    private func tagButton(_ tag: String) -> some View {
-        let isSelected = viewModel.selectedTags.contains(tag)
+    private func tagButton(_ tagData: TagData) -> some View {
+        let isSelected = viewModel.selectedTags.contains(tagData.name)
         
         return Button(action: {
-            viewModel.toggleTag(tag)
+            viewModel.toggleTag(tagData.name)
         }) {
-            Text(tag)
-                .font(.m5r)
-                .foregroundStyle(isSelected ? .gray9 : .gray5)
-                .frame(height: 28, alignment: .center)
-                .padding(.horizontal, 12)
-                .background(isSelected ? .pBlue : .gray2, in: RoundedRectangle(cornerRadius: 20))
+            HStack {
+                if let img = tagData.imgUrl {
+                    KFImage(URL(string: img))
+                        .resizable()
+                        .onFailure { error in
+                            print("Image loading failed: \(error)")
+                        }
+                        .frame(width: 20, height: 20)
+                }
+                
+                Text(tagData.name)
+                    .font(.m5r)
+                    .foregroundStyle(isSelected ? .gray9 : .gray5)
+            }
+            .frame(height: 28, alignment: .center)
+            .padding(.horizontal, 12)
+            .background(isSelected ? .pBlue : .gray2, in: RoundedRectangle(cornerRadius: 20))
         }
         .animation(.fastEaseInOut, value: isSelected)
     }

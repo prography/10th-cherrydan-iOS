@@ -79,7 +79,7 @@ class NetworkAPI {
                 if let queryParams = queryParameters, !queryParams.isEmpty {
                     print("Query Parameters: \(queryParams)")
                 }
-                print("▶️ Response: \(String(data: data, encoding: .utf8)?.prefix(1200) ?? "Unable to decode response")")
+//                print("▶️ Response: \(String(data: data, encoding: .utf8)?.prefix(1200) ?? "Unable to decode response")")
             }
             
             guard let httpResponse = response as? HTTPURLResponse else {
@@ -90,7 +90,7 @@ class NetworkAPI {
             guard (200...299).contains(httpResponse.statusCode) else {
                 if httpResponse.statusCode == 401 {
                     do {
-                        print("▶️▶️ Response: \(String(data: data, encoding: .utf8) ?? "Unable to decode response")")
+//                        print("▶️▶️ Response: \(String(data: data, encoding: .utf8) ?? "Unable to decode response")")
                         _ = try await refreshToken()
                         
                         return try await request(endpoint, parameters: parameters, queryParameters: queryParameters)
