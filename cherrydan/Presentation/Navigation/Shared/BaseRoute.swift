@@ -4,6 +4,8 @@ import Foundation
 protocol BaseRoute: Hashable {
     var id: String { get }
     var disableSwipeBack: Bool { get }
+    
+    var analyticsName: String { get }
 }
 
 // MARK: - BaseRoute Protocol Extensions

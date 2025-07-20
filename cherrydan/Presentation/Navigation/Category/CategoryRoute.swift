@@ -1,6 +1,7 @@
 import Foundation
 
 enum CategoryRoute: BaseRoute {
+    case category
     case search
     case notification
     case categoryDetail(regionGroup: RegionGroup?, subRegion: SubRegion?)
@@ -19,6 +20,8 @@ enum CategoryRoute: BaseRoute {
     
     var analyticsName: String {
         switch self {
+        case .category:
+            "category_main_screen"
         case .categoryDetail:
             "category_detail_screen"
         case .search:

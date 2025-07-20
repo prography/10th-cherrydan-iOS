@@ -16,12 +16,14 @@ struct MyCampaignNavigationStack: View {
                 MyCampaignView()
                 CDBottomTab(selectedTab: $selectedTab)
             }
+            .onAppear {
+                router.logScreenView(for: .category)
+            }
             .navigationDestination(for: MyCampaignRoute.self) { route in
                 destinationView(for: route)
                     .swipeBackDisabled(route.disableSwipeBack)
                     .onAppear {
-                        // print("📊 Main Analytics: \(route.analyticsName)")
-                        // print("🔒 SwipeBack enabled: \(route.disableSwipeBack)")
+                        router.logScreenView(for: route)
                     }
             }
         }
@@ -30,6 +32,11 @@ struct MyCampaignNavigationStack: View {
     @ViewBuilder
     private func destinationView(for route: MyCampaignRoute) -> some View {
         switch route {
+        case .category:
+            VStack (spacing: 0){
+                MyCampaignView()
+                CDBottomTab(selectedTab: $selectedTab)
+            }
         case .categoryDetail: EmptyView()
         }
     }

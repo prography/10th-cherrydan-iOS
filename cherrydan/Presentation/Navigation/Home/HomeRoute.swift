@@ -1,6 +1,7 @@
 import Foundation
 
 enum HomeRoute: BaseRoute {
+    case home
     case search
     case notification
     case campaignWeb(campaignSite: CampaignPlatformType, campaignSiteUrl: String)
@@ -17,6 +18,8 @@ enum HomeRoute: BaseRoute {
     
     var analyticsName: String {
         switch self {
+        case .home :
+            "home_screen"
         case .search:
             "search_screen"
         case .notification:

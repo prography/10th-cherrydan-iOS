@@ -16,12 +16,14 @@ struct CategoryNavigationStack: View {
                 CategoryView()
                 CDBottomTab(selectedTab: $selectedTab)
             }
+            .onAppear {
+                router.logScreenView(for: .category)
+            }
             .navigationDestination(for: CategoryRoute.self) { route in
                 destinationView(for: route)
                     .swipeBackDisabled(route.disableSwipeBack)
                     .onAppear {
-                        // print("📊 Main Analytics: \(route.analyticsName)")
-                        // print("🔒 SwipeBack enabled: \(route.disableSwipeBack)")
+                        router.logScreenView(for: route)
                     }
             }
         }
@@ -30,6 +32,11 @@ struct CategoryNavigationStack: View {
     @ViewBuilder
     private func destinationView(for route: CategoryRoute) -> some View {
         switch route {
+        case .category:
+            VStack (spacing: 0){
+                CategoryView()
+                CDBottomTab(selectedTab: $selectedTab)
+            }
         case .categoryDetail(let regionGroup, let subRegion):
             CategoryDetailView(regionGroup: regionGroup, subRegion: subRegion)
         case .search:

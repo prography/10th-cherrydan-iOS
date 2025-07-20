@@ -16,20 +16,27 @@ struct MyPageNavigationStack: View {
                 MyPageView()
                 CDBottomTab(selectedTab: $selectedTab)
             }
-                .navigationDestination(for: MyPageRoute.self) { route in
-                    destinationView(for: route)
-                        .swipeBackDisabled(route.disableSwipeBack)
-                        .onAppear {
-                            // print("📊 Main Analytics: \(route.analyticsName)")
-                            // print("🔒 SwipeBack enabled: \(route.disableSwipeBack)")
-                        }
-                }
+            .onAppear {
+                router.logScreenView(for: .myPage)
+            }
+            .navigationDestination(for: MyPageRoute.self) { route in
+                destinationView(for: route)
+                    .swipeBackDisabled(route.disableSwipeBack)
+                    .onAppear {
+                        router.logScreenView(for: route)
+                    }
+            }
         }
     }
     
     @ViewBuilder
     private func destinationView(for route: MyPageRoute) -> some View {
         switch route {
+        case .myPage:
+            VStack (spacing: 0){
+                MyPageView()
+                CDBottomTab(selectedTab: $selectedTab)
+            }
         case .agreement: AgreementView()
         case .mediaConnect: ManageSNSView()
         case .profileSetting: ProfileSettingView()
@@ -40,7 +47,7 @@ struct MyPageNavigationStack: View {
         case .myPageDetail(let type): WebDetailView(myPageWebType: type)
         }
     }
-} 
+}
 
 #Preview {
     MyPageNavigationStack(selectedTab: .constant(4))

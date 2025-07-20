@@ -16,12 +16,14 @@ struct HomeNavigationStack: View {
                 HomeView()
                 CDBottomTab(selectedTab: $selectedTab)
             }
+            .onAppear {
+                router.logScreenView(for: .home)
+            }
             .navigationDestination(for: HomeRoute.self) { route in
                 destinationView(for: route)
                     .swipeBackDisabled(route.disableSwipeBack)
                     .onAppear {
-                        // print("📊 Main Analytics: \(route.analyticsName)")
-                        // print("🔒 SwipeBack enabled: \(route.disableSwipeBack)")
+                        router.logScreenView(for: route)
                     }
             }
         }
@@ -30,6 +32,11 @@ struct HomeNavigationStack: View {
     @ViewBuilder
     private func destinationView(for route: HomeRoute) -> some View {
         switch route {
+        case .home:
+            VStack (spacing: 0) {
+                HomeView()
+                CDBottomTab(selectedTab: $selectedTab)
+            }
         case .search: SearchView()
         case .notification: NotificationView()
         case .selectRegion(let viewModel): SelectRegionView(viewModel: viewModel)

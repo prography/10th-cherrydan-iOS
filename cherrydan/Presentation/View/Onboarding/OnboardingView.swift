@@ -1,5 +1,6 @@
 import SwiftUI
 import AuthenticationServices
+import FirebaseAnalytics
 
 struct OnboardingView: View {
     @StateObject var viewModel = OnboardingViewModel()
@@ -61,6 +62,9 @@ struct OnboardingView: View {
                         .foregroundStyle(.white)
                 }
             }
+        }
+        .onAppear {
+            Analytics.logScreenView(screenName: "onboarding_screen")
         }
     }
     

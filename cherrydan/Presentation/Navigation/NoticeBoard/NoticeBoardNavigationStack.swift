@@ -16,12 +16,14 @@ struct NoticeBoardNavigationStack: View {
                 NoticeBoardView()
                 CDBottomTab(selectedTab: $selectedTab)
             }
+            .onAppear {
+                router.logScreenView(for: .noticeBoard)
+            }
             .navigationDestination(for: NoticeBoardRoute.self) { route in
                 destinationView(for: route)
                     .swipeBackDisabled(route.disableSwipeBack)
                     .onAppear {
-                        // print("📊 Main Analytics: \(route.analyticsName)")
-                        // print("🔒 SwipeBack enabled: \(route.disableSwipeBack)")
+                        router.logScreenView(for: route)
                     }
             }
         }
@@ -30,12 +32,18 @@ struct NoticeBoardNavigationStack: View {
     @ViewBuilder
     private func destinationView(for route: NoticeBoardRoute) -> some View {
         switch route {
+        case .noticeBoard:
+            VStack (spacing: 0){
+                NoticeBoardView()
+                CDBottomTab(selectedTab: $selectedTab)
+            }
         case .noticeDetail(let noticeId): NoticeDetailView(noticeId: noticeId)
         case .notification: NotificationView()
         case .search: SearchView()
         }
     }
 }
+
 
 #Preview {
     NoticeBoardNavigationStack(selectedTab: .constant(3))

@@ -1,4 +1,5 @@
 enum MyPageRoute: BaseRoute {
+    case myPage
     case agreement
     case mediaConnect
     case manageSNS
@@ -14,6 +15,8 @@ enum MyPageRoute: BaseRoute {
     
     var analyticsName: String {
         switch self {
+        case .myPage:
+            "my_page_screen"
         case .agreement:
             "agreement_screen"
         case .mediaConnect:

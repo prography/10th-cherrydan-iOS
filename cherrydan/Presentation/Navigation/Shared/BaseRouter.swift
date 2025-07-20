@@ -1,5 +1,6 @@
 import SwiftUI
 import Combine
+import FirebaseAnalytics
 
 // MARK: - Base Router Protocol
 @MainActor
@@ -12,6 +13,7 @@ protocol BaseRouter: ObservableObject {
     func reset()
     func popTo(count: Int)
     func replace(with route: RouteType)
+    func logScreenView(for route: RouteType)
 }
 
 // MARK: - Base Router Implementation
@@ -37,5 +39,9 @@ extension BaseRouter {
     func replace(with route: RouteType) {
         path = NavigationPath()
         path.append(route)
+    }
+    
+    func logScreenView(for route: RouteType) {
+        Analytics.logScreenView(screenName: route.analyticsName)
     }
 } 
