@@ -1,4 +1,5 @@
 import SwiftUI
+import Kingfisher
 
 struct CampaignCardView: View {
     let campaign: Campaign
@@ -12,37 +13,44 @@ struct CampaignCardView: View {
     }
     
     private var thumbnail: some View {
-        ZStack(alignment: .topLeading) {
-            AsyncImage(url: URL(string: campaign.imageUrl)) { image in
-                image
+        GeometryReader { geometry in
+            ZStack(alignment: .topLeading) {
+                KFImage(URL(string: campaign.imageUrl))
                     .resizable()
+                    .placeholder {
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill(Color.gray.opacity(0.3))
+                            .overlay(
+                                ProgressView()
+                            )
+                    }
+                    .onFailure { error in
+                        print("Image loading failed: \(error)")
+                    }
                     .aspectRatio(contentMode: .fill)
-            } placeholder: {
-                RoundedRectangle(cornerRadius: 4)
-                    .fill(Color.gray.opacity(0.3))
-                    .overlay(
-                        ProgressView()
+                    
+                    .frame(width: geometry.size.width, height: 168)
+                    .cornerRadius(4)
+                    .clipped()
+                
+                Text(campaign.campaignSite.rawValue)
+                    .font(.m6r)
+                    .foregroundStyle(.pBlue)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(.gray5)
+                    .clipShape(
+                        UnevenRoundedRectangle(
+                            topLeadingRadius: 4,
+                            bottomLeadingRadius: 0,
+                            bottomTrailingRadius: 4,
+                            topTrailingRadius: 0
+                        )
                     )
             }
-            .frame(width: 168, height: 168)
-            .cornerRadius(4)
-            .clipped()
-            
-            Text(campaign.campaignSite.rawValue)
-                .font(.m6r)
-                .foregroundStyle(.pBlue)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
-                .background(.gray5)
-                .clipShape(
-                    UnevenRoundedRectangle(
-                        topLeadingRadius: 4,
-                        bottomLeadingRadius: 0,
-                        bottomTrailingRadius: 4,
-                        topTrailingRadius: 0
-                    )
-                )
         }
+        .frame(maxWidth: .infinity)
+        .frame(height: 168)
     }
     
     private var textSection: some View {
