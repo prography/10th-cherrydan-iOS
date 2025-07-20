@@ -1,53 +1,48 @@
 enum CampaignEndpoint: APIEndpoint {
-    case getCampaignByType
+    case getAllCampaign
+    case getCampaignByReporter
+    case getCampaignByProduct
+    case getCampaignByRegion
     case getCampaignBySNSPlatform
     case getCampaignByCampaignPlatform
-    case getCampaign
-    case getCampaignPlatform
-    case getCampaignByCategory
-    case getMyCampaignByStatus
+    
+    case getCampaignSites
+    
+    case searchCampaign
+    case searchCampaignByCategory
+    
     
     var path: String {
         switch self {
-        case .getCampaignByType:
-            "/campaigns/types"
+        case .getAllCampaign:
+            "/campaigns"
         case .getCampaignBySNSPlatform:
             "/campaigns/sns-platforms"
         case .getCampaignByCampaignPlatform:
             "/campaigns/campaign-platforms"
+        case .getCampaignByReporter:
+            "/campaigns/reporter"
+        case .getCampaignByProduct:
+            "/campaigns/product"
+        case .getCampaignByRegion:
+            "/campaigns/local"
             
-        case .getCampaign:
+        case .searchCampaign:
             "/campaigns/search"
-        case .getCampaignPlatform:
-            "/campaigns/site"
-        case .getCampaignByCategory:
+        case .searchCampaignByCategory:
             "/campaigns/categories/search"
-        case .getMyCampaignByStatus:
-            "/api/campaigns/my-status"
+            
+        case .getCampaignSites:
+            "/campaigns/site"
         }
     }
     
     var method: HTTPMethod {
-        switch self {
-        case    .getCampaignByType,
-                .getCampaignBySNSPlatform,
-                .getCampaignByCampaignPlatform,
-                .getCampaignByCategory,
-                .getCampaign,
-                .getCampaignPlatform,
-                .getMyCampaignByStatus:
-                .get
-        }
+        .get
     }
     
     var tokenType: TokenType {
-        switch self {
-        case    .getCampaignByCategory,
-                .getCampaign:
-                .none
-        default:
-                .accessToken
-        }
+        .none
     }
 }
 

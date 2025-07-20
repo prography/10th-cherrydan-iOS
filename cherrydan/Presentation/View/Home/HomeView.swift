@@ -43,10 +43,11 @@ struct HomeView: View {
                     sortSection
                     tagSection
                     campaignGridSection
-                    
-                    if viewModel.isLoadingMore {
-                        loadingIndicator
-                    }
+                }
+            }
+            .overlay {
+                if viewModel.isLoading || viewModel.isLoadingMore {
+                    loadingIndicator
                 }
             }
         }
@@ -175,15 +176,8 @@ struct HomeView: View {
     }
     
     private var loadingIndicator: some View {
-        HStack {
-            Spacer()
-            ProgressView()
-                .progressViewStyle(CircularProgressViewStyle())
-                .scaleEffect(0.8)
-            Spacer()
-        }
-        .frame(height: 60)
-        .padding(.horizontal, 16)
+        ProgressView()
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
     }
 }
 

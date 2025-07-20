@@ -20,8 +20,6 @@ class SearchViewModel: ObservableObject {
     @Published var selectedProductCategories: [ProductCategory] = []
     @Published var selectedSnsPlatforms: [SocialPlatformType] = []
     @Published var selectedCampaignPlatforms: [CampaignPlatformType] = []
-    @Published var selectedApplyStart: String? = nil
-    @Published var selectedApplyEnd: String? = nil
     @Published var selectedSortType: SortType = .popular
     
     private let campaignRepository: CampaignRepository
@@ -70,7 +68,7 @@ class SearchViewModel: ObservableObject {
         isLoading = true
         
         do {
-            let response = try await campaignRepository.searchCampaigns(query)
+            let response = try await campaignRepository.searchCampaign(query)
             
             autoCompleteResults = response.map { campaign in
                 SearchRecord(id: "\(campaign.id)", text: campaign.title ?? "", createdAt: "")
@@ -267,8 +265,6 @@ class SearchViewModel: ObservableObject {
     }
     
     func updateApplyDateRange(start: String?, end: String?) {
-        selectedApplyStart = start
-        selectedApplyEnd = end
         if isSubmitted {
             refreshSearch()
         }
@@ -298,8 +294,6 @@ class SearchViewModel: ObservableObject {
         selectedProductCategories = []
         selectedSnsPlatforms = []
         selectedCampaignPlatforms = []
-        selectedApplyStart = nil
-        selectedApplyEnd = nil
         selectedSortType = .popular
         
         if isSubmitted {

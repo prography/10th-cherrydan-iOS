@@ -28,45 +28,45 @@ class CategoryDetailViewModel: ObservableObject {
         errorMessage = nil
         
         
-        Task {
-            do {
-                let localCategories: [LocalCategory]
-                if categoryTabs[selectedTabIndex] == "전체" {
-                    localCategories = []
-                } else {
-                    localCategories = [LocalCategory.from(displayName: categoryTabs[selectedTabIndex])].compactMap { $0 }
-                }
-                
-                let response: PageableResponse<CampaignDTO>
-                if let subRegion {
-                    response = try await campaignRepository.getCampaignByCategory(
-                        subRegion: [subRegion],
-                        local: localCategories,
-                        sort: selectedSortType
-                    )
-                    
-                } else if let regionGroup {
-                    response = try await campaignRepository.getCampaignByCategory(
-                        regionGroup: [regionGroup],
-                        local: localCategories,
-                        sort: selectedSortType
-                    )
-                } else {
-                    response = try await campaignRepository.getCampaignByCategory(
-                        local: localCategories,
-                        sort: selectedSortType
-                    )
-                }
-                
-                campaigns = response.content.map { $0.toCampaign() }
-                totalCount = response.totalElements
-                isLoading = false
-            } catch {
-                print("Error loading campaigns: \(error)")
-                errorMessage = "캠페인을 불러오는 중 오류가 발생했습니다."
-                isLoading = false
-            }
-        }
+//        Task {
+//            do {
+//                let localCategories: [LocalCategory]
+//                if categoryTabs[selectedTabIndex] == "전체" {
+//                    localCategories = []
+//                } else {
+//                    localCategories = [LocalCategory.from(displayName: categoryTabs[selectedTabIndex])].compactMap { $0 }
+//                }
+//                
+//                let response: PageableResponse<CampaignDTO>
+//                if let subRegion {
+//                    response = try await campaignRepository.getCampaignByCategory(
+//                        subRegion: [subRegion],
+//                        local: localCategories,
+//                        sort: selectedSortType
+//                    )
+//                    
+//                } else if let regionGroup {
+//                    response = try await campaignRepository.getCampaignByCategory(
+//                        regionGroup: [regionGroup],
+//                        local: localCategories,
+//                        sort: selectedSortType
+//                    )
+//                } else {
+//                    response = try await campaignRepository.getCampaignByCategory(
+//                        local: localCategories,
+//                        sort: selectedSortType
+//                    )
+//                }
+//                
+//                campaigns = response.content.map { $0.toCampaign() }
+//                totalCount = response.totalElements
+//                isLoading = false
+//            } catch {
+//                print("Error loading campaigns: \(error)")
+//                errorMessage = "캠페인을 불러오는 중 오류가 발생했습니다."
+//                isLoading = false
+//            }
+//        }
     }
     
     func changeTab(to index: Int) {

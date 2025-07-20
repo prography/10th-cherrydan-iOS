@@ -96,37 +96,37 @@ class HomeViewModel: ObservableObject {
                 page: currentPage
             )
         case .region:
-            response = try await campaignAPI.searchCampaignsByCategory(
+            response = try await campaignAPI.getCampaignByRegion(
                 regionGroups: regionGroups,
                 subRegions: subRegions,
                 local: getLocalCategoriesForCurrentCategory(),
                 sort: selectedSortType,
-                page: currentPage,
-                focusedCategory: category
+                page: currentPage
             )
+            
         case .product:
-            response = try await campaignAPI.searchCampaignsByCategory(
-                regionGroups: regionGroups,
-                subRegions: subRegions,
-                product: getProductCategoriesForCurrentCategory(),
+            response = try await campaignAPI.getCampaignByProduct(
+                getProductCategoriesForCurrentCategory(),
                 sort: selectedSortType,
-                page: currentPage,
-                focusedCategory: category
+                page: currentPage
             )
+            
         case .snsPlatform:
             response = try await campaignAPI.getCampaignBySNSPlatform(
                 getSocialPlatformsForCurrentCategory(),
                 sort: selectedSortType,
                 page: currentPage
             )
+            
         case .campaignPlatform:
             response = try await campaignAPI.getCampaignByCampaignPlatform(
                 getCampaignPlatformsForCurrentCategory(),
                 sort: selectedSortType,
                 page: currentPage
             )
+            
         }
-        print(response.totalElements)
+        
         totalCnt = response.totalElements
         hasMorePages = response.hasNext
         
@@ -267,7 +267,7 @@ class HomeViewModel: ObservableObject {
         isLoadingCampaignPlatforms = true
         
         do {
-            let response = try await campaignAPI.getCampaignPlatforms()
+            let response = try await campaignAPI.getCampaignSites()
             campaignPlatforms = response
         } catch {
             print("Error loading campaign platforms: \(error)")
