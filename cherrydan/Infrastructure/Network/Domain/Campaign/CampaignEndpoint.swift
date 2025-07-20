@@ -2,6 +2,7 @@ enum CampaignEndpoint: APIEndpoint {
     case getCampaignByType
     case getCampaignBySNSPlatform
     case getCampaignByCampaignPlatform
+    case getCampaign
     case getCampaignByCategory
     case getMyCampaignByStatus
     
@@ -14,6 +15,8 @@ enum CampaignEndpoint: APIEndpoint {
         case .getCampaignByCampaignPlatform:
             "/campaigns/campaign-platforms"
             
+        case .getCampaign:
+            "/campaigns/search"
         case .getCampaignByCategory:
             "/campaigns/categories/search"
         case .getMyCampaignByStatus:
@@ -23,22 +26,20 @@ enum CampaignEndpoint: APIEndpoint {
     
     var method: HTTPMethod {
         switch self {
-        case .getCampaignByType:
-                .get
-        case .getCampaignBySNSPlatform:
-                .get
-        case .getCampaignByCampaignPlatform:
-                .get
-        case .getCampaignByCategory:
-                .get
-        case .getMyCampaignByStatus:
+        case    .getCampaignByType,
+                .getCampaignBySNSPlatform,
+                .getCampaignByCampaignPlatform,
+                .getCampaignByCategory,
+                .getCampaign,
+                .getMyCampaignByStatus:
                 .get
         }
     }
     
     var tokenType: TokenType {
         switch self {
-        case .getCampaignByCategory:
+        case    .getCampaignByCategory,
+                .getCampaign:
                 .none
         default:
                 .accessToken

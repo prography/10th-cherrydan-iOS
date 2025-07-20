@@ -13,7 +13,8 @@ extension View {
         modifier(SwipeBackDisabledViewModifier(isDisabled: isDisabled))
     }
     
-    /// Infinite scrolling을 위한 ViewModifier
+    /// 블로그 방식의 무한 스크롤을 위한 ViewModifier
+    /// LazyVStack과 onAppear를 사용하여 마지막 아이템이 나타날 때 다음 페이지 로드
     /// - Parameters:
     ///   - hasMoreData: 더 많은 데이터가 있는지 여부
     ///   - isLoading: 현재 로딩 중인지 여부
@@ -28,6 +29,13 @@ extension View {
             isLoading: isLoading,
             onLoadMore: onLoadMore
         ))
+    }
+    
+    /// 뷰가 메모리에 로드될 경우 수행되게 하는 ViewDidLoad 함수
+    /// UIKit에는 viewDidLoad 함수가 있지만 SwiftUI에는 존재하지 않는다.
+    /// onAppear을 사용하여 직접 viewDidLoad를 수정자로 구현한다.
+    func onViewDidLoad(perform action: (() -> Void)? = nil) -> some View {
+        self.modifier(ViewDidLoadModifier(action: action))
     }
 }
 
@@ -48,32 +56,22 @@ struct InfiniteScrollingModifier: ViewModifier {
     }
 }
 
-// MARK: - ScrollViewReader Extension
+// MARK: - ViewDidLoadModifier
 
-extension View {
-    /// 스크롤 위치 감지를 위한 invisible view 추가
-    /// - Parameter onAppear: 해당 뷰가 나타날 때 호출될 액션
-    func onScrollToBottom(perform action: @escaping () -> Void) -> some View {
-        self.background(
-            GeometryReader { geometry in
-                Color.clear
-                    .preference(key: ScrollOffsetPreferenceKey.self, value: geometry.frame(in: .named("scrollView")).minY)
+/// 뷰가 한번 로드되었을 때를 감지하여 액션을 수행하게 하는 ViewDidLoad 수정자
+struct ViewDidLoadModifier: ViewModifier {
+    @State private var viewDidLoad: Bool = false
+    let action: (() -> Void)?
+
+    func body(content: Content) -> some View {
+        content
+            .onAppear {
+                if viewDidLoad == false {
+                    viewDidLoad = true
+                    action?()
+                }
             }
-        )
-        .onPreferenceChange(ScrollOffsetPreferenceKey.self) { offset in
-            // 스크롤 위치가 하단에 가까워지면 액션 실행
-            if offset < 100 {
-                action()
-            }
-        }
     }
 }
 
-// MARK: - ScrollOffsetPreferenceKey
 
-struct ScrollOffsetPreferenceKey: PreferenceKey {
-    static var defaultValue: CGFloat = 0
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-        value = nextValue()
-    }
-}

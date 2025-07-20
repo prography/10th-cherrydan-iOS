@@ -12,11 +12,9 @@ class CampaignRepository {
         subRegion: [SubRegion] = [],
         local: [LocalCategory] = [],
         product: [ProductCategory] = [],
-        reporter: ReporterType = .all,
+        reporter: [ReporterType] = [],
         snsPlatform: [SocialPlatformType] = [],
         campaignPlatform: [CampaignPlatformType] = [],
-        applyStart: String? = nil,
-        applyEnd: String? = nil,
         sort: SortType = .popular,
         page: Int = 0,
         size: Int = 20
@@ -28,7 +26,6 @@ class CampaignRepository {
             "size": "\(size)"
         ]
         
-        // 배열 파라미터들 처리
         if !regionGroup.isEmpty {
             queryParameters["regionGroup"] = regionGroup.map { $0.rawValue }.joined(separator: ",")
         }
@@ -53,17 +50,8 @@ class CampaignRepository {
             queryParameters["campaignPlatform"] = campaignPlatform.map { $0.rawValue }.joined(separator: ",")
         }
         
-        // 단일 파라미터들 처리
-        if reporter != .all {
-            queryParameters["reporter"] = reporter.rawValue
-        }
-        
-        if let applyStart = applyStart {
-            queryParameters["applyStart"] = applyStart
-        }
-        
-        if let applyEnd = applyEnd {
-            queryParameters["applyEnd"] = applyEnd
+        if !reporter.isEmpty {
+            queryParameters["reporter"] = campaignPlatform.map { $0.rawValue }.joined(separator: ",")
         }
         
         do {
@@ -122,65 +110,108 @@ class CampaignRepository {
         }
     }
     
+    func searchCampaigns(_ keyword: String) async throws -> [CampaignDTO] {
+        let query = ["keyword": keyword]
+        
+        do {
+            let response: APIResponse<PageableResponse<CampaignDTO>> = try await networkAPI.request(
+                CampaignEndpoint.getCampaign,
+                queryParameters: query
+            )
+            
+            return response.result.content
+        } catch {
+            print("CampaignRepository Error: \(error)")
+            throw error
+        }
+    }
+    
     func searchCampaignsByCategory(
         query: String? = nil,
-        regionGroup: [RegionGroup] = [],
-        subRegion: [SubRegion] = [],
+        regionGroups: [RegionGroup] = [],
+        subRegions: [SubRegion] = [],
         local: [LocalCategory] = [],
         product: [ProductCategory] = [],
         snsPlatform: [SocialPlatformType] = [],
         campaignPlatform: [CampaignPlatformType] = [],
-        applyStart: String? = nil,
-        applyEnd: String? = nil,
         sort: SortType = .popular,
         page: Int = 0,
-        size: Int = 20
+        size: Int = 20,
+        focusedCategory: CampaignType? = nil,
+        isReporter: Bool = false
     ) async throws -> PageableResponse<CampaignDTO> {
-        
         var queryParameters: [String: String] = [
             "sort": sort.rawValue,
             "page": "\(page)",
             "size": "\(size)"
         ]
         
-        // 검색어
         if let query = query, !query.isEmpty {
             queryParameters["title"] = query
         }
         
-        // 배열 파라미터들 처리
-        if !regionGroup.isEmpty {
-            queryParameters["regionGroup"] = regionGroup.map { $0.rawValue }.joined(separator: ",")
+        if !regionGroups.isEmpty {
+            queryParameters["regionGroup"] = regionGroups.map {
+                $0.rawValue
+            }.joined(separator: ",")
         }
         
-        if !subRegion.isEmpty {
-            queryParameters["subRegion"] = subRegion.map { $0.rawValue }.joined(separator: ",")
+        if !subRegions.isEmpty {
+            queryParameters["subRegion"] = subRegions.map {
+                $0.rawValue
+            }.joined(separator: ",")
         }
         
-        if !local.isEmpty {
-            queryParameters["local"] = local.map { $0.rawValue }.joined(separator: ",")
+        switch focusedCategory {
+        case .region:
+            if !local.isEmpty {
+                queryParameters["local"] = local.map { $0.rawValue }.joined(separator: ",")
+            } else {
+                queryParameters["local"] = "all"
+            }
+        case .product:
+            if !product.isEmpty {
+                queryParameters["product"] = product.map { $0.rawValue }.joined(separator: ",")
+            } else {
+                queryParameters["product"] = "all"
+            }
+        case .snsPlatform:
+            if !snsPlatform.isEmpty {
+                queryParameters["snsPlatform"] = snsPlatform.map { $0.imageName }.joined(separator: ",")
+            } else {
+                queryParameters["snsPlatform"] = "all"
+            }
+        case .campaignPlatform:
+            if !campaignPlatform.isEmpty {
+                queryParameters["campaignPlatform"] = campaignPlatform.map { $0.imageName }.joined(separator: ",")
+            } else {
+                queryParameters["campaignPlatform"] = "all"
+            }
+        default:
+            if !local.isEmpty {
+                queryParameters["local"] = local.map { $0.rawValue }.joined(separator: ",")
+            } else {
+                queryParameters["local"] = "all"
+            }
+            if !product.isEmpty {
+                queryParameters["product"] = product.map { $0.rawValue }.joined(separator: ",")
+            } else {
+                queryParameters["product"] = "all"
+            }
+            if !snsPlatform.isEmpty {
+                queryParameters["snsPlatform"] = snsPlatform.map { $0.imageName }.joined(separator: ",")
+            } else {
+                queryParameters["snsPlatform"] = "all"
+            }
+            if !campaignPlatform.isEmpty {
+                queryParameters["campaignPlatform"] = campaignPlatform.map { $0.imageName }.joined(separator: ",")
+            } else {
+                queryParameters["campaignPlatform"] = "all"
+            }
         }
         
-        if !product.isEmpty {
-            queryParameters["product"] = product.map { $0.rawValue }.joined(separator: ",")
-        }
-        
-        if !snsPlatform.isEmpty {
-            queryParameters["snsPlatform"] = snsPlatform.map { $0.imageName }.joined(separator: ",")
-        }
-        
-        if !campaignPlatform.isEmpty {
-            queryParameters["campaignPlatform"] = campaignPlatform.map { $0.imageName }.joined(separator: ",")
-        }
-        
-        queryParameters["reporter"] = "all"
-        
-        if let applyStart = applyStart {
-            queryParameters["applyStart"] = applyStart
-        }
-        
-        if let applyEnd = applyEnd {
-            queryParameters["applyEnd"] = applyEnd
+        if isReporter {
+            queryParameters["reporter"] = "all"
         }
         
         do {
