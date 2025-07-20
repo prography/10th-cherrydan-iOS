@@ -57,7 +57,7 @@ class HomeViewModel: ObservableObject {
     ) {
         self.campaignAPI = campaignAPI
         self.noticeBoardAPI = noticeBoardAPI
-        fetchCampaigns()
+        initializeFetch()
     }
     
     func fetchBannerData() {
@@ -77,7 +77,20 @@ class HomeViewModel: ObservableObject {
         }
     }
     
-    func fetchCampaigns() {
+    
+    func fetchCampaigns(for category: CampaignType) {
+        switch category {
+        case .all:
+        case .region:
+        case .product:
+        case .snsPlatform:
+        case .campaignPlatform:
+            <#code#>
+        }
+    }
+    /// 화면 처음 진입 및 카테고리 변경 시 호출되는 api입니다.
+    /// 인피니티 스크롤을 초기화합니다.
+    func initializeFetch() {
         isLoading = true
         currentPage = 0
         campaigns = []
@@ -105,11 +118,12 @@ class HomeViewModel: ObservableObject {
                 print("Error fetching campaigns: \(error)")
                 errorMessage = "캠페인을 불러오는 중 오류가 발생했습니다."
             }
+            
             isLoading = false
         }
     }
     
-    /// 다음 페이지 로드 (무한 스크롤용)
+    /// 인피니트 스크롤을 수행합니다.
     func loadNextPage() {
         guard hasMorePages && !isLoadingMore else { return }
         
@@ -149,7 +163,7 @@ class HomeViewModel: ObservableObject {
     /// 정렬 타입 변경
     func selectSortType(_ sortType: SortType) {
         selectedSortType = sortType
-        fetchCampaigns()
+        initializeFetch()
     }
     
     /// 카테고리 변경
@@ -163,20 +177,20 @@ class HomeViewModel: ObservableObject {
         selectedTags.removeAll()
         getTagsForCurrentCategory()
         selectedTags.insert("전체")
-        fetchCampaigns()
+        initializeFetch()
     }
     
     /// 지역 변경
     func selectRegion(_ regionGroup: RegionGroup? = nil, _ subRegion: SubRegion? = nil) {
         if let regionGroup {
             selectedRegionGroup = regionGroup
-            fetchCampaigns()
         }
         
         if let subRegion {
             selectedSubRegion = subRegion
-            fetchCampaigns()
         }
+        
+        initializeFetch()
     }
     
     /// 태그 선택/해제
@@ -195,7 +209,8 @@ class HomeViewModel: ObservableObject {
                 selectedTags.insert(tag)
             }
         }
-        fetchCampaigns()
+        
+        initializeFetch()
     }
     
     func getTagsForCurrentCategory() -> [String] {

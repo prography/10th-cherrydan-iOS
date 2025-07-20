@@ -7,6 +7,7 @@ class CampaignRepository {
         self.networkAPI = networkAPI
     }
     
+    /// - Note: SearchView에서 호출합니다.
     func getCampaignByCategory(
         regionGroup: [RegionGroup] = [],
         subRegion: [SubRegion] = [],
@@ -66,42 +67,88 @@ class CampaignRepository {
         }
     }
     
-    func getCampaignByType(type: CampaignType, sortType: SortType) async throws -> PageableResponse<CampaignDTO> {
-        let query: [String: String] = [
-            "type": type.rawValue,
-            "sort": sortType.rawValue,
-            "page": "0",
-            "size": "20"
-        ]
+    /// - Note: HomeView 내부 `전체`, `지역`, `제품` 탭에서 호출합니다.
+    func getCampaignByType(
+        _ type: CampaignType,
+        sort: SortType = .popular,
+        page: Int = 0,
+        size: Int = 20
+    ) async throws -> PageableResponse<CampaignDTO> {
+        guard type == .all || type == .product || type == .region else {  throw APIError.notFound }
         
-        let response: APIResponse<PageableResponse<CampaignDTO>> = try await networkAPI.request(CampaignEndpoint.getCampaignByType, queryParameters: query)
+        var queryParameters: [String: String] = [
+            "sort": sort.rawValue,
+            "page": "\(page)",
+            "size": "\(size)"
+        ]
+        switch type {
+        case .all:
+            break
+        case .region:
+            if !regionGroups.isEmpty {
+                queryParameters["regionGroup"] = regionGroups.map {
+                    $0.rawValue
+                }.joined(separator: ",")
+            }
+            
+            if !subRegions.isEmpty {
+                queryParameters["subRegion"] = subRegions.map {
+                    $0.rawValue
+                }.joined(separator: ",")
+            }
+        case .product:
+        }
+        
+        let response: APIResponse<PageableResponse<CampaignDTO>> = try await networkAPI.request(CampaignEndpoint.getCampaignByType, queryParameters: queryParameters)
         return response.result
     }
     
-    func getCampaignBySNSPlatform(_ platform: SocialPlatformType, _ sortType: SortType) async throws -> PageableResponse<CampaignDTO> {
-        let query: [String: String] = [
-            "platform": platform.rawValue,
-            "sort": "popular",
-            "page": "0",
-            "size": "5"
+    /// - Note: HomeView 내부 `SNS 플랫폼` 탭에서 호출합니다.
+    func getCampaignBySNSPlatform(
+        _ snsPlatform: [SocialPlatformType] = [],
+        sort: SortType = .popular,
+        page: Int = 0,
+        size: Int = 20
+    ) async throws -> PageableResponse<CampaignDTO> {
+        var queryParameters: [String: String] = [
+            "sort": sort.rawValue,
+            "page": "\(page)",
+            "size": "\(size)"
         ]
         
-        let response: APIResponse<PageableResponse<CampaignDTO>> = try await networkAPI.request(CampaignEndpoint.getCampaignBySNSPlatform, queryParameters: query)
+        if !snsPlatform.isEmpty {
+            queryParameters["snsPlatform"] = snsPlatform.map { $0.imageName }.joined(separator: ",")
+        } else {
+            queryParameters["snsPlatform"] = "all"
+        }
+        
+        let response: APIResponse<PageableResponse<CampaignDTO>> = try await networkAPI.request(CampaignEndpoint.getCampaignBySNSPlatform, queryParameters: queryParameters)
         return response.result
     }
     
-    func getCampaignByCampaignPlatform(_ platform: CampaignPlatformType) async throws -> PageableResponse<CampaignDTO> {
-        let query = [
-            "platform": "all",
-            "sort": "popular",
-            "page": "0",
-            "size": "5"
+    /// - Note: HomeView 내부 `캠페인 플랫폼` 탭에서 호출합니다.
+    func getCampaignByCampaignPlatform(
+        _ campaignPlatform: [CampaignPlatformType] = [],
+        sort: SortType = .popular,
+        page: Int = 0,
+        size: Int = 20
+    ) async throws -> PageableResponse<CampaignDTO> {
+        var queryParameters: [String: String] = [
+            "sort": sort.rawValue,
+            "page": "\(page)",
+            "size": "\(size)"
         ]
+        
+        if !campaignPlatform.isEmpty {
+            queryParameters["campaignPlatform"] = campaignPlatform.map { $0.imageName }.joined(separator: ",")
+        } else {
+            queryParameters["campaignPlatform"] = "all"
+        }
         
         do {
             let response: APIResponse<PageableResponse<CampaignDTO>> = try await networkAPI.request(
                 CampaignEndpoint.getCampaignByCampaignPlatform,
-                queryParameters: query
+                queryParameters: queryParameters
             )
             return response.result
         } catch {
