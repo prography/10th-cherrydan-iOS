@@ -137,19 +137,19 @@ struct SearchView: View {
                 GridItem(.flexible(), spacing: 8)
             ], spacing: 32) {
                 ForEach(Array(zip(viewModel.searchResults.indices, viewModel.searchResults)), id: \.1.id) { index, campaign in
-                    CampaignCardView(campaign: campaign)
-                        .onTapGesture {
-                            router.push(to: .campaignWeb(
-                                campaignSite: campaign.campaignSite,
-                                campaignSiteUrl: campaign.detailUrl
-                            ))
+                    Button(action:{
+                        router.push(to: .campaignWeb(
+                            campaignSite: campaign.campaignSite,
+                            campaignSiteUrl: campaign.detailUrl
+                        ))
+                    }){
+                        CampaignCardView(campaign: campaign)
+                    }
+                    .onAppear {
+                        if index == viewModel.searchResults.count - 10 && viewModel.hasMorePages && !viewModel.isLoading {
+                            viewModel.loadNextPage()
                         }
-                        .onAppear {
-                            // 마지막에서 10번째 아이템이 나타날 때 다음 페이지 로드 (더 자연스러운 스크롤)
-                            if index == viewModel.searchResults.count - 10 && viewModel.hasMorePages && !viewModel.isLoading {
-                                viewModel.loadNextPage()
-                            }
-                        }
+                    }
                 }
             }
             .padding(.horizontal, 16)
