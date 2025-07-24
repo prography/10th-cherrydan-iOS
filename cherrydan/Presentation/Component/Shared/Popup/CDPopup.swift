@@ -19,7 +19,7 @@ struct CDPopup: View {
                 .font(.t2)
                 .foregroundColor(.gray9)
                 .multilineTextAlignment(.center)
-            if case .loginWithDeletedAccount(let account) = type {
+            if case .loginWithDuplicatedAccount(let account) = type {
                 Text(account)
                     .font(.m3r)
                     .foregroundColor(.gray9)

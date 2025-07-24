@@ -39,7 +39,6 @@ class OnboardingViewModel: NSObject, ObservableObject {
     
     func performNaverLogin() async {
         isLoading = true
-        errorMessage = nil
         
         instance?.requestThirdPartyLogin()
     }
@@ -123,7 +122,6 @@ class OnboardingViewModel: NSObject, ObservableObject {
                     return
                 }
                 
-                // 구글 사용자 정보 수집
                 let userName = signInResult.user.profile?.name
                 let userEmail = signInResult.user.profile?.email
                 
@@ -190,7 +188,7 @@ class OnboardingViewModel: NSObject, ObservableObject {
                 errorMessage = response.message
             }
         } catch {
-            PopupManager.shared.show(.loginWithDeletedAccount(account: userInfo?.email ?? ""))
+            PopupManager.shared.show(.loginWithDuplicatedAccount(account: userInfo?.email ?? ""))
             print("\(platform.rawValue) login error: \(error)")
             isLoading = false
         }
