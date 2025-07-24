@@ -44,11 +44,12 @@ class HomeViewModel: ObservableObject {
     }
     
     var selectedRegion: String {
-        if let selectedRegionGroup {
-            return selectedRegionGroup.displayName
-        }
         if let selectedSubRegion {
             return selectedSubRegion.displayName
+        }
+        
+        if let selectedRegionGroup {
+            return selectedRegionGroup.displayName
         }
         
         return "지역 전체"
@@ -203,6 +204,9 @@ class HomeViewModel: ObservableObject {
     
     /// 지역 변경
     func selectRegion(_ regionGroup: RegionGroup? = nil, _ subRegion: SubRegion? = nil) {
+        selectedRegionGroup = nil
+        selectedSubRegion = nil
+        
         if let regionGroup {
             selectedRegionGroup = regionGroup
         }

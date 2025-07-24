@@ -38,10 +38,9 @@ class NotificationViewModel: ObservableObject {
             currentPage = 0
         }
         
-        isLoading = true
-        errorMessage = nil
         
         do {
+            isLoading = true
             let response = try await notificationRepository.getActivityNotifications(
                 page: currentPage,
                 size: pageSize
@@ -67,10 +66,9 @@ class NotificationViewModel: ObservableObject {
             currentPage = 0
         }
         
-        isLoading = true
-        errorMessage = nil
         
         do {
+            isLoading = true
             let response = try await notificationRepository.getKeywordNotifications(
                 page: currentPage,
                 size: pageSize
@@ -87,7 +85,6 @@ class NotificationViewModel: ObservableObject {
         } catch {
             print("NotificationViewModel Error: \(error)")
         }
-        
         isLoading = false
     }
 //
