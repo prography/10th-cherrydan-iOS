@@ -59,9 +59,9 @@ struct HomeView: View {
             )
         }
         .animation(.fastEaseInOut, value: viewModel.selectedSortType)
-        .onViewDidLoad {
-            viewModel.fetchBannerData()
-        }
+//        .onViewDidLoad {
+//            viewModel.fetchBannerData()
+//        }
     }
     
     private var sortSection: some View {
@@ -164,7 +164,6 @@ struct HomeView: View {
                     CampaignCardView(campaign: campaign)
                 }
                 .onAppear {
-                    // 마지막에서 10번째 아이템이 나타날 때 다음 페이지 로드 (더 자연스러운 스크롤)
                     if index == viewModel.campaigns.count - 10 && viewModel.hasMorePages && !viewModel.isLoadingMore {
                         viewModel.loadNextPage()
                     }

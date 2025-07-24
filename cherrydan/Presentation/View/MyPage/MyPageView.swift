@@ -102,11 +102,17 @@ struct MyPageView: View {
             menuItem("개인정보 처리방침") {
                 router.push(to: .myPageDetail(type: .privacyPolicy))
             }
+            
             menuItem("이용약관") {
                 router.push(to: .myPageDetail(type: .termsOfService))
             }
+            
             menuItem("운영정책") {
                 router.push(to: .myPageDetail(type: .operationalPolicy))
+            }
+            
+            menuItem("버그제보 및 문의하기") {
+                router.push(to: .myPageDetail(type: .feedback))
             }
         }
     }

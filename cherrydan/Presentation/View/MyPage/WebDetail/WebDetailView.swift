@@ -5,6 +5,7 @@ enum MyPageWebType: String {
     case privacyPolicy
     case termsOfService
     case operationalPolicy
+    case feedback
     
     var title: String {
         switch self {
@@ -14,6 +15,8 @@ enum MyPageWebType: String {
             return "이용약관"
         case .operationalPolicy:
             return "운영정책"
+        case .feedback:
+            return "피드백"
         }
     }
     
@@ -25,6 +28,8 @@ enum MyPageWebType: String {
             return "https://hataerin.notion.site/22c1517970678057a0c6cbcf77964204?pvs=73"
         case .operationalPolicy:
             return "https://hataerin.notion.site/22c15179706780d39b1ad23127d5b3ca?pvs=74"
+        case .feedback:
+            return "https://docs.google.com/forms/d/1TCtw3GJn3wqpoc-0OiFyleuI2L7O5sDmLO84EVGnyUc/preview"
         }
     }
 }
