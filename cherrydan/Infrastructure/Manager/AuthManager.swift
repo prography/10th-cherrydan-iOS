@@ -58,7 +58,6 @@ final class AuthManager: ObservableObject {
     }
     
     func logout() {
-        // 플랫폼별 SDK 로그아웃 처리
         if let platform = lastLoggedInPlatform {
             performPlatformLogout(platform)
         }

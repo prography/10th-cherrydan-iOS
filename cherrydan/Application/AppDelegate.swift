@@ -16,7 +16,8 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
         
         let instance = NaverThirdPartyLoginConnection.getSharedInstance()
         
-        instance?.isNaverAppOauthEnable = true
+        // 네이버 로그인 설정
+        instance?.isNaverAppOauthEnable = false
         instance?.isInAppOauthEnable = true
         instance?.setOnlyPortraitSupportInIphone(true)
         
@@ -35,15 +36,17 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
     }
     
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        if let naverHandled = NaverThirdPartyLoginConnection.getSharedInstance()?.application(app, open: url, options: options), naverHandled {
+            return true
+        }
+        
         if (AuthApi.isKakaoTalkLoginUrl(url)) {
             return AuthController.handleOpenUrl(url: url)
         }
         
-        GIDSignIn.sharedInstance.handle(url)
-        
-        NaverThirdPartyLoginConnection
-            .getSharedInstance()
-            .receiveAccessToken(url)
+        if GIDSignIn.sharedInstance.handle(url) {
+            return true
+        }
         
         return false
     }
@@ -55,7 +58,6 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
         Messaging.messaging().apnsToken = deviceToken
     }
 }
-
 
 // MARK: - Private Methods
 private extension AppDelegate {
