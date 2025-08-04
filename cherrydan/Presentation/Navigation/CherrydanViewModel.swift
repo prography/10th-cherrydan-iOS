@@ -36,7 +36,7 @@ class CherrydanViewModel: ObservableObject {
     
     private func handleVersionCheck(newVersion: String, minVersion: String) {
         let moveToAppStore = {
-            if let url = URL(string: "https://apps.apple.com/kr/app/tyte/id6723872988") {
+            if let url = URL(string: "https://apps.apple.com/kr/app/%EC%B2%B4%EB%A6%AC%EB%8B%A8/id6748566686") {
                 UIApplication.shared.open(url)
             }
         }
@@ -45,6 +45,7 @@ class CherrydanViewModel: ObservableObject {
         if currentAppVersion.isVersionLower(than: minVersion) {
             PopupManager.shared.show(.updateMandatory(onClick: moveToAppStore))
         }
+        
         // 현재 버전이 최신 버전보다 낮은 경우 - 선택적 업데이트
         else if currentAppVersion.isVersionLower(than: newVersion) {
             PopupManager.shared.show(.updateOptional(onClick: moveToAppStore))
