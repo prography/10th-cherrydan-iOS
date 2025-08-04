@@ -49,7 +49,7 @@ enum RegionGroup: String, CaseIterable, Codable {
         case .gyeonggiIncheon:
             return [
                 .namyangjuGuriHanam, .ilsanPaju, .anyangAnsanGwangmyeong,
-                .yonginSangnamSuwon, .hwaseong, .incheonBucheon, .gyeonggiEtc
+                .yonginSeongnamSuwon, .hwaseong, .incheonBucheon, .gyeonggiEtc
             ]
         case .gangwon:
             return [

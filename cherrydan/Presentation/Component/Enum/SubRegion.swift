@@ -25,7 +25,7 @@ enum SubRegion: String, CaseIterable, Codable {
     case namyangjuGuriHanam = "namyangju_guri_hanam"
     case ilsanPaju = "ilsan_paju"
     case anyangAnsanGwangmyeong = "anyang_ansan_gwangmyeong"
-    case yonginSangnamSuwon = "yongin_sangnam_suwon"
+    case yonginSeongnamSuwon = "yongin_seongnam_suwon"
     case hwaseong = "hwaseong"
     case incheonBucheon = "incheon_bucheon"
     case gyeonggiEtc = "gyeonggi_etc"
@@ -83,7 +83,7 @@ enum SubRegion: String, CaseIterable, Codable {
         case .namyangjuGuriHanam: return 30
         case .ilsanPaju: return 31
         case .anyangAnsanGwangmyeong: return 32
-        case .yonginSangnamSuwon: return 33
+        case .yonginSeongnamSuwon: return 33
         case .hwaseong: return 34
         case .incheonBucheon: return 35
         case .gyeonggiEtc: return 36
@@ -143,7 +143,7 @@ enum SubRegion: String, CaseIterable, Codable {
         case .namyangjuGuriHanam: return "남양주/구리/하남"
         case .ilsanPaju: return "일산/파주"
         case .anyangAnsanGwangmyeong: return "안양/안산/광명"
-        case .yonginSangnamSuwon: return "용인/성남/수원"
+        case .yonginSeongnamSuwon: return "용인/성남/수원"
         case .hwaseong: return "화성"
         case .incheonBucheon: return "인천/부천"
         case .gyeonggiEtc: return "기타"
