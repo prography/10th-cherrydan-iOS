@@ -3,31 +3,82 @@ import Foundation
 class NetworkAPI {
     private let session = URLSession.shared
     
+    private var isRefreshing = false
+    private var refreshTask: Task<LoginResult, Error>? = nil
+    private let refreshQueue = DispatchQueue(label: "com.cherrydan.tokenRefreshQueue")
+    
     func refreshToken() async throws -> LoginResult {
-        guard let refreshToken = KeychainManager.shared.getRefreshToken() else {
-            throw APIError.unauthorized
+        return try await withCheckedThrowingContinuation { continuation in
+            refreshQueue.async {
+                if let task = self.refreshTask {
+                    // 이미 진행 중이면 기존 task 결과 기다림
+                    Task {
+                        do {
+                            let result = try await task.value
+                            continuation.resume(returning: result)
+                        } catch {
+                            continuation.resume(throwing: error)
+                        }
+                    }
+                    return
+                }
+
+                let task = Task<LoginResult, Error> {
+                    guard let refreshToken = KeychainManager.shared.getRefreshToken() else {
+                        throw APIError.unauthorized
+                    }
+
+                    let params: [String: Any] = ["refreshToken": refreshToken]
+
+                    do {
+                        let response: APIResponse<LoginResult> = try await self.request(AuthEndpoint.refresh, parameters: params)
+
+                        KeychainManager.shared.saveToken(response.result.accessToken)
+                        KeychainManager.shared.saveRefreshToken(response.result.refreshToken)
+
+                        return response.result
+                    } catch let error as APIError {
+                        if case .unauthorized = error {
+                            // ⛔️ refreshToken 자체가 만료된 상태 → 로그아웃 처리
+                            DispatchQueue.main.async {
+                                AuthManager.shared.logout()
+                            }
+                        }
+                        throw error
+                    }
+                }
+
+                self.refreshTask = task
+
+                Task {
+                    do {
+                        let result = try await task.value
+                        self.refreshQueue.async {
+                            self.refreshTask = nil
+                        }
+                        continuation.resume(returning: result)
+                    } catch {
+                        self.refreshQueue.async {
+                            self.refreshTask = nil
+                        }
+                        continuation.resume(throwing: error)
+                    }
+                }
+            }
         }
-        let params: [String: Any] = [
-            "refreshToken": refreshToken
-        ]
-        let response: APIResponse<LoginResult> = try await request(AuthEndpoint.refresh, parameters: params)
-        
-        KeychainManager.shared.saveToken(response.result.accessToken)
-        KeychainManager.shared.saveRefreshToken(response.result.refreshToken)
-        
-        return response.result
     }
+
     
     func request<T: Decodable>(
         _ endpoint: APIEndpoint,
         parameters: [String: Any]? = nil,
         queryParameters: [String: String]? = nil
     ) async throws -> T {
+        var urlString = APIConstants.baseUrl + endpoint.path
+        
         guard NetworkManager.shared.isConnected else {
             throw APIError.networkError
         }
-        
-        var urlString = APIConstants.baseUrl + endpoint.path
         
         if let queryParams = queryParameters, !queryParams.isEmpty {
             var components = URLComponents(string: urlString)
@@ -79,7 +130,7 @@ class NetworkAPI {
                 if let queryParams = queryParameters, !queryParams.isEmpty {
                     print("Query Parameters: \(queryParams)")
                 }
-//                print("▶️ Response: \(String(data: data, encoding: .utf8)?.prefix(1200) ?? "Unable to decode response")")
+                print("▶️ Response: \(String(data: data, encoding: .utf8)?.prefix(1200) ?? "Unable to decode response")")
             }
             
             guard let httpResponse = response as? HTTPURLResponse else {
@@ -108,6 +159,7 @@ class NetworkAPI {
             }
             
             let decoder = JSONDecoder()
+            
             return try decoder.decode(T.self, from: data)
         } catch {
             if let apiError = error as? APIError {
