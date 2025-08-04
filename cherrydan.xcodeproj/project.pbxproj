@@ -7,7 +7,18 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E56E151D2E1005B0007932B4 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = E56E151C2E1005B0007932B4 /* FirebaseAnalytics */; };
+		E56E151F2E1005B0007932B4 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = E56E151E2E1005B0007932B4 /* FirebaseCore */; };
+		E56E15212E1005B0007932B4 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = E56E15202E1005B0007932B4 /* FirebaseMessaging */; };
+		E56E15292E101902007932B4 /* KakaoSDKAuth in Frameworks */ = {isa = PBXBuildFile; productRef = E56E15282E101902007932B4 /* KakaoSDKAuth */; };
+		E56E152B2E101902007932B4 /* KakaoSDKCommon in Frameworks */ = {isa = PBXBuildFile; productRef = E56E152A2E101902007932B4 /* KakaoSDKCommon */; };
+		E56E152D2E101902007932B4 /* KakaoSDKUser in Frameworks */ = {isa = PBXBuildFile; productRef = E56E152C2E101902007932B4 /* KakaoSDKUser */; };
+		E56E167D2E10200C007932B4 /* NaverThirdPartyLogin in Frameworks */ = {isa = PBXBuildFile; productRef = E56E167C2E10200C007932B4 /* NaverThirdPartyLogin */; };
+		E56E16802E1024C1007932B4 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = E56E167F2E1024C1007932B4 /* GoogleSignIn */; };
+		E56E16822E1024C1007932B4 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = E56E16812E1024C1007932B4 /* GoogleSignInSwift */; };
+		E5D64EFE2E1808BC0093EFD3 /* cherrydan.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E5D64EFC2E1808BC0093EFD3 /* cherrydan.xcdatamodeld */; };
 		E5E506A22DE969790075264B /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = E5E506A12DE969730075264B /* .gitignore */; };
+		E5E803A62E2CC5BA00B24125 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = E5E803A52E2CC5BA00B24125 /* Kingfisher */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -31,6 +42,7 @@
 		601A23C92DE42E8300ED0FE1 /* cherrydan.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = cherrydan.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		601A23DE2DE42E8500ED0FE1 /* cherrydanTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = cherrydanTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		601A23E82DE42E8500ED0FE1 /* cherrydanUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = cherrydanUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E5D64EFD2E1808BC0093EFD3 /* cherrydan.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = cherrydan.xcdatamodel; sourceTree = "<group>"; };
 		E5E506A12DE969730075264B /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -70,6 +82,16 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E56E16822E1024C1007932B4 /* GoogleSignInSwift in Frameworks */,
+				E56E15212E1005B0007932B4 /* FirebaseMessaging in Frameworks */,
+				E56E16802E1024C1007932B4 /* GoogleSignIn in Frameworks */,
+				E56E151F2E1005B0007932B4 /* FirebaseCore in Frameworks */,
+				E5E803A62E2CC5BA00B24125 /* Kingfisher in Frameworks */,
+				E56E167D2E10200C007932B4 /* NaverThirdPartyLogin in Frameworks */,
+				E56E152D2E101902007932B4 /* KakaoSDKUser in Frameworks */,
+				E56E151D2E1005B0007932B4 /* FirebaseAnalytics in Frameworks */,
+				E56E152B2E101902007932B4 /* KakaoSDKCommon in Frameworks */,
+				E56E15292E101902007932B4 /* KakaoSDKAuth in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -93,6 +115,7 @@
 		601A23C02DE42E8300ED0FE1 = {
 			isa = PBXGroup;
 			children = (
+				E5D64EFC2E1808BC0093EFD3 /* cherrydan.xcdatamodeld */,
 				E5E506A12DE969730075264B /* .gitignore */,
 				E59A2B412DF0286C00B7610C /* cherrydan */,
 				601A23E12DE42E8500ED0FE1 /* cherrydanTests */,
@@ -131,6 +154,16 @@
 			);
 			name = cherrydan;
 			packageProductDependencies = (
+				E56E151C2E1005B0007932B4 /* FirebaseAnalytics */,
+				E56E151E2E1005B0007932B4 /* FirebaseCore */,
+				E56E15202E1005B0007932B4 /* FirebaseMessaging */,
+				E56E15282E101902007932B4 /* KakaoSDKAuth */,
+				E56E152A2E101902007932B4 /* KakaoSDKCommon */,
+				E56E152C2E101902007932B4 /* KakaoSDKUser */,
+				E56E167C2E10200C007932B4 /* NaverThirdPartyLogin */,
+				E56E167F2E1024C1007932B4 /* GoogleSignIn */,
+				E56E16812E1024C1007932B4 /* GoogleSignInSwift */,
+				E5E803A52E2CC5BA00B24125 /* Kingfisher */,
 			);
 			productName = cherrydan;
 			productReference = 601A23C92DE42E8300ED0FE1 /* cherrydan.app */;
@@ -214,6 +247,13 @@
 			);
 			mainGroup = 601A23C02DE42E8300ED0FE1;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				E56E151B2E1005B0007932B4 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				E56E15272E101902007932B4 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */,
+				E56E167B2E10200C007932B4 /* XCRemoteSwiftPackageReference "naveridlogin-sdk-ios" */,
+				E56E167E2E1024C1007932B4 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				E5E803A42E2CC5BA00B24125 /* XCRemoteSwiftPackageReference "Kingfisher" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 601A23CA2DE42E8300ED0FE1 /* Products */;
 			projectDirPath = "";
@@ -256,6 +296,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E5D64EFE2E1808BC0093EFD3 /* cherrydan.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -413,23 +454,26 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = cherrydan/cherrydan.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = H856SYKNM8;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = cherrydan/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "체리단";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.teamSquid.cherrydan;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -443,23 +487,26 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = cherrydan/cherrydan.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = H856SYKNM8;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = cherrydan/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "체리단";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.teamSquid.cherrydan;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -580,6 +627,115 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		E56E151B2E1005B0007932B4 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.15.0;
+			};
+		};
+		E56E15272E101902007932B4 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kakao/kakao-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.24.4;
+			};
+		};
+		E56E167B2E10200C007932B4 /* XCRemoteSwiftPackageReference "naveridlogin-sdk-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/naver/naveridlogin-sdk-ios";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+		E56E167E2E1024C1007932B4 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.0.0;
+			};
+		};
+		E5E803A42E2CC5BA00B24125 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.5.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		E56E151C2E1005B0007932B4 /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E56E151B2E1005B0007932B4 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+		E56E151E2E1005B0007932B4 /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E56E151B2E1005B0007932B4 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		E56E15202E1005B0007932B4 /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E56E151B2E1005B0007932B4 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
+		};
+		E56E15282E101902007932B4 /* KakaoSDKAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E56E15272E101902007932B4 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */;
+			productName = KakaoSDKAuth;
+		};
+		E56E152A2E101902007932B4 /* KakaoSDKCommon */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E56E15272E101902007932B4 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */;
+			productName = KakaoSDKCommon;
+		};
+		E56E152C2E101902007932B4 /* KakaoSDKUser */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E56E15272E101902007932B4 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */;
+			productName = KakaoSDKUser;
+		};
+		E56E167C2E10200C007932B4 /* NaverThirdPartyLogin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E56E167B2E10200C007932B4 /* XCRemoteSwiftPackageReference "naveridlogin-sdk-ios" */;
+			productName = NaverThirdPartyLogin;
+		};
+		E56E167F2E1024C1007932B4 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E56E167E2E1024C1007932B4 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		E56E16812E1024C1007932B4 /* GoogleSignInSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E56E167E2E1024C1007932B4 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignInSwift;
+		};
+		E5E803A52E2CC5BA00B24125 /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E5E803A42E2CC5BA00B24125 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
+/* End XCSwiftPackageProductDependency section */
+
+/* Begin XCVersionGroup section */
+		E5D64EFC2E1808BC0093EFD3 /* cherrydan.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				E5D64EFD2E1808BC0093EFD3 /* cherrydan.xcdatamodel */,
+			);
+			currentVersion = E5D64EFD2E1808BC0093EFD3 /* cherrydan.xcdatamodel */;
+			path = cherrydan.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 601A23C12DE42E8300ED0FE1 /* Project object */;
 }
