@@ -26,6 +26,7 @@ class HomeViewModel: ObservableObject {
     
     private let campaignAPI: CampaignRepository
     private let noticeBoardAPI: NoticeBoardRepository
+    private let bookmarkAPI: BookmarkRepository
     
     var regionGroups: [RegionGroup] {
         if let selectedRegionGroup {
@@ -62,10 +63,12 @@ class HomeViewModel: ObservableObject {
     
     init(
         campaignAPI: CampaignRepository = CampaignRepository(),
-        noticeBoardAPI: NoticeBoardRepository = NoticeBoardRepository()
+        noticeBoardAPI: NoticeBoardRepository = NoticeBoardRepository(),
+        bookmarkAPI: BookmarkRepository = BookmarkRepository()
     ) {
         self.campaignAPI = campaignAPI
         self.noticeBoardAPI = noticeBoardAPI
+        self.bookmarkAPI = bookmarkAPI
         initializeFetch()
     }
     
@@ -264,7 +267,6 @@ class HomeViewModel: ObservableObject {
         return []
     }
     
-    @MainActor
     private func loadCampaignPlatforms() async {
         guard !isLoadingCampaignPlatforms else { return }
         
@@ -310,11 +312,35 @@ class HomeViewModel: ObservableObject {
     }
     
     /// 현재 카테고리와 선택된 태그에 따른 캠페인 플랫폼 반환
-    private func getCampaignPlatformsForCurrentCategory() -> [CampaignPlatformType] {
+    private func getCampaignPlatformsForCurrentCategory() -> [CampaignPlatform] {
         guard selectedCategory == .campaignPlatform else { return [] }
         
         return selectedTags.compactMap { tag in
-            CampaignPlatformType.from(displayName: tag)
+            campaignPlatforms.first(where: {$0.siteNameKr == tag})
+        }
+    }
+    
+    // MARK: - 북마크 관련 메서드
+    
+    /// 북마크 토글 (추가/취소)
+    func toggleBookmark(for campaign: Campaign) {
+        Task {
+            do {
+                if campaign.isBookmarked {
+                    try await bookmarkAPI.cancelBookmark(campaignId: campaign.id)
+                    if let index = campaigns.firstIndex(where: { $0.id == campaign.id }) {
+                        campaigns[index].isBookmarked = false
+                    }
+                } else {
+                    try await bookmarkAPI.addBookmark(campaignId: campaign.id)
+                    if let index = campaigns.firstIndex(where: { $0.id == campaign.id }) {
+                        campaigns[index].isBookmarked = true
+                    }
+                }
+            } catch {
+                print("북마크 토글 오류: \(error)")
+                errorMessage = "북마크 처리 중 오류가 발생했습니다."
+            }
         }
     }
 }

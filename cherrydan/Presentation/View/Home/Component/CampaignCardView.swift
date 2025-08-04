@@ -3,6 +3,7 @@ import Kingfisher
 
 struct CampaignCardView: View {
     let campaign: Campaign
+    let onToggle: () -> Void
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -14,7 +15,7 @@ struct CampaignCardView: View {
     
     private var thumbnail: some View {
         GeometryReader { geometry in
-            ZStack(alignment: .topLeading) {
+            ZStack {
                 KFImage(URL(string: campaign.imageUrl))
                     .resizable()
                     .placeholder {
@@ -33,7 +34,7 @@ struct CampaignCardView: View {
                     .cornerRadius(4)
                     .clipped()
                 
-                Text(campaign.campaignSite.rawValue)
+                Text(campaign.campaignSite.siteNameKr)
                     .font(.m6r)
                     .foregroundStyle(.pBlue)
                     .padding(.horizontal, 12)
@@ -47,6 +48,14 @@ struct CampaignCardView: View {
                             topTrailingRadius: 0
                         )
                     )
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                
+                Button(action: {
+                    onToggle()
+                }) {
+                    Image("like\(campaign.isBookmarked ? "_filled" : "")")
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+                }
             }
         }
         .frame(maxWidth: .infinity)

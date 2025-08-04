@@ -86,7 +86,7 @@ struct MyCampaignRow: View {
                         }
                         
                         HStack(spacing: 4) {
-                            AsyncImage(url: URL(string: myCampaign.campaignPlatformImageUrl)) { image in
+                            AsyncImage(url: URL(string: myCampaign.campaignSite.cdnUrl)) { image in
                                 image
                                     .resizable()
                                     .aspectRatio(1, contentMode: .fill)
@@ -97,7 +97,7 @@ struct MyCampaignRow: View {
                             .frame(width: 16, height: 16)
                             .cornerRadius(4)
                             
-                            Text(myCampaign.campaignSite.rawValue)
+                            Text(myCampaign.campaignSite.siteNameKr)
                                 .font(.m5r)
                                 .foregroundStyle(.gray9)
                         }
