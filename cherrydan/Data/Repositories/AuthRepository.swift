@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 
 class AuthRepository {
     private let networkAPI: NetworkAPI
@@ -9,10 +10,14 @@ class AuthRepository {
     
     func socialLogin(_ provider: String,_ token: String, userInfo: UserInfo?) async throws -> SocialLoginResponse {
         let fcmToken = KeychainManager.shared.getFcmToken()
-        var params: [String: Any] = [
+        let deviceModel = await UIDevice.current.model
+        var params: [String: String] = [
             "accessToken": token,
-            "fcmToken": fcmToken,
-            "deviceType": "iOS"
+            "fcmToken": fcmToken ?? "",
+            "deviceType": "iOS",
+            "deviceModel": deviceModel,
+            "osVersion": "\(ProcessInfo.processInfo.operatingSystemVersionString)",
+            "appVersion": "\(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0")"
         ]
         
         // 사용자 정보가 있는 경우 추가
