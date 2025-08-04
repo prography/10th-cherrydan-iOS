@@ -8,9 +8,8 @@ struct MyCampaign: Identifiable, Equatable {
     let benefit: String
     let detailUrl: String
     let imageUrl: String
-    let campaignPlatformImageUrl: String
     let applicantCount: Int
     let recruitCount: Int
+    let campaignSite: CampaignPlatform
     let snsPlatforms: [SocialPlatformType]
-    let campaignSite: CampaignPlatformType
 } 

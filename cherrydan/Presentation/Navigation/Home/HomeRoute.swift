@@ -4,13 +4,13 @@ enum HomeRoute: BaseRoute {
     case home
     case search
     case notification
-    case campaignWeb(campaignSite: CampaignPlatformType, campaignSiteUrl: String)
+    case campaignWeb(siteNameKr: String, campaignSiteUrl: String)
     case selectRegion(viewModel: HomeViewModel)
     
     var id: String {
         switch self {
-        case .campaignWeb(let campaignSite, _):
-            "campaignWeb_\(campaignSite.rawValue)"
+        case .campaignWeb(let siteNameKr, _):
+            "campaignWeb_\(siteNameKr)"
         default:
             String(describing: self)
         }

@@ -157,11 +157,13 @@ struct HomeView: View {
             ForEach(Array(zip(viewModel.campaigns.indices, viewModel.campaigns)), id: \.1.id) { index, campaign in
                 Button(action:{
                     router.push(to: .campaignWeb(
-                        campaignSite: campaign.campaignSite,
+                        siteNameKr: campaign.campaignSite.siteNameKr,
                         campaignSiteUrl: campaign.detailUrl
                     ))
                 }){
-                    CampaignCardView(campaign: campaign)
+                    CampaignCardView(campaign: campaign) {
+                        viewModel.toggleBookmark(for: campaign)
+                    }
                 }
                 .onAppear {
                     if index == viewModel.campaigns.count - 10 && viewModel.hasMorePages && !viewModel.isLoadingMore {

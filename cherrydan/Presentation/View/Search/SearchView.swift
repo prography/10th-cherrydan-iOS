@@ -139,11 +139,13 @@ struct SearchView: View {
                 ForEach(Array(zip(viewModel.searchResults.indices, viewModel.searchResults)), id: \.1.id) { index, campaign in
                     Button(action:{
                         router.push(to: .campaignWeb(
-                            campaignSite: campaign.campaignSite,
+                            siteNameKr: campaign.campaignSite.siteNameKr,
                             campaignSiteUrl: campaign.detailUrl
                         ))
                     }){
-                        CampaignCardView(campaign: campaign)
+                        CampaignCardView(campaign: campaign) {
+                            viewModel.toggleBookmark(for: campaign)
+                        }
                     }
                     .onAppear {
                         if index == viewModel.searchResults.count - 10 && viewModel.hasMorePages && !viewModel.isLoading {

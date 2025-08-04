@@ -5,14 +5,14 @@ enum CategoryRoute: BaseRoute {
     case search
     case notification
     case categoryDetail(regionGroup: RegionGroup?, subRegion: SubRegion?)
-    case campaignWeb(campaignSite: CampaignPlatformType, campaignSiteUrl: String)
+    case campaignWeb(siteNameKr: String, campaignSiteUrl: String)
     
     var id: String {
         switch self {
         case .categoryDetail(let regionGroup, let subRegion):
             "categoryDetail_\(regionGroup?.displayName ?? subRegion?.displayName ?? "error")"
-        case .campaignWeb(let campaignSite, _):
-            "campaignWeb_\(campaignSite.rawValue)"
+        case .campaignWeb(let siteNameKr, _):
+            "campaignWeb_\(siteNameKr)"
         default:
             String(describing: self)
         }

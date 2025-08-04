@@ -100,7 +100,7 @@ class CampaignRepository {
     
     /// - Note: HomeView 내부 `캠페인 플랫폼` 탭에서 호출합니다.
     func getCampaignByCampaignPlatform(
-        _ campaignPlatform: [CampaignPlatformType] = [],
+        _ campaignPlatform: [CampaignPlatform] = [],
         sort: SortType = .popular,
         page: Int = 0
     ) async throws -> PageableResponse<CampaignDTO> {
@@ -110,7 +110,7 @@ class CampaignRepository {
         ]
         
         if !campaignPlatform.isEmpty {
-            query["platform"] = campaignPlatform.map { $0.imageName }.joined(separator: ",")
+            query["platform"] = campaignPlatform.map { $0.siteNameEn }.joined(separator: ",")
         } else {
             query["platform"] = "all"
         }
@@ -155,7 +155,7 @@ class CampaignRepository {
         local: [LocalCategory] = [],
         product: [ProductCategory] = [],
         snsPlatform: [SocialPlatformType] = [],
-        campaignPlatform: [CampaignPlatformType] = [],
+        campaignPlatform: [CampaignPlatform] = [],
         sort: SortType = .popular,
         page: Int = 0,
         focusedCategory: CampaignType? = nil,
@@ -204,7 +204,7 @@ class CampaignRepository {
             }
         case .campaignPlatform:
             if !campaignPlatform.isEmpty {
-                queryParameters["campaignPlatform"] = campaignPlatform.map { $0.imageName }.joined(separator: ",")
+                queryParameters["campaignPlatform"] = campaignPlatform.map { $0.siteNameEn }.joined(separator: ",")
             } else {
                 queryParameters["campaignPlatform"] = "all"
             }
@@ -225,7 +225,7 @@ class CampaignRepository {
                 queryParameters["snsPlatform"] = "all"
             }
             if !campaignPlatform.isEmpty {
-                queryParameters["campaignPlatform"] = campaignPlatform.map { $0.imageName }.joined(separator: ",")
+                queryParameters["campaignPlatform"] = campaignPlatform.map { $0.siteNameEn }.joined(separator: ",")
             } else {
                 queryParameters["campaignPlatform"] = "all"
             }

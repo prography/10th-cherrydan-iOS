@@ -3,14 +3,14 @@ import WebKit
 
 struct CampaignWebView: View {
     @Environment(\.dismiss) var dismiss
-    let campaignSite: CampaignPlatformType
-    let campaignSiteUrl: String
     @EnvironmentObject private var router: HomeRouter
+    let siteNameKr: String
+    let campaignSiteUrl: String
     
     var body: some View {
         CDScreen(horizontalPadding: 0) {
             HStack(alignment: .center) {
-                Text(campaignSite.rawValue)
+                Text(siteNameKr)
                     .font(.t3)
                     .foregroundStyle(.gray9)
                 
@@ -33,6 +33,6 @@ struct CampaignWebView: View {
 }
 
 #Preview {
-    CampaignWebView(campaignSite: .revu, campaignSiteUrl: "https://example.com")
+    CampaignWebView(siteNameKr: "레뷰", campaignSiteUrl: "https://example.com")
         .environmentObject(HomeRouter())
 } 
