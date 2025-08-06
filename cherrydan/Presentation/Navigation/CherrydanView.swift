@@ -2,6 +2,7 @@ import SwiftUI
 import FirebaseAnalytics
 
 struct CherrydanView: View {
+    @StateObject private var viewModel = CherrydanViewModel()
     @StateObject private var authManager = AuthManager.shared
     @StateObject private var popupManager = PopupManager.shared
     
@@ -11,12 +12,26 @@ struct CherrydanView: View {
     @StateObject private var myCampaignRouter = MyCampaignRouter()
     @StateObject private var myPageRouter = MyPageRouter()
     
-    @StateObject private var viewModel = CherrydanViewModel()
     @State private var selectedTab = 0
     
     var body: some View {
-        Group {
-            if authManager.isLoggedIn {
+        VStack {
+            if viewModel.isInitializing {
+                ZStack {
+                    Color.gray0
+                    
+                    VStack(spacing: 16) {
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle(tint: .primary))
+                            .scaleEffect(1.2)
+                        
+                        Text("체리단을 준비하고 있어요")
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundColor(.gray700)
+                    }
+                }
+                .ignoresSafeArea()
+            } else if authManager.isLoggedIn {
                 VStack(spacing: 0) {
                     switch(selectedTab) {
                     case 0:

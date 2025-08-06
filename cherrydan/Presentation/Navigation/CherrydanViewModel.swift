@@ -3,7 +3,7 @@ import SwiftUI
 
 @MainActor
 class CherrydanViewModel: ObservableObject {
-    @Published var isLoading: Bool = true
+    @Published var isInitializing = true
     
     private let myPageRepository: MyPageRepository
     
@@ -13,12 +13,10 @@ class CherrydanViewModel: ObservableObject {
     
     init(myPageRepository: MyPageRepository =  MyPageRepository()) {
         self.myPageRepository = myPageRepository
-        checkAppVersion()
+        initialize()
     }
     
-    func checkAppVersion() {
-        isLoading = true
-        
+    private func initialize() {
         Task {
             do {
                 let response = try await myPageRepository.getVersion()
@@ -26,11 +24,29 @@ class CherrydanViewModel: ObservableObject {
                     newVersion: response.latestVersion,
                     minVersion: response.minSupportedVersion
                 )
-                isLoading = false
+                
+                await handleAuthState()
             } catch {
-                print(error)
-                isLoading = false
+                print("Failed to get version info: \(error)")
             }
+            
+            isInitializing = false
+        }
+    }
+    
+    private func handleAuthState() async {
+        if let refreshToken = KeychainManager.shared.getRefreshToken(), !refreshToken.isEmpty {
+            do {
+                let refreshResult = try await NetworkAPI().refreshToken()
+                print("리프레시 토큰 존재 & 재발급 완료하여 자동 로그인")
+                AuthManager.shared.login(refreshResult.accessToken, refreshResult.refreshToken)
+            } catch {
+                print("리프레시 토큰 존재 & 재발급 실패하여 자동 로그아웃")
+                AuthManager.shared.logout()
+            }
+        } else {
+            print("리프레시 토큰 존재하지 않아 자동 로그아웃")
+            AuthManager.shared.logout()
         }
     }
     

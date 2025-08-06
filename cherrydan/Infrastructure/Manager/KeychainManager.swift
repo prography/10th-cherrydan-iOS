@@ -72,6 +72,24 @@ final class KeychainManager {
         }
     }
     
+    func saveTokens(_ accessToken: String, _ refreshToken: String) {
+        do {
+            try save(token: accessToken, forKey: KeychainKeys.accessToken)
+            try save(token: refreshToken, forKey: KeychainKeys.refreshToken)
+        } catch {
+            print("Save tokens Error in KeychainManager")
+        }
+    }
+    
+    func clearTokens() {
+        do {
+            try delete(forKey: KeychainKeys.accessToken)
+            try delete(forKey: KeychainKeys.refreshToken)
+        } catch{
+            print("clear tokens Error in KeychainManager")
+        }
+    }
+    
     func clearToken() {
         do {
             try delete(forKey: KeychainKeys.accessToken)
