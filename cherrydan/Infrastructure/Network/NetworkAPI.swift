@@ -4,13 +4,25 @@ class NetworkAPI {
     private let session = URLSession.shared
     
     func refreshToken() async throws -> LoginResult {
-        let response: APIResponse<LoginResult> = try await request(AuthEndpoint.refresh)
+        guard let refreshToken = KeychainManager.shared.getRefreshToken() else {
+            throw APIError.unauthorized
+        }
         
-        KeychainManager.shared.saveTokens(response.result.accessToken, response.result.refreshToken)
-        
-        return response.result
+        do {
+            let params: [String: Any] = ["refreshToken": refreshToken]
+            let response: APIResponse<LoginResult> = try await self.request(AuthEndpoint.refresh, parameters: params)
+            KeychainManager.shared.saveTokens(response.result.accessToken, response.result.refreshToken)
+            
+            return response.result
+        } catch let error as APIError {
+            if case .unauthorized = error {
+                DispatchQueue.main.async {
+                    AuthManager.shared.logout()
+                }
+            }
+            throw error
+        }
     }
-
     
     func request<T: Decodable>(
         _ endpoint: APIEndpoint,
