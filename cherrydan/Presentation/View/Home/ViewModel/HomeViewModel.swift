@@ -205,7 +205,6 @@ class HomeViewModel: ObservableObject {
         initializeFetch()
     }
     
-    /// 지역 변경
     func selectRegion(_ regionGroup: RegionGroup? = nil, _ subRegion: SubRegion? = nil) {
         selectedRegionGroup = nil
         selectedSubRegion = nil
@@ -283,7 +282,6 @@ class HomeViewModel: ObservableObject {
     }
     
     // MARK: - Private Helper Methods
-    
     /// 현재 카테고리와 선택된 태그에 따른 지역 카테고리 반환
     private func getLocalCategoriesForCurrentCategory() -> [LocalCategory] {
         guard selectedCategory == .region else { return [] }

@@ -18,17 +18,12 @@ struct CherrydanView: View {
         VStack {
             if viewModel.isInitializing {
                 ZStack {
-                    Color.gray0
+                    Color.pBeige
                     
-                    VStack(spacing: 16) {
-                        ProgressView()
-                            .progressViewStyle(CircularProgressViewStyle(tint: .primary))
-                            .scaleEffect(1.2)
-                        
-                        Text("체리단을 준비하고 있어요")
-                            .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(.gray700)
-                    }
+                    Image("logo_img")
+                    
+                    ProgressView()
+                        .offset(y: 96)
                 }
                 .ignoresSafeArea()
             } else if authManager.isLoggedIn {

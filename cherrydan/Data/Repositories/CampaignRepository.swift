@@ -132,7 +132,6 @@ class CampaignRepository {
         }
     }
     
-    
     /// - Note: SearchView 내부 `검색 단계`에서 호출합니다.
     func searchCampaign(_ keyword: String) async throws -> [CampaignDTO] {
         let query = ["keyword": keyword]
