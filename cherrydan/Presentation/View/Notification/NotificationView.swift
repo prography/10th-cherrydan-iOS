@@ -7,7 +7,7 @@ struct NotificationView: View {
     @State private var keywordNum = 2
     
     var body: some View {
-        CDScreen(horizontalPadding: 0) {
+        CDScreen(horizontalPadding: 0, isLoading: viewModel.isLoading) {
             CDBackHeaderWithTitle(title:"알림"){
                 Button(action: {
                     isDeleteMode.toggle()
@@ -35,56 +35,97 @@ struct NotificationView: View {
             ScrollView(.vertical, showsIndicators: false) {
                 LazyVStack(spacing: 12) {
                     if viewModel.selectedTab == .activity {
-                        if viewModel.isLoading {
-                            loadingView
-                        } else if viewModel.activityNotifications.isEmpty {
-                            emptyView
-                        } else {
-                            ForEach(viewModel.activityNotifications) { notification in
-                                NotificationRow(
-                                    notification: notification,
-                                    isSelected: selectedAll,
-                                    onSelect: {
-                                        
-                                    }
-                                )
-                                Divider().background(Color.gray2)
-                            }
-                            
-                            if viewModel.hasNextPage && !viewModel.isLoading {
-                                loadMoreButton
-                            }
-                        }
+                        activityListSection
                     } else {
-                        if viewModel.isLoading {
-                            loadingView
-                        } else if viewModel.activityNotifications.isEmpty {
-                            emptyView
-                        } else {
-//                            ForEach(viewModel.keywordNotifications) { notification in
-//                                NotificationRow(
-//                                    notification: notification,
-//                                    isSelected: selectedAll,
-//                                    onSelect: {
-//                                        
-//                                    }
-//                                )
-//                                Divider().background(Color.gray2)
-//                            }
-                            
-                            if viewModel.hasNextPage && !viewModel.isLoading {
-                                loadMoreButton
-                            }
-                        }
-                        
+                        keywordListSection
                     }
                 }
                 .padding(.horizontal, 12)
                 .padding(.top, 4)
             }
+            .overlay {
+                if viewModel.isLoadingMore {
+                    loadingMoreIndicator
+                }
+            }
             .refreshable {
                 await viewModel.refreshNotifications()
             }
+        }
+    }
+    
+    @ViewBuilder
+    private var activityListSection: some View {
+        if viewModel.activityNotifications.isEmpty && !viewModel.isLoading {
+            VStack(spacing: 16) {
+                Image(systemName: "bell.slash")
+                    .font(.system(size: 40))
+                    .foregroundColor(.gray4)
+                
+                Text("새로운 알림이 없습니다")
+                    .font(.m4r)
+                    .foregroundColor(.gray5)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .padding(.top, 100)
+        } else {
+            ForEach(Array(zip(viewModel.activityNotifications.indices, viewModel.activityNotifications)), id: \.1.id) { index, notification in
+                NotificationRow(
+                    notification: notification,
+                    isSelected: selectedAll,
+                    onSelect: {
+                        
+                    }
+                )
+                .onAppear {
+                    // 마지막 10개 아이템이 나타날 때 다음 페이지 로드
+                    if index == viewModel.activityNotifications.count - 10 && viewModel.hasNextPage && !viewModel.isLoadingMore {
+                        viewModel.loadNextPage()
+                    }
+                }
+                Divider().background(Color.gray2)
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private var keywordListSection: some View {
+        if viewModel.isLoading && viewModel.keywordNotifications.isEmpty {
+            loadingView
+        } else if viewModel.keywordNotifications.isEmpty {
+            emptyView
+        } else {
+            ForEach(Array(zip(viewModel.keywordNotifications.indices, viewModel.keywordNotifications)), id: \.1.id) { index, notification in
+                NotificationRow(
+                    notification: notification,
+                    isSelected: selectedAll,
+                    onSelect: {
+                        
+                    }
+                )
+                .onAppear {
+                    // 마지막 10개 아이템이 나타날 때 다음 페이지 로드
+                    if index == viewModel.keywordNotifications.count - 10 && viewModel.hasNextPage && !viewModel.isLoadingMore {
+                        viewModel.loadNextPage()
+                    }
+                }
+                Divider().background(Color.gray2)
+            }
+        }
+    }
+    
+    private var loadingMoreIndicator: some View {
+        VStack {
+            Spacer()
+            HStack {
+                Spacer()
+                ProgressView()
+                    .progressViewStyle(CircularProgressViewStyle())
+                    .scaleEffect(0.8)
+                Spacer()
+            }
+            .frame(height: 60)
+            .background(Color.clear)
         }
     }
     
@@ -100,52 +141,18 @@ struct NotificationView: View {
         .padding(.top, 100)
     }
     
-    private func errorView(_ message: String) -> some View {
-        VStack(spacing: 16) {
-            Image(systemName: "exclamationmark.triangle")
-                .font(.system(size: 40))
-                .foregroundColor(.gray4)
-            
-            Text(message)
-                .font(.m4r)
-                .foregroundColor(.gray5)
-                .multilineTextAlignment(.center)
-            
-            Button("다시 시도") {
-                Task {
-                    await viewModel.refreshNotifications()
-                }
-            }
-            .font(.m4b)
-            .foregroundColor(.mPink3)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding(.top, 100)
-    }
-    
     private var emptyView: some View {
         VStack(spacing: 16) {
             Image(systemName: "bell.slash")
                 .font(.system(size: 40))
                 .foregroundColor(.gray4)
             
-            Text("새로운 알림이 없습니다")
+            Text("키워드 알림이 없습니다")
                 .font(.m4r)
                 .foregroundColor(.gray5)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(.top, 100)
-    }
-    
-    private var loadMoreButton: some View {
-        Button("더 보기") {
-            Task {
-                await viewModel.loadMoreNotifications()
-            }
-        }
-        .font(.m4r)
-        .foregroundColor(.mPink3)
-        .padding(.vertical, 16)
     }
     
     private var tabSection: some View {
@@ -153,7 +160,7 @@ struct NotificationView: View {
             ForEach(NotificationType.allCases, id: \.self) { tab in
                 let isSelected = viewModel.selectedTab == tab
                 Button(action: {
-                    viewModel.selectedTab = tab
+                    viewModel.selectTab(tab)
                 }) {
                     VStack(spacing: 8){
                         Text(tab.title)

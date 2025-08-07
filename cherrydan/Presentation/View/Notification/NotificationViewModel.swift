@@ -9,6 +9,7 @@ class NotificationViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
     @Published var hasNextPage: Bool = false
+    @Published var isLoadingMore: Bool = false
     
     private let notificationRepository: NotificationRepository
     private var currentPage: Int = 0
@@ -29,18 +30,41 @@ class NotificationViewModel: ObservableObject {
         }
     }
     
-    func loadMoreNotifications() async {
-        await loadActivityNotifications(refresh: false)
+    /// 인피니트 스크롤을 위한 다음 페이지 로드
+    func loadNextPage() {
+        guard hasNextPage && !isLoadingMore else { return }
+        
+        isLoadingMore = true
+        
+        Task {
+            if selectedTab == .activity {
+                await loadActivityNotifications(refresh: false)
+            } else {
+                await loadKeywordNotifications(refresh: false)
+            }
+            isLoadingMore = false
+        }
+    }
+    
+    /// 탭 변경 시 호출되는 메서드
+    func selectTab(_ tab: NotificationType) {
+        selectedTab = tab
+        currentPage = 0
+        hasNextPage = false
+        isLoadingMore = false
+        
+        Task {
+            await loadNotifications()
+        }
     }
     
     private func loadActivityNotifications(refresh: Bool = true) async {
         if refresh {
             currentPage = 0
+            isLoading = true
         }
         
-        
         do {
-            isLoading = true
             let response = try await notificationRepository.getActivityNotifications(
                 page: currentPage,
                 size: pageSize
@@ -56,6 +80,7 @@ class NotificationViewModel: ObservableObject {
             currentPage = response.result.page + 1
         } catch {
             print("NotificationViewModel Error: \(error)")
+            errorMessage = "알림을 불러오는 중 오류가 발생했습니다."
         }
         
         isLoading = false
@@ -64,11 +89,10 @@ class NotificationViewModel: ObservableObject {
     private func loadKeywordNotifications(refresh: Bool = true) async {
         if refresh {
             currentPage = 0
+            isLoading = true
         }
         
-        
         do {
-            isLoading = true
             let response = try await notificationRepository.getKeywordNotifications(
                 page: currentPage,
                 size: pageSize
@@ -84,6 +108,7 @@ class NotificationViewModel: ObservableObject {
             currentPage = response.result.page + 1
         } catch {
             print("NotificationViewModel Error: \(error)")
+            errorMessage = "알림을 불러오는 중 오류가 발생했습니다."
         }
         isLoading = false
     }
@@ -103,6 +128,10 @@ class NotificationViewModel: ObservableObject {
 //    }
     
     func refreshNotifications() async {
-        await loadActivityNotifications(refresh: true)
+        if selectedTab == .activity {
+            await loadActivityNotifications(refresh: true)
+        } else {
+            await loadKeywordNotifications(refresh: true)
+        }
     }
 }
