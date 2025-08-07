@@ -14,7 +14,7 @@ struct CategoryDetailView: View {
     
     var body: some View {
         ZStack {
-            CDScreen(horizontalPadding: 0) {
+            CDScreen(horizontalPadding: 0, isLoading: viewModel.isLoading) {
                 CDBackHeaderWithTitle(title: headerTitle){
                     Button(action: {router.push(to: .search)}) {
                         Image("search_bg")
@@ -49,11 +49,6 @@ struct CategoryDetailView: View {
                     .padding(.bottom, 120)
                 }
                 
-                if viewModel.isLoading {
-                    ProgressView()
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .background(Color.black.opacity(0.2))
-                }
             }
         }
         .sheet(isPresented: $isFilterPresent) {

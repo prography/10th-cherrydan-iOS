@@ -220,20 +220,21 @@ class HomeViewModel: ObservableObject {
         initializeFetch()
     }
     
-    /// 태그 선택/해제
+    /// 태그 선택/해제 (단일 선택)
     func toggleTag(_ tag: String) {
         if tag == "전체" {
             selectedTags = ["전체"]
         } else {
+            // 전체 태그가 선택되어 있으면 제거
             selectedTags.remove("전체")
             
+            // 현재 선택된 태그와 동일한 태그를 클릭한 경우
             if selectedTags.contains(tag) {
-                selectedTags.remove(tag)
-                if selectedTags.isEmpty {
-                    selectedTags.insert("전체")
-                }
+                // 선택 해제하고 전체로 설정
+                selectedTags = ["전체"]
             } else {
-                selectedTags.insert(tag)
+                // 다른 태그를 선택한 경우, 기존 선택을 모두 제거하고 새로운 태그만 선택
+                selectedTags = [tag]
             }
         }
         

@@ -110,7 +110,7 @@ struct CampaignCardView: View {
     }
     
     private var platformStatus: some View {
-        HStack(spacing: 8) {
+        VStack(alignment: .leading, spacing: 4) {
             ForEach(Array(campaign.snsPlatforms.prefix(2)), id: \.self) { sns in
                 HStack(spacing: 4) {
                     Image(sns.imageName)
