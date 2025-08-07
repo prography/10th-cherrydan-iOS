@@ -32,7 +32,11 @@ struct CherrydanView: View {
                     case 0:
                         HomeNavigationStack(selectedTab: $selectedTab)
                             .environmentObject(homeRouter)
+                    
                     case 1:
+                        MyCampaignNavigationStack(selectedTab: $selectedTab)
+                            .environmentObject(myCampaignRouter)
+                    case 2:
                         MyPageNavigationStack(selectedTab: $selectedTab)
                             .environmentObject(myPageRouter)
                     default:
