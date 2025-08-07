@@ -14,7 +14,7 @@ struct MyCampaignView: View {
     
     var body: some View {
         CDScreen(horizontalPadding: 0) {
-            CDHeaderWithRightContent(title: "내 찜"){
+            CDHeaderWithRightContent(title: "내 체험단"){
                 Image("trash")
             }
             .padding(.horizontal, 16)
@@ -24,9 +24,8 @@ struct MyCampaignView: View {
             
             ScrollView {
                 VStack(spacing: 16) {
-//                    campaignListSection
+                    campaignListSection
                 }
-                .padding(.horizontal, 16)
                 .padding(.top, 16)
                 .padding(.bottom, 120)
             }
@@ -34,33 +33,6 @@ struct MyCampaignView: View {
             Spacer()
         }
     }
-    
-//    private var campaignGridSection: some View {
-//        LazyVGrid(columns: [
-//            GridItem(.flexible(), spacing: 8),
-//            GridItem(.flexible(), spacing: 8)
-//        ], spacing: 32) {
-//            ForEach(Array(zip(viewModel.campaigns.indices, viewModel.campaigns)), id: \.1.id) { index, campaign in
-//                Button(action:{
-//                    router.push(to: .campaignWeb(
-//                        siteNameKr: campaign.campaignSite.siteNameKr,
-//                        campaignSiteUrl: campaign.detailUrl
-//                    ))
-//                }){
-//                    CampaignCardView(campaign: campaign) {
-//                        viewModel.toggleBookmark(for: campaign)
-//                    }
-//                }
-//                .onAppear {
-//                    if index == viewModel.campaigns.count - 10 && viewModel.hasMorePages && !viewModel.isLoadingMore {
-//                        viewModel.loadNextPage()
-//                    }
-//                }
-//            }
-//        }
-//        .padding(.top, 16)
-//        .padding(.horizontal, 16)
-//    }
     
 //    private var tabSection: some View {
 //        VStack(spacing: 0) {
@@ -78,28 +50,30 @@ struct MyCampaignView: View {
     private var campaignListSection: some View {
         VStack(spacing: 16) {
             Divider()
+                .padding(.horizontal, 16)
             
-//            ForEach(MyCampaign.dummy.prefix(2), id: \.id) { campaign in
-//                MyCampaignRow(
-//                    myCampaign: campaign,
-//                    leftButtonTitle: campaign.statusLabel == "선정됨" ? "공고 확인" : nil,
-//                    rightButtonTitle: campaign.statusLabel == "선정됨" ? "방문 완료" : 
-//                                     campaign.statusLabel == "완료" ? "결과 확인" : "신청 취소",
-//                    isRightButtonPrimary: campaign.statusLabel == "완료",
-//                    isChecked: campaign.statusLabel == "완료",
-//                    onLeftButtonTap: {
-//                        // 왼쪽 버튼 액션
-//                    },
-//                    onRightButtonTap: {
-//                        // 오른쪽 버튼 액션
-//                    }
-//                )
-//                
-//                Divider()
-//            }
+            ForEach(viewModel.likedCampaigns, id: \.id) { campaign in
+                MyCampaignRow(
+                    myCampaign: campaign
+                )
+                
+                Divider()
+            }
+            .padding(.horizontal, 16)
+            closedSection
         }
     }
     
+    private var closedSection: some View {
+        HStack{
+            Text("신청 마감된 공고")
+                .frame(maxWidth: .infinity ,alignment: .leading)
+            Image("chevron_right")
+        }
+        .padding(.horizontal, 16)
+        .frame(height: 80, alignment: .center)
+        .background(.gray1)
+    }
 //    private func tabItem(_ index: Int) -> some View {
 //        Button(action: {
 //            selectedTab = index

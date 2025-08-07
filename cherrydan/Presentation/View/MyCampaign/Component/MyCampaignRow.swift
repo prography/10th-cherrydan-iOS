@@ -2,35 +2,35 @@ import SwiftUI
 
 struct MyCampaignRow: View {
     let myCampaign: MyCampaign
-    let leftButtonTitle: String?
-    let rightButtonTitle: String
-    let isRightButtonPrimary: Bool
-    let isChecked: Bool
-    let onLeftButtonTap: (() -> Void)?
-    let onRightButtonTap: (() -> Void)?
+//    let leftButtonTitle: String?
+//    let rightButtonTitle: String
+//    let isRightButtonPrimary: Bool
+//    let isChecked: Bool
+//    let onLeftButtonTap: (() -> Void)?
+//    let onRightButtonTap: (() -> Void)?
     
     init(
         myCampaign: MyCampaign,
-        leftButtonTitle: String? = nil,
-        rightButtonTitle: String,
-        isRightButtonPrimary: Bool = false,
-        isChecked: Bool = false,
-        onLeftButtonTap: (() -> Void)? = nil,
-        onRightButtonTap: (() -> Void)? = nil
+//        leftButtonTitle: String? = nil,
+//        rightButtonTitle: String,
+//        isRightButtonPrimary: Bool = false,
+//        isChecked: Bool = false,
+//        onLeftButtonTap: (() -> Void)? = nil,
+//        onRightButtonTap: (() -> Void)? = nil
     ) {
         self.myCampaign = myCampaign
-        self.leftButtonTitle = leftButtonTitle
-        self.rightButtonTitle = rightButtonTitle
-        self.isRightButtonPrimary = isRightButtonPrimary
-        self.isChecked = isChecked
-        self.onLeftButtonTap = onLeftButtonTap
-        self.onRightButtonTap = onRightButtonTap
+//        self.leftButtonTitle = leftButtonTitle
+//        self.rightButtonTitle = rightButtonTitle
+//        self.isRightButtonPrimary = isRightButtonPrimary
+//        self.isChecked = isChecked
+//        self.onLeftButtonTap = onLeftButtonTap
+//        self.onRightButtonTap = onRightButtonTap
     }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .top, spacing: 4) {
-                Image("check_circle\(isChecked ? "_filled" : "_empty")")
+//                Image("check_circle\(isChecked ? "_filled" : "_empty")")
                 
                 AsyncImage(url: URL(string: myCampaign.campaignImageUrl)) { image in
                     image
@@ -108,19 +108,19 @@ struct MyCampaignRow: View {
             }
             
             
-            HStack(spacing: 8) {
-                Spacer()
-                
-                if let leftButtonTitle {
-                    mainButton(leftButtonTitle, isMinor: true){
-                        onLeftButtonTap?()
-                    }
-                }
-                
-                mainButton(rightButtonTitle){
-                    onRightButtonTap?()
-                }
-            }
+//            HStack(spacing: 8) {
+//                Spacer()
+//                
+//                if let leftButtonTitle {
+//                    mainButton(leftButtonTitle, isMinor: true){
+//                        onLeftButtonTap?()
+//                    }
+//                }
+//                
+//                mainButton(rightButtonTitle){
+//                    onRightButtonTap?()
+//                }
+//            }
         }
         .background(.white)
     }
