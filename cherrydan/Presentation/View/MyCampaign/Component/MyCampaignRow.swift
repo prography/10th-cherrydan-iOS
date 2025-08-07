@@ -32,7 +32,7 @@ struct MyCampaignRow: View {
             HStack(alignment: .top, spacing: 4) {
                 Image("check_circle\(isChecked ? "_filled" : "_empty")")
                 
-                AsyncImage(url: URL(string: myCampaign.imageUrl)) { image in
+                AsyncImage(url: URL(string: myCampaign.campaignImageUrl)) { image in
                     image
                         .resizable()
                         .aspectRatio(contentMode: .fill)
@@ -48,12 +48,12 @@ struct MyCampaignRow: View {
                 .padding(.trailing, 8)
                 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text(myCampaign.statusLabel)
+                    Text(myCampaign.reviewerAnnouncementStatus)
                         .font(.m5b)
                         .foregroundStyle(.mPink3)
                     
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(myCampaign.title)
+                        Text(myCampaign.campaignTitle)
                             .font(.m5b)
                             .foregroundStyle(.gray9)
                             .lineLimit(2)
@@ -86,7 +86,7 @@ struct MyCampaignRow: View {
                         }
                         
                         HStack(spacing: 4) {
-                            AsyncImage(url: URL(string: myCampaign.campaignSite.cdnUrl)) { image in
+                            AsyncImage(url: URL(string: myCampaign.campaignPlatformImageUrl)) { image in
                                 image
                                     .resizable()
                                     .aspectRatio(1, contentMode: .fill)
@@ -97,7 +97,7 @@ struct MyCampaignRow: View {
                             .frame(width: 16, height: 16)
                             .cornerRadius(4)
                             
-                            Text(myCampaign.campaignSite.siteNameKr)
+                            Text(myCampaign.campaignSite)
                                 .font(.m5r)
                                 .foregroundStyle(.gray9)
                         }

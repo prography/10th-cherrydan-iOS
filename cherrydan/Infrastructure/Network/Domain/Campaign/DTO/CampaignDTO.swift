@@ -11,8 +11,9 @@ struct CampaignDTO: Codable {
     let campaignPlatformImageUrl: String?
     let campaignType: String?
     let competitionRate: Double?
-    let campaignSiteNameKr: String?
-    let campaignSiteNameEn: String?
+    let campaignSite: String? // 추후 fade-out 예정 -> campaignSiteKr과 동일
+    let campaignSiteKr: String?
+    let campaignSiteEn: String?
     let campaignSiteUrl: String?
     let snsPlatforms: [String]
     
@@ -30,8 +31,8 @@ struct CampaignDTO: Codable {
             campaignType: CampaignType(rawValue: campaignType ?? "REGION") ?? .product,
             competitionRate: competitionRate ?? 0.0,
             campaignSite: CampaignPlatform(
-                siteNameKr: campaignSiteNameKr ?? "레뷰",
-                siteNameEn: campaignSiteNameEn ?? "revu",
+                siteNameKr: campaignSiteKr ?? "레뷰",
+                siteNameEn: campaignSiteEn ?? "revu",
                 cdnUrl: campaignSiteUrl ?? ""
             ),
             snsPlatforms: snsPlatforms.compactMap { SocialPlatformType.from(displayName: $0) }
