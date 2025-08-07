@@ -38,6 +38,8 @@ struct MyCampaignNavigationStack: View {
                 CDBottomTab(selectedTab: $selectedTab)
             }
         case .categoryDetail: EmptyView()
+        case .campaignWeb(let siteNameKr, let campaignSiteUrl):
+            CampaignWebView(siteNameKr: siteNameKr, campaignSiteUrl: campaignSiteUrl)
         }
     }
 }

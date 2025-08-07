@@ -1,9 +1,11 @@
 import SwiftUI
 
 struct MyCampaignView: View {
-//    @State private var selectedTab = 1 // 신청 탭이 기본 선택
-    @State private var isEditPresent = false
+    @EnvironmentObject private var router: MyCampaignRouter
     @StateObject private var viewModel = MyCampaignViewModel()
+//    @State private var selectedTab = 1 // 신청 탭이 기본 선택
+    
+    
     private let tabData = [
         ("찜한 공고", 2),
 //        ("신청", 3),
@@ -25,11 +27,7 @@ struct MyCampaignView: View {
                 .padding(16)
             
             if !viewModel.isShowingClosedCampaigns {
-                if viewModel.likedCampaigns.isEmpty {
-                    openSectionPlaceholder
-                } else {
-                    openSection
-                }
+                openSection
             } else {
                 closedCampaignListSection
                     .transition(.move(edge: .trailing))
@@ -44,31 +42,38 @@ struct MyCampaignView: View {
                 .font(.m4r)
                 .foregroundStyle(.gray5)
                 .padding(.vertical, 120)
+                .frame(maxWidth: .infinity, alignment: .center)
         }
     }
     
     private var openSection: some View {
         ScrollView(.vertical, showsIndicators: false) {
-            LazyVStack(spacing: 20) {
-                ForEach(viewModel.likedCampaigns, id: \.id) { campaign in
-                    MyCampaignRow(
-                        myCampaign: campaign,
-                        buttonConfigs: [
-                            ButtonConfig(
-                                text: "공고 보기",
-                                type: .smallGray,
-                                onClick: {
-                                    print("공고 보기: \(campaign.campaignTitle)")
-                                }
-                            )
-                        ]
-                    )
-                    
-                    Divider()
+            if viewModel.likedCampaigns.isEmpty {
+                openSectionPlaceholder
+            } else {
+                LazyVStack(spacing: 20) {
+                    ForEach(viewModel.likedCampaigns, id: \.id) { campaign in
+                        MyCampaignRow(
+                            myCampaign: campaign,
+                            buttonConfigs: [
+                                ButtonConfig(
+                                    text: "공고 보기",
+                                    type: .smallGray,
+                                    onClick: {
+                                        router.push(to: .campaignWeb(
+                                            siteNameKr: campaign.campaignSite,
+                                            campaignSiteUrl: campaign.campaignDetailUrl
+                                        ))
+                                    }
+                                )
+                            ]
+                        )
+                        
+                        Divider()
+                    }
                 }
+                .padding(.horizontal, 16)
             }
-            .padding(.horizontal, 16)
-            
             closedSectionButton
         }
         .transition(.move(edge: .leading))
@@ -117,13 +122,10 @@ struct MyCampaignView: View {
     }
     
     private var closedSectionPlaceholder: some View {
-        VStack(spacing: 12) {
             Text("마감된 공고가 없습니다")
                 .font(.m4r)
                 .foregroundStyle(.gray5)
-                .padding(.vertical, 120)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
     }
     
     private var closedSection: some View {
@@ -137,7 +139,10 @@ struct MyCampaignView: View {
                                 text: "공고 확인하기",
                                 type: .smallWhite,
                                 onClick: {
-                                    print("공고 확인하기: \(campaign.campaignTitle)")
+                                    router.push(to: .campaignWeb(
+                                        siteNameKr: campaign.campaignSite,
+                                        campaignSiteUrl: campaign.campaignDetailUrl
+                                    ))
                                 }
                             )
                         ]

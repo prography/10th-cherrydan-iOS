@@ -16,6 +16,8 @@ class MyCampaignViewModel: ObservableObject {
     @Published var hasMorePages: Bool = true
     @Published var isLoadingMore: Bool = false
     
+    @Published var isShowingClosedCampaigns: Bool = false
+        
     private let bookmarkRepository: BookmarkRepository
     
     init(bookmarkRepository: BookmarkRepository = BookmarkRepository()) {
