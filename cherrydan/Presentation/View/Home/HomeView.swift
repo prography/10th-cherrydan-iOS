@@ -9,7 +9,17 @@ struct HomeView: View {
     
     var body: some View {
         CDScreen(horizontalPadding: 0) {
-            CDHeaderWithLeftContent(onSearchClick: {
+            CDHeaderWithLeftContent(
+                onNotificationClick: {
+                    if AuthManager.shared.isGuestMode {
+                        PopupManager.shared.show(.loginNeeded(onClick: {
+                            AuthManager.shared.leaveGuestMode()
+                        }))
+                    } else {
+                        router.push(to: .notification)
+                    }
+                },
+                onSearchClick: {
                 if AuthManager.shared.isGuestMode {
                     PopupManager.shared.show(.loginNeeded(onClick: {
                         AuthManager.shared.leaveGuestMode()

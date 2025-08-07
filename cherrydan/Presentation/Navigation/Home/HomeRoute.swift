@@ -6,11 +6,15 @@ enum HomeRoute: BaseRoute {
     case notification
     case campaignWeb(siteNameKr: String, campaignSiteUrl: String)
     case selectRegion(viewModel: HomeViewModel)
+    case keywordSettings
+    case keywordAlertDetail(keyword: String)
     
     var id: String {
         switch self {
         case .campaignWeb(let siteNameKr, _):
             "campaignWeb_\(siteNameKr)"
+        case .keywordAlertDetail(let keyword):
+            "keywordAlertDetail_\(keyword)"
         default:
             String(describing: self)
         }
@@ -28,6 +32,10 @@ enum HomeRoute: BaseRoute {
             "campaign_web_screen"
         case .selectRegion:
             "select_region_screen"
+        case .keywordSettings:
+            "keyword_settings_screen"
+        case .keywordAlertDetail:
+            "keyword_alert_detail_screen"
         }
     }
     

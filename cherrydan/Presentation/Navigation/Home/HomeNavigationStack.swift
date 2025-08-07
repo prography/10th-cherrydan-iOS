@@ -42,6 +42,8 @@ struct HomeNavigationStack: View {
         case .selectRegion(let viewModel): SelectRegionView(viewModel: viewModel)
         case .campaignWeb(let siteNameKr, let campaignSiteUrl):
             CampaignWebView(siteNameKr: siteNameKr, campaignSiteUrl: campaignSiteUrl)
+        case .keywordSettings: KeywordSettingsView()
+        case .keywordAlertDetail(let keyword): KeywordAlertDetailView(keyword: keyword)
         }
     }
 }

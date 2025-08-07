@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct NotificationView: View {
+    @EnvironmentObject var router: HomeRouter
     @StateObject var viewModel: NotificationViewModel = NotificationViewModel()
     @State private var selectedAll: Bool = false
     @State private var isDeleteMode: Bool = false
@@ -96,13 +97,17 @@ struct NotificationView: View {
             emptyView
         } else {
             ForEach(Array(zip(viewModel.keywordNotifications.indices, viewModel.keywordNotifications)), id: \.1.id) { index, notification in
-                NotificationRow(
-                    notification: notification,
-                    isSelected: selectedAll,
-                    onSelect: {
-                        
-                    }
-                )
+                Button(action: {
+                    router.push(to: .keywordAlertDetail(keyword: notification.keyword))
+                }) {
+                    KeywordNotificationRow(
+                        notification: notification,
+                        isSelected: selectedAll,
+                        onSelect: {
+                            
+                        }
+                    )
+                }
                 .onAppear {
                     // 마지막 10개 아이템이 나타날 때 다음 페이지 로드
                     if index == viewModel.keywordNotifications.count - 10 && viewModel.hasNextPage && !viewModel.isLoadingMore {
@@ -191,7 +196,7 @@ struct NotificationView: View {
             Spacer()
             
             Button(action: {
-                
+                router.push(to: .keywordSettings)
             }) {
                 HStack(spacing: 4) {
                     Image("edit")
@@ -258,4 +263,5 @@ private var customNotifications: [ActivityNotification] {
 
 #Preview {
     NotificationView()
+        .environmentObject(HomeRouter())
 }

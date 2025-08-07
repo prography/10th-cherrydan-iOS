@@ -1,4 +1,4 @@
-struct KeywordNotification: Codable {
+struct KeywordNotification: Identifiable, Codable, Equatable {
     let id: Int
     let keyword: String
     let isRead: Bool

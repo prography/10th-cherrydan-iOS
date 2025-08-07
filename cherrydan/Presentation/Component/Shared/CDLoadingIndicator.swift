@@ -10,12 +10,12 @@ struct CDLoadingIndicator: View {
     var body: some View {
         if isFullScreen {
             ProgressView()
-                .tint(.gray70)
+                .tint(.gray5)
                 .scaleEffect(1.2)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
         } else {
             ProgressView()
-                .tint(.gray70)
+                .tint(.gray5)
                 .scaleEffect(1.2)
         }
     }
