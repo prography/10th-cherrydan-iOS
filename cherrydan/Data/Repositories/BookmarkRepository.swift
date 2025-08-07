@@ -29,13 +29,13 @@ class BookmarkRepository {
     }
     
     /// 내 북마크 목록 조회
-    func getBookmarks(page: Int = 0, size: Int = 20) async throws -> BookmarkSplitResponseDTO {
+    func getBookmarks(page: Int = 0, size: Int = 20) async throws -> BookmarkListResponseDTO {
         let query = [
             "page": "\(page)",
             "size": "\(size)"
         ]
         
-        let response: APIResponse<BookmarkSplitResponseDTO> = try await networkAPI.request(
+        let response: APIResponse<BookmarkListResponseDTO> = try await networkAPI.request(
             BookmarkEndpoint.getBookmarks,
             queryParameters: query
         )

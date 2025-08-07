@@ -1,40 +1,31 @@
 struct MyCampaignDTO: Codable {
     let id: Int
     let campaignId: Int
-    let userId: Int
-    let reviewerAnnouncementStatus: String?
-    let statusLabel: String?
-    let title: String?
-    let benefit: String?
+    let campaignTitle: String?
+    let campaignDetailUrl: String?
+    let campaignImageUrl: String?
     let campaignPlatformImageUrl: String?
-    let detailUrl: String?
-    let imageUrl: String?
+    let benefit: String?
     let applicantCount: Int?
     let recruitCount: Int?
-    let campaignSiteNameKr: String?
-    let campaignSiteNameEn: String?
-    let campaignSiteUrl: String?
     let snsPlatforms: [String]
+    let reviewerAnnouncementStatus: String?
+    let campaignSite: String?
     
     func toMyCampaign() -> MyCampaign {
         MyCampaign(
             id: id,
             campaignId: campaignId,
-            userId: userId,
-            reviewerAnnouncementStatus: reviewerAnnouncementStatus ?? "",
-            statusLabel: statusLabel ?? "",
-            title: title ?? "",
+            campaignTitle: campaignTitle ?? "",
+            campaignDetailUrl: campaignDetailUrl ?? "",
+            campaignImageUrl: campaignImageUrl ?? "",
+            campaignPlatformImageUrl: campaignPlatformImageUrl ?? "",
             benefit: benefit ?? "",
-            detailUrl: detailUrl ?? "",
-            imageUrl: imageUrl ?? "",
-            applicantCount: applicantCount ?? 1,
-            recruitCount: recruitCount ?? 1,
-            campaignSite: CampaignPlatform(
-                siteNameKr: campaignSiteNameKr ?? "레뷰",
-                siteNameEn: campaignSiteNameEn ?? "revu",
-                cdnUrl: campaignSiteUrl ?? ""
-            ),
-            snsPlatforms: snsPlatforms.map { SocialPlatformType(rawValue: $0) ?? .instagram }
+            applicantCount: applicantCount ?? 0,
+            recruitCount: recruitCount ?? 0,
+            snsPlatforms: snsPlatforms.compactMap { SocialPlatformType.from(displayName: $0) },
+            reviewerAnnouncementStatus: reviewerAnnouncementStatus ?? "",
+            campaignSite: campaignSite ?? ""
         )
     }
 }
