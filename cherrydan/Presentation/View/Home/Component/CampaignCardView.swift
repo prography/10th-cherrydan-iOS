@@ -29,10 +29,23 @@ struct CampaignCardView: View {
                         print("Image loading failed: \(error)")
                     }
                     .aspectRatio(contentMode: .fill)
-                    
                     .frame(width: geometry.size.width, height: 168)
+                    .overlay(
+                        VStack {
+                            Spacer()
+                            LinearGradient(
+                                gradient: Gradient(colors: [
+                                    Color.gray9.opacity(0.0),
+                                    Color.gray9.opacity(0.7)
+                                ]),
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                            .frame(height: 44)
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+                    )
                     .cornerRadius(4)
-                    .clipped()
                 
                 Text(campaign.campaignSite.siteNameKr)
                     .font(.m6r)
