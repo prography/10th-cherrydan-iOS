@@ -2,48 +2,70 @@ import Foundation
 
 @MainActor
 class MyCampaignViewModel: ObservableObject {
-    @Published var appliedCampaigns: [MyCampaign] = []
-    @Published var selectedCampaigns: [MyCampaign] = []
-    @Published var nonSelectedCampaigns: [MyCampaign] = []
-    @Published var registeredCampaigns: [MyCampaign] = []
-    @Published var endedCampaigns: [MyCampaign] = []
+    @Published var likedCampaigns: [MyCampaign] = []
+    @Published var likedClosedCampaigns: [MyCampaign] = []
+//    @Published var appliedCampaigns: [MyCampaign] = []
+//    @Published var selectedCampaigns: [MyCampaign] = []
+//    @Published var nonSelectedCampaigns: [MyCampaign] = []
+//    @Published var registeredCampaigns: [MyCampaign] = []
+//    @Published var endedCampaigns: [MyCampaign] = []
     
     @Published var isLoading: Bool = false
     
-    private let campaignRepository: CampaignRepository
+    @Published var currentPage: Int = 0
+    @Published var hasMorePages: Bool = true
+    @Published var isLoadingMore: Bool = false
     
-    init(campaignRepository: CampaignRepository = CampaignRepository()) {
-        self.campaignRepository = campaignRepository
-        loadCampaigns()
+    private let bookmarkRepository: BookmarkRepository
+    
+    init(bookmarkRepository: BookmarkRepository = BookmarkRepository()) {
+        self.bookmarkRepository = bookmarkRepository
+        initializeFetch()
     }
     
-    func loadCampaigns() {
+    func initializeFetch()  {
         isLoading = true
+        currentPage = 0
+        likedCampaigns = []
+        likedClosedCampaigns = []
+        hasMorePages = true
         
         Task {
-//            do {
-//                let response = try await campaignRepository.getMyCampaignsByStatus()
-//                print(response)
-//                let campaigns = response.result
-//                appliedCampaigns = campaigns.apply.map { $0.toMyCampaign() }
-//                nonSelectedCampaigns = campaigns.nonSelected.map { $0.toMyCampaign() }
-//                registeredCampaigns = campaigns.registered.map { $0.toMyCampaign() }
-//                endedCampaigns = campaigns.ended.map { $0.toMyCampaign() }
-//                isLoading = false
-//            } catch {
-//                print("Error loading campaigns: \(error)")
-//                isLoading = false
-//            }
+            do {
+                let response: BookmarkListResponseDTO = try await bookmarkRepository.getBookmarks(
+                    page: currentPage
+                )
+                
+                likedCampaigns = response.open.content.map{ $0.toMyCampaign() }
+                
+                likedClosedCampaigns = response.closed.content.map{ $0.toMyCampaign() }
+            } catch {
+                print("Error fetching campaigns: \(error)")
+            }
+            isLoading = false
         }
     }
-//    
-//    func changeTab(to index: Int) {
-//        selectedTabIndex = index
-//        loadCampaigns()
-//    }
-//    
-//    func selectSortType(_ sortType: SortType) {
-//        selectedSortType = sortType
-//        loadCampaigns()
-//    }
+    
+    func loadNextPage() {
+        guard hasMorePages && !isLoadingMore else { return }
+        
+        isLoadingMore = true
+        currentPage += 1
+        
+        Task {
+            do {
+                let response: BookmarkListResponseDTO = try await bookmarkRepository.getBookmarks(
+                    page: currentPage
+                )
+                
+                likedCampaigns.append(contentsOf: response.open.content.map { $0.toMyCampaign() })
+            } catch {
+                print("Error loading next page: \(error)")
+                // 에러 발생 시 currentPage를 다시 원래대로 복원
+                currentPage -= 1
+            }
+            
+            isLoadingMore = false
+        }
+    }
 }
