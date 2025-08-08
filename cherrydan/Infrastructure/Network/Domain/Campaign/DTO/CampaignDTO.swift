@@ -35,7 +35,9 @@ struct CampaignDTO: Codable {
                 siteNameEn: campaignSiteEn ?? "revu",
                 cdnUrl: campaignSiteUrl ?? ""
             ),
-            snsPlatforms: snsPlatforms.compactMap { SocialPlatformType.from(displayName: $0) }
+            snsPlatforms: snsPlatforms.compactMap { snsPlatform in
+                SNSPlatformType.allCases.first(where:{ $0.displayName == snsPlatform})
+            },
         )
     }
 }
