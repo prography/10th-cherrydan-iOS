@@ -66,20 +66,4 @@ class SNSRepository {
         return response.code == 200
     }
     
-    // MARK: - SocialPlatformType 기반 편의 메서드들
-    
-    /// OAuth 인증 URL 생성 (SocialPlatformType 기반)
-    func getOAuthAuthUrl(for platformType: SocialPlatformType) async throws -> OAuthAuthUrlResponseDTO {
-        return try await getOAuthAuthUrl(platform: platformType.apiPlatformKey)
-    }
-    
-    /// OAuth 콜백 처리 (SocialPlatformType 기반)
-    func handleOAuthCallback(for platformType: SocialPlatformType, code: String, state: String? = nil) async throws -> OAuthCallbackResponseDTO {
-        return try await handleOAuthCallback(platform: platformType.apiPlatformKey, code: code, state: state)
-    }
-    
-    /// SNS 연동 해제 (SocialPlatformType 기반)
-    func disconnect(platformType: SocialPlatformType) async throws -> Bool {
-        return try await disconnect(platform: platformType.apiPlatformKey)
-    }
 } 

@@ -32,30 +32,4 @@ enum LocalCategory: String, CaseIterable, Codable {
         case .etc: return "기타"
         }
     }
-    
-    static func from(displayName: String) -> LocalCategory? {
-        switch displayName {
-        case "🍴맛집": return .restaurant
-        case "💄뷰티": return .beauty
-        case "⛺️숙박": return .accommodation
-        case "🕹문화": return .culture
-        case "🛵배달": return .delivery
-        case "🥡포장": return .takeout
-        case "기타": return .etc
-        default: return nil
-        }
-    }
-    
-    static func from(id: Int) -> LocalCategory {
-        switch id {
-        case 1: return .restaurant
-        case 2: return .beauty
-        case 3: return .accommodation
-        case 4: return .culture
-        case 5: return .delivery
-        case 6: return .takeout
-        case 99: return .etc
-        default: return .restaurant
-        }
-    }
 } 

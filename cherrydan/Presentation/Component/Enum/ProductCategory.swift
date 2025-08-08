@@ -44,38 +44,4 @@ enum ProductCategory: String, CaseIterable, Codable {
         case .etc: return "기타"
         }
     }
-    
-    static func from(displayName: String) -> ProductCategory? {
-        switch displayName {
-        case "🍎식품": return .food
-        case "🧺생활": return .living
-        case "📱디지털": return .digital
-        case "🧥뷰티/패션": return .beautyFashion
-        case "🐶반려동물": return .pet
-        case "🧸유아동": return .kids
-        case "📚도서": return .book
-        case "🍴맛집": return .restaurant
-        case "✈️여행": return .travel
-        case "🪐서비스": return .service
-        case "기타": return .etc
-        default: return nil
-        }
-    }
-    
-    static func from(id: Int) -> ProductCategory {
-        switch id {
-        case 1: return .food
-        case 2: return .living
-        case 3: return .digital
-        case 4: return .beautyFashion
-        case 5: return .pet
-        case 6: return .kids
-        case 7: return .book
-        case 8: return .restaurant
-        case 9: return .travel
-        case 10: return .service
-        case 99: return .etc
-        default: return .etc
-        }
-    }
 } 

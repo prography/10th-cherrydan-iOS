@@ -91,14 +91,6 @@ enum RegionGroup: String, CaseIterable, Codable {
         }
     }
     
-    static func from(displayName: String) -> RegionGroup? {
-        return RegionGroup.allCases.first { $0.displayName == displayName }
-    }
-    
-    static func from(id: Int) -> RegionGroup? {
-        return RegionGroup.allCases.first { $0.id == id }
-    }
-    
     static func regionGroup(for subRegion: SubRegion) -> RegionGroup? {
         return RegionGroup.allCases.first { $0.subRegions.contains(subRegion) }
     }
