@@ -18,7 +18,7 @@ class SearchViewModel: ObservableObject {
     @Published var selectedSubRegions: [SubRegion] = []
     @Published var selectedLocalCategories: [LocalCategory] = []
     @Published var selectedProductCategories: [ProductCategory] = []
-    @Published var selectedSnsPlatforms: [SocialPlatformType] = []
+    @Published var selectedSnsPlatforms: [SNSPlatformType] = []
     @Published var selectedCampaignPlatforms: [CampaignPlatform] = []
     @Published var selectedSortType: SortType = .popular
     
@@ -268,7 +268,7 @@ class SearchViewModel: ObservableObject {
         }
     }
     
-    func updateSnsPlatforms(_ snsPlatforms: [SocialPlatformType]) {
+    func updateSnsPlatforms(_ snsPlatforms: [SNSPlatformType]) {
         selectedSnsPlatforms = snsPlatforms
         if isSubmitted {
             refreshSearch()

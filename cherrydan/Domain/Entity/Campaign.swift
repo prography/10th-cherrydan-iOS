@@ -11,5 +11,5 @@ struct Campaign: Identifiable, Equatable {
     let campaignType: CampaignType  // 열거형 사용
     let competitionRate: Double
     let campaignSite: CampaignPlatform
-    let snsPlatforms: [SocialPlatformType]
+    let snsPlatforms: [SNSPlatformType]
 }

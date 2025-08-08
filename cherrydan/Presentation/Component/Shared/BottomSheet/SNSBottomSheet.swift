@@ -4,13 +4,13 @@ struct SNSBottomSheet: View {
     @Environment(\.dismiss) private var dismiss
     @State private var platformUrl: String = ""
     
-    let platformType: SocialPlatformType
+    let platformType: SNSPlatformType
     let onConnect: (String) -> Void
     
     var body: some View {
         CDBottomSheet(
-            type: .titleLeading(title: platformType.connectGuideTitle, buttonConfig: ButtonConfig(
-                text: platformType.connectButtonText,
+            type: .titleLeading(title: "\(platformType.displayName) 연결 가이드", buttonConfig: ButtonConfig(
+                text: "연결하기",
                 disabled: platformUrl.isEmpty,
                 onClick: {
                     onConnect(platformUrl)
@@ -37,7 +37,7 @@ struct SNSBottomSheet: View {
                 
                 // URL 입력 섹션
                 VStack(alignment: .leading, spacing: 8) {
-                    TextField(platformType.urlPlaceholder, text: $platformUrl)
+                    TextField("url을 입력해 주세요", text: $platformUrl)
                         .font(.m4r)
                         .foregroundStyle(.gray9)
                         .padding(.horizontal, 16)

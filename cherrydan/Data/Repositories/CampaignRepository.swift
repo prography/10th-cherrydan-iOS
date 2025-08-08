@@ -79,7 +79,7 @@ class CampaignRepository {
     
     /// - Note: HomeView 내부 `SNS 플랫폼` 탭에서 호출합니다.
     func getCampaignBySNSPlatform(
-        _ snsPlatform: [SocialPlatformType] = [],
+        _ snsPlatform: [SNSPlatformType] = [],
         sort: SortType = .popular,
         page: Int = 0
     ) async throws -> PageableResponse<CampaignDTO> {
@@ -153,7 +153,7 @@ class CampaignRepository {
         subRegions: [SubRegion] = [],
         local: [LocalCategory] = [],
         product: [ProductCategory] = [],
-        snsPlatform: [SocialPlatformType] = [],
+        snsPlatform: [SNSPlatformType] = [],
         campaignPlatform: [CampaignPlatform] = [],
         sort: SortType = .popular,
         page: Int = 0,
