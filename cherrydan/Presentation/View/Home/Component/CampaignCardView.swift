@@ -67,8 +67,9 @@ struct CampaignCardView: View {
                     onToggle()
                 }) {
                     Image("like\(campaign.isBookmarked ? "_filled" : "")")
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+                        .padding(4)
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
             }
         }
         .frame(maxWidth: .infinity)
