@@ -21,7 +21,7 @@ enum SNSPlatformType: CaseIterable, Codable {
         case .reels: "reels"
         case .thread: "thread"
         case .shorts: "shorts"
-        case .etc: "etc"
+        case .etc: ""
         }
     }
     
