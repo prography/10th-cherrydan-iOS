@@ -245,8 +245,8 @@ struct SearchFilterSideMenu: View {
                     viewModel.updateSnsPlatforms([])
                 }
                 
-                ForEach(SocialPlatformType.allCases, id: \.self) { platform in
-                    filterButton(platform.rawValue, isSelected: viewModel.selectedSnsPlatforms.contains(platform)) {
+                ForEach(SNSPlatformType.allCases, id: \.self) { platform in
+                    filterButton(platform.displayName, isSelected: viewModel.selectedSnsPlatforms.contains(platform)) {
                         toggleSelection(platform, in: viewModel.selectedSnsPlatforms) { newSelection in
                             viewModel.updateSnsPlatforms(newSelection)
                         }

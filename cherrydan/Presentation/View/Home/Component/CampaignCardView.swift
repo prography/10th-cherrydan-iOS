@@ -115,7 +115,7 @@ struct CampaignCardView: View {
                 HStack(spacing: 4) {
                     Image(sns.imageName)
                     
-                    Text(sns.rawValue)
+                    Text(sns.displayName)
                         .font(.m6r)
                         .foregroundStyle(.gray9)
                 }

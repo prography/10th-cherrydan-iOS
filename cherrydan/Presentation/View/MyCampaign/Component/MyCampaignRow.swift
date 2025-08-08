@@ -85,7 +85,7 @@ struct MyCampaignRow: View {
                 HStack(spacing: 4) {
                     Image(platform.imageName)
                     
-                    Text(platform.rawValue)
+                    Text(platform.displayName)
                         .font(.m5r)
                         .foregroundStyle(.gray9)
                 }
