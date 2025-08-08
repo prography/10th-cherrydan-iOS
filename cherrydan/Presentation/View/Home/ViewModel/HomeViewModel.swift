@@ -107,7 +107,11 @@ class HomeViewModel: ObservableObject {
                 sort: selectedSortType,
                 page: currentPage
             )
-            
+        case .reporter:
+            response = try await campaignAPI.getCampaignByReporter(
+                sort: selectedSortType,
+                page: currentPage
+            )
         case .product:
             response = try await campaignAPI.getCampaignByProduct(
                 getProductCategoriesForCurrentCategory(),
@@ -247,6 +251,8 @@ class HomeViewModel: ObservableObject {
             return []
         case .region:
             return [TagData(name: "전체")] + LocalCategory.allCases.map{ TagData(name: $0.displayName) }
+        case .reporter:
+            return []
         case .product:
             return [TagData(name: "전체")] + ProductCategory.allCases.map{ TagData(name: $0.displayName) }
         case .snsPlatform:

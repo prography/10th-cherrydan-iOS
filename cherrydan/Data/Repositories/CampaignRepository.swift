@@ -56,6 +56,25 @@ class CampaignRepository {
         return response.result
     }
     
+    func getCampaignByReporter(
+        sort: SortType = .popular,
+        page: Int = 0
+    ) async throws -> PageableResponse<CampaignDTO> {
+        do {
+            let query: [String: String] = [
+                "sort": sort.rawValue,
+                "page": "\(page)",
+            ]
+            
+            let response: APIResponse<PageableResponse<CampaignDTO>> = try await networkAPI.request(CampaignEndpoint.getCampaignByReporter, queryParameters: query)
+            return response.result
+        } catch {
+            print("CampaignRepository Error: \(error)")
+            throw error
+        }
+    }
+    
+    
     /// - Note: HomeView 내부 `제품` 탭에서 호출합니다.
     func getCampaignByProduct(
         _ product: [ProductCategory] = [],
