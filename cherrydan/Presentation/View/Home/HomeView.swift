@@ -148,6 +148,7 @@ struct HomeView: View {
                             print("Image loading failed: \(error)")
                         }
                         .frame(width: 16, height: 16)
+                        .padding(.trailing, 4)
                 }
                 
                 Text(tagData.name)
