@@ -246,25 +246,14 @@ class HomeViewModel: ObservableObject {
         case .all:
             return []
         case .region:
-            return [TagData(imgUrl: nil, name: "전체")] + LocalCategory.allCases.map{TagData(imgUrl: nil, name: $0.displayName)}
+            return [TagData(name: "전체")] + LocalCategory.allCases.map{ TagData(name: $0.displayName) }
         case .product:
-            return [TagData(imgUrl: nil, name: "전체")] + ProductCategory.allCases.map{TagData(imgUrl: nil, name: $0.displayName)}
+            return [TagData(name: "전체")] + ProductCategory.allCases.map{ TagData(name: $0.displayName) }
         case .snsPlatform:
-            return [TagData(imgUrl: nil, name: "전체")] + SocialPlatformType.allCases.map{TagData(imgUrl: nil, name: $0.rawValue)}
+            return [TagData(name: "전체")] + SNSPlatformType.allCases.map{ TagData(imgName: $0.imageName, name: $0.displayName) }
         case .campaignPlatform:
-            return getCampaignPlatformTabs()
+            return [TagData(name: "전체")] + campaignPlatforms.map { TagData(imgUrl: $0.cdnUrl, name: $0.siteNameKr) }
         }
-    }
-    
-    
-    func getCampaignPlatformTabs() -> [TagData] {
-        // 캐시된 데이터가 있으면 반환
-        if !campaignPlatforms.isEmpty {
-            return [TagData(imgUrl: nil, name: "전체")] + campaignPlatforms.map { TagData(imgUrl: $0.cdnUrl, name: $0.siteNameKr) }
-        }
-        
-        // 로딩 중이거나 캐시된 데이터가 없으면 빈 배열 반환
-        return []
     }
     
     private func loadCampaignPlatforms() async {
@@ -288,7 +277,7 @@ class HomeViewModel: ObservableObject {
         guard selectedCategory == .region else { return [] }
         
         return selectedTags.compactMap { tag in
-            LocalCategory.from(displayName: tag)
+            LocalCategory.allCases.first(where: { $0.displayName == tag} )
         }
     }
     
@@ -297,16 +286,16 @@ class HomeViewModel: ObservableObject {
         guard selectedCategory == .product else { return [] }
         
         return selectedTags.compactMap { tag in
-            ProductCategory.from(displayName: tag)
+            ProductCategory.allCases.first(where: { $0.displayName == tag} )
         }
     }
     
     /// 현재 카테고리와 선택된 태그에 따른 SNS 플랫폼 반환
-    private func getSocialPlatformsForCurrentCategory() -> [SocialPlatformType] {
+    private func getSocialPlatformsForCurrentCategory() -> [SNSPlatformType] {
         guard selectedCategory == .snsPlatform else { return [] }
         
         return selectedTags.compactMap { tag in
-            SocialPlatformType.from(displayName: tag)
+            SNSPlatformType.allCases.first(where: { $0.displayName == tag} )
         }
     }
     

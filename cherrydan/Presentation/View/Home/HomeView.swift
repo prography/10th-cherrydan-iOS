@@ -138,14 +138,16 @@ struct HomeView: View {
         return Button(action: {
             viewModel.toggleTag(tagData.name)
         }) {
-            HStack {
-                if let img = tagData.imgUrl {
-                    KFImage(URL(string: img))
+            HStack(spacing: 2) {
+                if let imgName = tagData.imgName {
+                    Image(imgName)
+                } else if let imgUrl = tagData.imgUrl {
+                    KFImage(URL(string: imgUrl))
                         .resizable()
                         .onFailure { error in
                             print("Image loading failed: \(error)")
                         }
-                        .frame(width: 20, height: 20)
+                        .frame(width: 16, height: 16)
                 }
                 
                 Text(tagData.name)
