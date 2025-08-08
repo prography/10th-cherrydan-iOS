@@ -22,7 +22,7 @@ struct CDBottomTab: View {
                     let isFocused = selectedTab == index
                     
                     Button(action: {
-                        if AuthManager.shared.isGuestMode, index == 1 {
+                        if AuthManager.shared.isGuestMode, index != 0 {
                             PopupManager.shared.show(.loginNeeded(onClick: {
                                 AuthManager.shared.leaveGuestMode()
                             }))

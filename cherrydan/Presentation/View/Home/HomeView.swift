@@ -175,7 +175,13 @@ struct HomeView: View {
                     ))
                 }){
                     CampaignCardView(campaign: campaign) {
-                        viewModel.toggleBookmark(for: campaign)
+                        if AuthManager.shared.isGuestMode {
+                            PopupManager.shared.show(.loginNeeded(onClick: {
+                                AuthManager.shared.leaveGuestMode()
+                            }))
+                        } else {
+                            viewModel.toggleBookmark(for: campaign)
+                        }
                     }
                 }
                 .onAppear {
