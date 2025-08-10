@@ -4,6 +4,7 @@ import Kingfisher
 struct CampaignCardView: View {
     let campaign: Campaign
     let onToggle: () -> Void
+    @State private var didFailToLoadThumbnailImage: Bool = false
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -16,36 +17,50 @@ struct CampaignCardView: View {
     private var thumbnail: some View {
         GeometryReader { geometry in
             ZStack {
-                KFImage(URL(string: campaign.imageUrl))
-                    .resizable()
-                    .placeholder {
-                        RoundedRectangle(cornerRadius: 4)
-                            .fill(Color.gray.opacity(0.3))
-                            .overlay(
-                                ProgressView()
-                            )
+                Group {
+                    if didFailToLoadThumbnailImage || URL(string: campaign.imageUrl) == nil {
+                        Image("placeholder")
+                            .resizable()
+                    } else {
+                        KFImage(URL(string: campaign.imageUrl))
+                            .resizable()
+                            .placeholder {
+                                RoundedRectangle(cornerRadius: 4)
+                                    .fill(Color.gray.opacity(0.3))
+                                    .overlay(
+                                        ProgressView()
+                                    )
+                            }
+                            .onFailure { error in
+                                print("Image loading failed: \(error)")
+                                didFailToLoadThumbnailImage = true
+                            }
+                            .onSuccess { _ in
+                                didFailToLoadThumbnailImage = false
+                            }
                     }
-                    .onFailure { error in
-                        print("Image loading failed: \(error)")
+                }
+                .aspectRatio(contentMode: .fill)
+                .frame(width: geometry.size.width, height: 168)
+                .overlay(
+                    VStack {
+                        Spacer()
+                        LinearGradient(
+                            gradient: Gradient(colors: [
+                                Color.gray9.opacity(0.0),
+                                Color.gray9.opacity(0.7)
+                            ]),
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                        .frame(height: 44)
                     }
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: geometry.size.width, height: 168)
-                    .overlay(
-                        VStack {
-                            Spacer()
-                            LinearGradient(
-                                gradient: Gradient(colors: [
-                                    Color.gray9.opacity(0.0),
-                                    Color.gray9.opacity(0.7)
-                                ]),
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
-                            .frame(height: 44)
-                        }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
-                    )
-                    .cornerRadius(4)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+                )
+                .cornerRadius(4)
+                .onChange(of: campaign.imageUrl) { _, _ in
+                    didFailToLoadThumbnailImage = false
+                }
                 
                 Text(campaign.campaignSite.siteNameKr)
                     .font(.m6r)
