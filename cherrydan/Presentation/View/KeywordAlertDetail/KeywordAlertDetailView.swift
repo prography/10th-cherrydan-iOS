@@ -4,42 +4,30 @@ struct KeywordAlertDetailView: View {
     @EnvironmentObject var router: HomeRouter
     @StateObject private var viewModel: KeywordAlertDetailViewModel
     
-    init(keyword: String) {
+    init(keyword: KeywordNotification) {
         self._viewModel = StateObject(wrappedValue: KeywordAlertDetailViewModel(keyword: keyword))
     }
     
     var body: some View {
-        CDScreen(horizontalPadding: 0) {
-            CDBackHeaderWithTitle(title: "\(viewModel.keyword) 키워드 알림") {
-                // 뒤로가기 버튼
-            }
+        CDScreen(
+            horizontalPadding: 0,
+            isLoading: viewModel.isLoading || viewModel.isLoadingMore
+        ) {
+            CDBackHeaderWithTitle(title: "\(viewModel.keyword.keyword) 키워드 알림")
             .padding(.horizontal, 16)
             
-            if viewModel.isLoading && viewModel.campaigns.isEmpty {
-                loadingView
-            } else if viewModel.campaigns.isEmpty {
+            Text("총 \(viewModel.campaignCount)개")
+                .font(.m5r)
+                .foregroundStyle(.gray4)
+                .padding(.horizontal, 16)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            
+            if !viewModel.isLoading && viewModel.campaigns.isEmpty {
                 emptyView
             } else {
                 campaignGridSection
             }
         }
-        .overlay {
-            if viewModel.isLoadingMore {
-                loadingMoreIndicator
-            }
-        }
-    }
-    
-    private var loadingView: some View {
-        VStack(spacing: 16) {
-            ProgressView()
-                .scaleEffect(1.2)
-            Text("캠페인을 불러오는 중...")
-                .font(.m4r)
-                .foregroundColor(.gray5)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding(.top, 100)
     }
     
     private var emptyView: some View {
@@ -48,7 +36,7 @@ struct KeywordAlertDetailView: View {
                 .font(.system(size: 40))
                 .foregroundColor(.gray4)
             
-            Text("\(viewModel.keyword) 관련 캠페인이 없습니다")
+            Text("\(viewModel.keyword.keyword) 관련 캠페인이 없습니다")
                 .font(.m4r)
                 .foregroundColor(.gray5)
         }
@@ -70,7 +58,13 @@ struct KeywordAlertDetailView: View {
                         ))
                     }) {
                         CampaignCardView(campaign: campaign) {
-                            // 북마크 토글 로직 (필요시 구현)
+                            if AuthManager.shared.isGuestMode {
+                                PopupManager.shared.show(.loginNeeded(onClick: {
+                                    AuthManager.shared.leaveGuestMode()
+                                }))
+                            } else {
+                                viewModel.toggleBookmark(for: campaign)
+                            }
                         }
                     }
                     .onAppear {
@@ -85,24 +79,4 @@ struct KeywordAlertDetailView: View {
             .padding(.horizontal, 16)
         }
     }
-    
-    private var loadingMoreIndicator: some View {
-        VStack {
-            Spacer()
-            HStack {
-                Spacer()
-                ProgressView()
-                    .progressViewStyle(CircularProgressViewStyle())
-                    .scaleEffect(0.8)
-                Spacer()
-            }
-            .frame(height: 60)
-            .background(Color.clear)
-        }
-    }
 }
-
-#Preview {
-    KeywordAlertDetailView(keyword: "서초")
-        .environmentObject(HomeRouter())
-} 

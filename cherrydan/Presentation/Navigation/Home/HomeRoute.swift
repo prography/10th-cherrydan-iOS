@@ -7,7 +7,7 @@ enum HomeRoute: BaseRoute {
     case campaignWeb(siteNameKr: String, campaignSiteUrl: String)
     case selectRegion(viewModel: HomeViewModel)
     case keywordSettings
-    case keywordAlertDetail(keyword: String)
+    case keywordAlertDetail(keyword: KeywordNotification)
     
     var id: String {
         switch self {
