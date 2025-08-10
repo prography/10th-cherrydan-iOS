@@ -27,13 +27,6 @@ class NotificationViewModel: ObservableObject {
         self.keywordRepository = keywordRepository
         self.selectedTab = initialSelectedTab
         
-        #if DEBUG
-        // 더미 데이터 선반영 후 네트워크 새로고침으로 덮어쓰기
-        self.activityNotifications = ActivityNotification.dummy(count: 10)
-        self.hasNextPage = false
-        self.isLoading = false
-        #endif
-        
         loadNotifications()
     }
     

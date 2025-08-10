@@ -17,7 +17,7 @@ struct MyCampaignView: View {
     var body: some View {
         CDScreen(
             horizontalPadding: 0,
-            isLoading: viewModel.isLoadingMore && !viewModel.isShowingClosedCampaigns
+            isLoading: viewModel.isLoading || viewModel.isLoadingMore && !viewModel.isShowingClosedCampaigns
         ) {
             CDHeaderWithRightContent(title: "내 체험단"){}
                 .padding(.horizontal, 16)
