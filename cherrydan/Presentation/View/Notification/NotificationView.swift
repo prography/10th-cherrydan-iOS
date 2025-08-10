@@ -3,19 +3,38 @@ import SwiftUI
 struct NotificationView: View {
     @EnvironmentObject var router: HomeRouter
     @StateObject var viewModel: NotificationViewModel = NotificationViewModel()
-    @State private var selectedAll: Bool = false
     @State private var isDeleteMode: Bool = false
     
+    // 현재 탭의 항목이 모두 선택되었는지 여부
+    private var isAllSelected: Bool {
+        let ids = currentIds
+        guard !ids.isEmpty else { return false }
+        return Set(ids).isSubset(of: viewModel.selectedNotifications)
+    }
+    
+    private var currentIds: [Int] {
+        if viewModel.selectedTab == .activity {
+            return viewModel.activityNotifications.map { $0.id }
+        } else {
+            return viewModel.keywordNotifications.map { $0.id }
+        }
+    }
+    
+    private func toggleSelectAll() {
+        let ids = currentIds
+        guard !ids.isEmpty else { return }
+        
+        if isAllSelected {
+            viewModel.deselectAll(ids)
+        } else {
+            viewModel.selectAll(ids)
+        }
+    }
+    
     var body: some View {
-        CDScreen(horizontalPadding: 0, isLoading: viewModel.isLoading) {
-            CDBackHeaderWithTitle(title:"알림"){
-                Button(action: {
-                    isDeleteMode.toggle()
-                }) {
-                    Image("trash")
-                }
-            }
-            .padding(.horizontal, 16)
+        CDScreen(horizontalPadding: 0, isLoading: viewModel.isLoading || viewModel.isLoadingMore) {
+            CDBackHeaderWithTitle(title: "알림")
+                .padding(.horizontal, 16)
             
             tabSection
                 .padding(.horizontal, 16)
@@ -43,13 +62,11 @@ struct NotificationView: View {
                 .padding(.horizontal, 12)
                 .padding(.top, 4)
             }
-            .overlay {
-                if viewModel.isLoadingMore {
-                    loadingMoreIndicator
-                }
+            .onAppear {
+                viewModel.loadNotifications()
             }
             .refreshable {
-                await viewModel.refreshNotifications()
+                viewModel.loadNotifications()
             }
         }
     }
@@ -72,27 +89,25 @@ struct NotificationView: View {
             ForEach(Array(zip(viewModel.activityNotifications.indices, viewModel.activityNotifications)), id: \.1.id) { index, notification in
                 NotificationRow(
                     notification: notification,
-                    isSelected: selectedAll,
+                    isSelected: viewModel.isSelected(notification.id),
                     onSelect: {
-                        
+                        viewModel.toggleSelect(notification.id)
                     }
                 )
                 .onAppear {
-                    // 마지막 10개 아이템이 나타날 때 다음 페이지 로드
                     if index == viewModel.activityNotifications.count - 10 && viewModel.hasNextPage && !viewModel.isLoadingMore {
                         viewModel.loadNextPage()
                     }
                 }
-                Divider().background(Color.gray2)
+                
+                Divider()
             }
         }
     }
     
     @ViewBuilder
     private var keywordListSection: some View {
-        if viewModel.isLoading && viewModel.keywordNotifications.isEmpty {
-            loadingView
-        } else if viewModel.keywordNotifications.isEmpty {
+        if viewModel.keywordNotifications.isEmpty {
             emptyView
         } else {
             ForEach(Array(zip(viewModel.keywordNotifications.indices, viewModel.keywordNotifications)), id: \.1.id) { index, notification in
@@ -101,19 +116,18 @@ struct NotificationView: View {
                 }) {
                     KeywordNotificationRow(
                         notification: notification,
-                        isSelected: selectedAll,
+                        isSelected: viewModel.isSelected(notification.id),
                         onSelect: {
-                            
+                            viewModel.toggleSelect(notification.id)
                         }
                     )
                 }
                 .onAppear {
-                    // 마지막 10개 아이템이 나타날 때 다음 페이지 로드
                     if index == viewModel.keywordNotifications.count - 10 && viewModel.hasNextPage && !viewModel.isLoadingMore {
                         viewModel.loadNextPage()
                     }
                 }
-                Divider().background(Color.gray2)
+                Divider()
             }
         }
     }
@@ -131,18 +145,6 @@ struct NotificationView: View {
             .frame(height: 60)
             .background(Color.clear)
         }
-    }
-    
-    private var loadingView: some View {
-        VStack(spacing: 16) {
-            ProgressView()
-                .scaleEffect(1.2)
-            Text("알림을 불러오는 중...")
-                .font(.m4r)
-                .foregroundColor(.gray5)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding(.top, 100)
     }
     
     private var emptyView: some View {
@@ -188,7 +190,7 @@ struct NotificationView: View {
                 .resizable()
                 .frame(width: 20, height: 20)
             
-            Text("알림 받는 키워드 \(viewModel.keywordNotifications.count)개")
+            Text("알림 받는 키워드 \(viewModel.keywordCount)개")
                 .font(.m4r)
                 .foregroundColor(.gray9)
             
@@ -212,9 +214,9 @@ struct NotificationView: View {
     
     private var selectSection: some View {
         HStack(alignment: .center, spacing: 12) {
-            Button(action: { selectedAll.toggle() }) {
+            Button(action: { toggleSelectAll() }) {
                 HStack(spacing: 2){
-                    Image("check_circle_\(selectedAll ? "filled" : "empty")")
+                    Image("check_circle_\(isAllSelected ? "filled" : "empty")")
                     
                     Text("모두 선택")
                         .font(.m4r)
