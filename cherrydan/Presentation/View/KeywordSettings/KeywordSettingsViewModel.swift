@@ -32,20 +32,21 @@ class KeywordSettingsViewModel: ObservableObject {
     }
     
     /// 새 키워드 등록
-    func addKeyword() async {
+    func addKeyword() {
         guard !newKeyword.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
-        isLoading = true
-        
-        do {
-            try await keywordRepository.addUserKeyword(keyword: newKeyword.trimmingCharacters(in: .whitespacesAndNewlines))
-            newKeyword = ""
-            await loadUserKeywords() // 목록 새로고침
-        } catch {
-            print("KeywordSettingsViewModel Add Error: \(error)")
-            errorMessage = "키워드 등록 중 오류가 발생했습니다."
+        Task {
+            do {
+                isLoading = true
+                try await keywordRepository.addUserKeyword(keyword: newKeyword.trimmingCharacters(in: .whitespacesAndNewlines))
+                newKeyword = ""
+                await loadUserKeywords() // 목록 새로고침
+            } catch {
+                print("KeywordSettingsViewModel Add Error: \(error)")
+                errorMessage = "키워드 등록 중 오류가 발생했습니다."
+            }
+            
+            isLoading = false
         }
-        
-        isLoading = false
     }
     
     /// 키워드 삭제

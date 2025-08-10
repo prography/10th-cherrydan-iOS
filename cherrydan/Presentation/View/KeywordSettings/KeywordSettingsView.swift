@@ -7,7 +7,7 @@ struct KeywordSettingsView: View {
     
     var body: some View {
         CDScreen(horizontalPadding: 0) {
-            CDBackHeaderWithTitle(title: "키워드 알림 설정 (\(viewModel.userKeywords.count))/5)")
+            CDBackHeaderWithTitle(title: "키워드 알림 설정 (\(viewModel.userKeywords.count)/5)")
             .padding(.horizontal, 16)
             
             VStack(spacing: 24) {
@@ -27,32 +27,25 @@ struct KeywordSettingsView: View {
     }
     
     private var keywordInputSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(spacing: 12) {
-                TextField("검색어를 입력해 주세요.", text: $viewModel.newKeyword)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .focused($isKeywordFocused)
-                    .onSubmit {
-                        Task {
-                            await viewModel.addKeyword()
-                        }
-                    }
-                
-                Button(action: {
-                    Task {
-                        await viewModel.addKeyword()
-                    }
-                }) {
-                    Text("등록")
-                        .font(.m4r)
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
-                        .background(Color.gray5, in: RoundedRectangle(cornerRadius: 8))
+        HStack(spacing: 12) {
+            TextField("검색어를 입력해 주세요.", text: $viewModel.newKeyword)
+                .focused($isKeywordFocused)
+                .onSubmit {
+                    viewModel.addKeyword()
                 }
-                .disabled(viewModel.newKeyword.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            
+            Button(action: viewModel.addKeyword) {
+                Text("등록")
+                    .foregroundColor(.gray5)
+                    .padding(.horizontal, 12)
             }
         }
+        .font(.m5r)
+        .foregroundStyle(.gray4)
+        .padding(.leading, 12)
+        .frame(height: 48)
+        .background(.gray2, in: RoundedRectangle(cornerRadius: 8))
+        .disabled(viewModel.newKeyword.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
     }
     
     private var myKeywordsSection: some View {
