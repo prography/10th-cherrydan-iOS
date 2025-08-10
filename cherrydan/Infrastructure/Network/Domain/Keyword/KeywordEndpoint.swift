@@ -1,28 +1,28 @@
 enum KeywordEndpoint: APIEndpoint {
+    case markKeywordAlertsAsRead(alertIds: [Int])
     case getUserKeywords
     case addUserKeyword(keyword: String)
-    case deleteUserKeyword(keywordId: Int)
+    case getPersonalizedCampaignsByKeyword(keyword: String)
     case getKeywordAlerts
     case deleteKeywordAlerts(alertIds: [Int])
-    case markKeywordAlertsAsRead(alertIds: [Int])
-    case getPersonalizedCampaignsByKeyword(keyword: String)
+    case deleteUserKeyword(keywordId: Int)
     
     var path: String {
         switch self {
+        case .markKeywordAlertsAsRead:
+            "/keywords/alerts/read"
         case .getUserKeywords:
-            "/user/me/keywords"
+            "/keywords/me"
         case .addUserKeyword:
-            "/user/me/keywords"
-        case .deleteUserKeyword(let keywordId):
-            "/user/me/keywords/\(keywordId)"
+            "/keywords/me"
+        case .getPersonalizedCampaignsByKeyword:
+            "/keywords/campaigns/personalized"
         case .getKeywordAlerts:
             "/keywords/alerts"
         case .deleteKeywordAlerts:
             "/keywords/alerts"
-        case .markKeywordAlertsAsRead:
-            "/keywords/alerts/read"
-        case .getPersonalizedCampaignsByKeyword:
-            "/keywords/campaigns/personalized/keyword"
+        case .deleteUserKeyword(let keywordId):
+            "/keywords/me/\(keywordId)"
         }
     }
     
