@@ -6,7 +6,6 @@ import AuthenticationServices
 @MainActor
 class HomeViewModel: ObservableObject {
     @Published var isLoading: Bool = false
-    @Published var errorMessage: String? = nil
     @Published var campaigns: [Campaign] = []
     @Published var banners: [NoticeBoardBanner] = []
     @Published var selectedSortType: SortType = .popular
@@ -82,7 +81,7 @@ class HomeViewModel: ObservableObject {
                 banners = response.result.map{$0.toNoticeBoardBanner()}
             } catch {
                 print("Error fetching banners: \(error)")
-                errorMessage = "캠페인을 불러오는 중 오류가 발생했습니다."
+                ToastManager.shared.show(.errorWithMessage("캠페인을 불러오는 중 오류가 발생했습니다."))
             }
             
             isLoading = false
@@ -154,7 +153,7 @@ class HomeViewModel: ObservableObject {
                 campaigns = try await fetchCampaigns(for: selectedCategory)
             } catch {
                 print("Error fetching campaigns: \(error)")
-                errorMessage = "캠페인을 불러오는 중 오류가 발생했습니다."
+                ToastManager.shared.show(.errorWithMessage("캠페인을 불러오는 중 오류가 발생했습니다."))
             }
             
             isLoading = false
@@ -174,7 +173,7 @@ class HomeViewModel: ObservableObject {
                 campaigns.append(contentsOf: newCampaigns)
             } catch {
                 print("Error loading next page: \(error)")
-                errorMessage = "추가 캠페인을 불러오는 중 오류가 발생했습니다."
+                ToastManager.shared.show(.errorWithMessage("추가 캠페인을 불러오는 중 오류가 발생했습니다."))
                 // 에러 발생 시 currentPage를 다시 원래대로 복원
                 currentPage -= 1
             }
@@ -333,7 +332,7 @@ class HomeViewModel: ObservableObject {
                 }
             } catch {
                 print("북마크 토글 오류: \(error)")
-                errorMessage = "북마크 처리 중 오류가 발생했습니다."
+                ToastManager.shared.show(.errorWithMessage("북마크 처리 중 오류가 발생했습니다."))
             }
         }
     }

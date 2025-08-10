@@ -8,7 +8,6 @@ class ManageSNSViewModel: ObservableObject {
     @Published var tiktokConnected = false
     
     @Published var isLoading: Bool = false
-    @Published var errorMessage: String? = nil
     
     // 바텀시트 표시 상태
     @Published var showNaverBottomSheet = false
@@ -25,7 +24,6 @@ class ManageSNSViewModel: ObservableObject {
     /// 연결 상태 정보를 로드
     private func loadConnections() {
         isLoading = true
-        errorMessage = nil
         
         Task {
             do {
@@ -50,7 +48,7 @@ class ManageSNSViewModel: ObservableObject {
                 isLoading = false
             } catch {
                 print("SNS 연결 상태 로드 실패: \(error)")
-                errorMessage = "SNS 연결 상태를 불러오는 중 오류가 발생했습니다."
+                ToastManager.shared.show(.errorWithMessage("SNS 연결 상태를 불러오는 중 오류가 발생했습니다."))
                 isLoading = false
             }
         }
@@ -102,7 +100,6 @@ class ManageSNSViewModel: ObservableObject {
     /// 네이버 블로그 연결 처리
     func connectNaverBlog(blogUrl: String) {
         isLoading = true
-        errorMessage = nil
         
         Task {
             do {
@@ -112,13 +109,13 @@ class ManageSNSViewModel: ObservableObject {
                     naverBlogConnected = true
                     print("네이버 블로그 연결 성공: \(result.message ?? "")")
                 } else {
-                    errorMessage = result.message ?? "네이버 블로그 연결에 실패했습니다."
+                    ToastManager.shared.show(.errorWithMessage(result.message ?? "네이버 블로그 연결에 실패했습니다."))
                 }
                 
                 isLoading = false
             } catch {
                 print("네이버 블로그 연결 실패: \(error)")
-                errorMessage = "네이버 블로그 연결 중 오류가 발생했습니다."
+                ToastManager.shared.show(.errorWithMessage("네이버 블로그 연결 중 오류가 발생했습니다."))
                 isLoading = false
             }
         }

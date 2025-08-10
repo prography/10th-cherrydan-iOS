@@ -4,7 +4,6 @@ import Foundation
 class KeywordAlertDetailViewModel: ObservableObject {
     @Published var campaigns: [Campaign] = []
     @Published var isLoading: Bool = false
-    @Published var errorMessage: String?
     @Published var hasNextPage: Bool = false
     @Published var isLoadingMore: Bool = false
     
@@ -37,7 +36,7 @@ class KeywordAlertDetailViewModel: ObservableObject {
             currentPage = response.result.page + 1
         } catch {
             print("KeywordAlertDetailViewModel Error: \(error)")
-            errorMessage = "캠페인을 불러오는 중 오류가 발생했습니다."
+            ToastManager.shared.show(.errorWithMessage("캠페인을 불러오는 중 오류가 발생했습니다."))
         }
         
         isLoading = false
@@ -62,7 +61,7 @@ class KeywordAlertDetailViewModel: ObservableObject {
                 currentPage = response.result.page + 1
             } catch {
                 print("KeywordAlertDetailViewModel LoadMore Error: \(error)")
-                errorMessage = "추가 캠페인을 불러오는 중 오류가 발생했습니다."
+                ToastManager.shared.show(.errorWithMessage("추가 캠페인을 불러오는 중 오류가 발생했습니다."))
             }
             
             isLoadingMore = false

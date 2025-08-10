@@ -129,7 +129,7 @@ struct OnboardingView: View {
                             await viewModel.performAppleLogin(authorization)
                         }
                     case .failure(let error):
-                        viewModel.errorMessage = "애플 로그인 실패: \(error.localizedDescription)"
+                        ToastManager.shared.show(.errorWithMessage("애플 로그인 실패: \(error.localizedDescription)"))
                     }
                 }
             )

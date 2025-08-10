@@ -8,7 +8,6 @@ import GoogleSignIn
 @MainActor
 class OnboardingViewModel: NSObject, ObservableObject {
     @Published var isLoading: Bool = false
-    @Published var errorMessage: String? = nil
     @Published var recentLoggedInPlatform: LoginPlatform?
     
     let instance = NaverThirdPartyLoginConnection.getSharedInstance()
@@ -45,7 +44,6 @@ class OnboardingViewModel: NSObject, ObservableObject {
     
     func performKakaoLogin() async {
         isLoading = true
-        errorMessage = nil
         
         UserApi.shared.loginWithKakaoAccount { [weak self] (oauthToken, error) in
             guard let self = self else { return }
@@ -53,13 +51,13 @@ class OnboardingViewModel: NSObject, ObservableObject {
             if let error = error {
                 print("Kakao login error: \(error)")
                 Task { @MainActor in
-                    self.errorMessage = "카카오 로그인 중 오류가 발생했습니다: \(error.localizedDescription)"
+                    ToastManager.shared.show(.errorWithMessage("카카오 로그인 중 오류가 발생했습니다: \(error.localizedDescription)"))
                     self.isLoading = false
                 }
             } else {
                 Task { @MainActor in
                     guard let oauthToken = oauthToken else {
-                        self.errorMessage = "카카오 토큰을 가져올 수 없습니다."
+                        ToastManager.shared.show(.errorWithMessage("카카오 토큰을 가져올 수 없습니다."))
                         self.isLoading = false
                         return
                     }
@@ -140,12 +138,11 @@ class OnboardingViewModel: NSObject, ObservableObject {
     
     func performAppleLogin(_ result: ASAuthorization) async {
         isLoading = true
-        errorMessage = nil
         
         guard let appleIDCredential = result.credential as? ASAuthorizationAppleIDCredential,
               let identityTokenData = appleIDCredential.identityToken,
               let idToken = String(data: identityTokenData, encoding: .utf8) else {
-            errorMessage = "애플 로그인 인증 정보를 가져올 수 없습니다."
+            ToastManager.shared.show(.errorWithMessage("애플 로그인 인증 정보를 가져올 수 없습니다."))
             isLoading = false
             return
         }
@@ -185,7 +182,7 @@ class OnboardingViewModel: NSObject, ObservableObject {
                     print("[\(platform.title)] 사용자 정보 수집 실패 - 기본 닉네임 '회원'으로 설정")
                 }
             } else {
-                errorMessage = response.message
+                ToastManager.shared.show(.errorWithMessage(response.message))
             }
         } catch {
             PopupManager.shared.show(.loginWithDuplicatedAccount(account: userInfo?.email ?? ""))
@@ -216,7 +213,7 @@ extension OnboardingViewModel: NaverThirdPartyLoginConnectionDelegate {
     func oauth20Connection(_ oauthConnection: NaverThirdPartyLoginConnection!, didFailWithError error: Error!) {
         print("네이버 로그인 실패: \(error.localizedDescription)")
         Task { @MainActor in
-            self.errorMessage = "네이버 로그인 중 오류가 발생했습니다: \(error.localizedDescription)"
+            ToastManager.shared.show(.errorWithMessage("네이버 로그인 중 오류가 발생했습니다: \(error.localizedDescription)"))
             self.isLoading = false
         }
     }
@@ -225,7 +222,7 @@ extension OnboardingViewModel: NaverThirdPartyLoginConnectionDelegate {
         Task { @MainActor in
             do {
                 guard let accessToken = instance?.accessToken else {
-                    self.errorMessage = "네이버 액세스 토큰을 가져올 수 없습니다."
+                    ToastManager.shared.show(.errorWithMessage("네이버 액세스 토큰을 가져올 수 없습니다."))
                     self.isLoading = false
                     return
                 }
