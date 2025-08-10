@@ -15,7 +15,10 @@ struct MyCampaignView: View {
     ]
     
     var body: some View {
-        CDScreen(horizontalPadding: 0) {
+        CDScreen(
+            horizontalPadding: 0,
+            isLoading: viewModel.isLoadingMore && !viewModel.isShowingClosedCampaigns
+        ) {
             CDHeaderWithRightContent(title: "내 체험단"){}
                 .padding(.horizontal, 16)
             
@@ -52,13 +55,22 @@ struct MyCampaignView: View {
                 openSectionPlaceholder
             } else {
                 LazyVStack(spacing: 20) {
-                    ForEach(viewModel.likedCampaigns, id: \.id) { campaign in
+                    ForEach(Array(zip(viewModel.likedCampaigns.indices, viewModel.likedCampaigns)), id: \.1.id) { index, campaign in
                         MyCampaignRow(
                             myCampaign: campaign,
                             buttonConfigs: [
                                 ButtonConfig(
-                                    text: "공고 보기",
+                                    text: "찜 취소하기",
                                     type: .smallGray,
+                                    onClick: {
+                                        PopupManager.shared.show(.cancelZzim(onClick: {
+                                            viewModel.cancelBookmark(for: campaign.campaignId)
+                                        }))
+                                    }
+                                ),
+                                ButtonConfig(
+                                    text: "공고 보기",
+                                    type: .smallPrimary,
                                     onClick: {
                                         router.push(to: .campaignWeb(
                                             siteNameKr: campaign.campaignSite,
@@ -68,7 +80,14 @@ struct MyCampaignView: View {
                                 )
                             ]
                         )
-                        
+                        .onAppear {
+                            if !viewModel.isShowingClosedCampaigns,
+                               index == viewModel.likedCampaigns.count - 10,
+                               viewModel.hasMoreOpenPages,
+                               !viewModel.isLoadingMore {
+                                viewModel.loadNextPage()
+                            }
+                        }
                         Divider()
                     }
                 }
@@ -82,6 +101,7 @@ struct MyCampaignView: View {
     private var closedSectionButton: some View {
         Button(action: {
             viewModel.isShowingClosedCampaigns = true
+            viewModel.handleToggleClosed(true)
         }) {
             HStack{
                 Text("신청 마감된 공고")
@@ -101,6 +121,7 @@ struct MyCampaignView: View {
         VStack(spacing: 0) {
             Button(action: {
                     viewModel.isShowingClosedCampaigns = false
+                    viewModel.handleToggleClosed(false)
             }) {
                 HStack(spacing: 0) {
                     Image("chevron_left")
@@ -131,7 +152,7 @@ struct MyCampaignView: View {
     private var closedSection: some View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack(spacing: 16) {
-                ForEach(viewModel.likedClosedCampaigns, id: \.id) { campaign in
+                ForEach(Array(zip(viewModel.likedClosedCampaigns.indices, viewModel.likedClosedCampaigns)), id: \.1.id) { index, campaign in
                     MyCampaignRow(
                         myCampaign: campaign,
                         buttonConfigs: [
@@ -147,12 +168,25 @@ struct MyCampaignView: View {
                             )
                         ]
                     )
+                    .onAppear {
+                        if viewModel.isShowingClosedCampaigns,
+                           index == viewModel.likedClosedCampaigns.count - 10,
+                           viewModel.hasMoreClosedPages,
+                           !viewModel.isLoadingMore {
+                            viewModel.loadNextPage()
+                        }
+                    }
                 }
                 .padding(.horizontal, 16)
             }
         }
         .padding(.top, 16)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .overlay {
+            if viewModel.isLoadingMore && viewModel.isShowingClosedCampaigns {
+                ProgressView().frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+            }
+        }
     }
     
 //    private var tabSection: some View {

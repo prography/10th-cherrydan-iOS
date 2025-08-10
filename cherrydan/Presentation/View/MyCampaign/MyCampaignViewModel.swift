@@ -4,16 +4,15 @@ import Foundation
 class MyCampaignViewModel: ObservableObject {
     @Published var likedCampaigns: [MyCampaign] = []
     @Published var likedClosedCampaigns: [MyCampaign] = []
-//    @Published var appliedCampaigns: [MyCampaign] = []
-//    @Published var selectedCampaigns: [MyCampaign] = []
-//    @Published var nonSelectedCampaigns: [MyCampaign] = []
-//    @Published var registeredCampaigns: [MyCampaign] = []
-//    @Published var endedCampaigns: [MyCampaign] = []
     
     @Published var isLoading: Bool = false
     
-    @Published var currentPage: Int = 0
-    @Published var hasMorePages: Bool = true
+    @Published var currentOpenPage: Int = 0
+    @Published var hasMoreOpenPages: Bool = true
+    
+    @Published var currentClosedPage: Int = 0
+    @Published var hasMoreClosedPages: Bool = true
+    
     @Published var isLoadingMore: Bool = false
     
     @Published var isShowingClosedCampaigns: Bool = false
@@ -27,20 +26,20 @@ class MyCampaignViewModel: ObservableObject {
     
     func initializeFetch()  {
         isLoading = true
-        currentPage = 0
+        currentOpenPage = 0
+        currentClosedPage = 0
         likedCampaigns = []
         likedClosedCampaigns = []
-        hasMorePages = true
+        hasMoreOpenPages = true
+        hasMoreClosedPages = true
         
         Task {
             do {
-                let response: BookmarkListResponseDTO = try await bookmarkRepository.getBookmarks(
-                    page: currentPage
+                let response: PageableResponse<MyCampaignDTO> = try await bookmarkRepository.getOpenBookmarks(
+                    page: currentOpenPage
                 )
-                
-                likedCampaigns = response.open.content.map{ $0.toMyCampaign() }
-                
-                likedClosedCampaigns = response.closed.content.map{ $0.toMyCampaign() }
+                likedCampaigns = response.content.map { $0.toMyCampaign() }
+                hasMoreOpenPages = response.hasNext
             } catch {
                 print("Error fetching campaigns: \(error)")
             }
@@ -49,25 +48,68 @@ class MyCampaignViewModel: ObservableObject {
     }
     
     func loadNextPage() {
-        guard hasMorePages && !isLoadingMore else { return }
-        
-        isLoadingMore = true
-        currentPage += 1
-        
+        if isShowingClosedCampaigns {
+            guard hasMoreClosedPages && !isLoadingMore else { return }
+            isLoadingMore = true
+            currentClosedPage += 1
+            Task {
+                do {
+                    let response: PageableResponse<MyCampaignDTO> = try await bookmarkRepository.getClosedBookmarks(page: currentClosedPage)
+                    likedClosedCampaigns.append(contentsOf: response.content.map { $0.toMyCampaign() })
+                    hasMoreClosedPages = response.hasNext
+                } catch {
+                    print("Error loading next closed page: \(error)")
+                    currentClosedPage -= 1
+                }
+                isLoadingMore = false
+            }
+        } else {
+            guard hasMoreOpenPages && !isLoadingMore else { return }
+            isLoadingMore = true
+            currentOpenPage += 1
+            Task {
+                do {
+                    let response: PageableResponse<MyCampaignDTO> = try await bookmarkRepository.getOpenBookmarks(page: currentOpenPage)
+                    likedCampaigns.append(contentsOf: response.content.map { $0.toMyCampaign() })
+                    hasMoreOpenPages = response.hasNext
+                } catch {
+                    print("Error loading next open page: \(error)")
+                    currentOpenPage -= 1
+                }
+                isLoadingMore = false
+            }
+        }
+    }
+
+    func handleToggleClosed(_ showClosed: Bool) {
+        if showClosed {
+            // reset and load first page for closed
+            currentClosedPage = 0
+            hasMoreClosedPages = true
+            likedClosedCampaigns = []
+            isLoading = true
+            Task {
+                do {
+                    let response: PageableResponse<MyCampaignDTO> = try await bookmarkRepository.getClosedBookmarks(page: currentClosedPage)
+                    likedClosedCampaigns = response.content.map { $0.toMyCampaign() }
+                    hasMoreClosedPages = response.hasNext
+                } catch {
+                    print("Error fetching closed campaigns: \(error)")
+                }
+                isLoading = false
+            }
+        }
+    }
+    
+    func cancelBookmark(for campaignId: Int) {
         Task {
             do {
-                let response: BookmarkListResponseDTO = try await bookmarkRepository.getBookmarks(
-                    page: currentPage
-                )
-                
-                likedCampaigns.append(contentsOf: response.open.content.map { $0.toMyCampaign() })
+                try await bookmarkRepository.cancelBookmark(campaignId: campaignId)
+                likedCampaigns.removeAll { $0.campaignId == campaignId }
             } catch {
-                print("Error loading next page: \(error)")
-                // 에러 발생 시 currentPage를 다시 원래대로 복원
-                currentPage -= 1
+                print("북마크 토글 오류: \(error)")
+                ToastManager.shared.show(.errorWithMessage("북마크 처리 중 오류가 발생했습니다."))
             }
-            
-            isLoadingMore = false
         }
     }
 }
