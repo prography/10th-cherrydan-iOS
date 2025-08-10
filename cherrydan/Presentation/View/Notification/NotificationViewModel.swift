@@ -7,22 +7,22 @@ class NotificationViewModel: ObservableObject {
     @Published var keywordNotifications: [KeywordNotification] = []
     @Published var keywordCount: Int = 0
     @Published var selectedTab: NotificationType = .activity
+    @Published var isDeleteMode: Bool = false
     @Published var selectedNotifications: Set<Int> = []
     
     @Published var isLoading: Bool = false
     @Published var hasNextPage: Bool = false
     @Published var isLoadingMore: Bool = false
     
-    private let notificationRepository: NotificationRepository
+    private let activityRepository: ActivityRepository
     private let keywordRepository: KeywordRepository
     private var currentPage: Int = 0
-    private let pageSize: Int = 20
     
     init(
-        notificationRepository: NotificationRepository = NotificationRepository(),
+        activityRepository: ActivityRepository = ActivityRepository(),
         keywordRepository: KeywordRepository = KeywordRepository()
     ) {
-        self.notificationRepository = notificationRepository
+        self.activityRepository = activityRepository
         self.keywordRepository = keywordRepository
         loadNotifications()
     }
@@ -70,9 +70,8 @@ class NotificationViewModel: ObservableObject {
             }
             
             do {
-                let response = try await notificationRepository.getActivityNotifications(
-                    page: currentPage,
-                    size: pageSize
+                let response = try await activityRepository.getActivityNotifications(
+                    page: currentPage
                 )
                 
                 if refresh {
@@ -98,9 +97,8 @@ class NotificationViewModel: ObservableObject {
             }
             
             do {
-                let response = try await notificationRepository.getKeywordNotifications(
-                    page: currentPage,
-                    size: pageSize
+                let response = try await keywordRepository.getKeywordNotifications(
+                    page: currentPage
                 )
                 
                 if refresh {
@@ -132,20 +130,89 @@ class NotificationViewModel: ObservableObject {
             isLoading = false
         }
     }
-//
-//    func markNotificationAsRead(notificationId: Int) async {
-//        do {
-//            let success = try await notificationRepository.markNotificationAsRead(notificationId: notificationId)
-//            if success {
-//                // 로컬에서 읽음 상태 업데이트
-//                if let index = notifications.firstIndex(where: { $0.campaignStatusId == notificationId }) {
-//                    notifications[index].isRead = true
-//                }
-//            }
-//        } catch {
-//            errorMessage = "알림 상태를 업데이트하는 중 오류가 발생했습니다: \(error.localizedDescription)"
-//        }
-//    }
+    
+    // MARK: - Selection scope helpers
+    private var currentIds: [Int] {
+        if selectedTab == .activity {
+            return activityNotifications.map { $0.id }
+        } else {
+            return keywordNotifications.map { $0.id }
+        }
+    }
+    
+    private var selectedIdsInCurrentTab: [Int] {
+        let currentIdSet = Set(currentIds)
+        return selectedNotifications.filter { currentIdSet.contains($0) }
+    }
+    
+    
+    // MARK: - Bulk actions
+    func deleteSelectedAlerts() {
+        let ids = selectedIdsInCurrentTab
+        guard !ids.isEmpty else { return }
+        
+        Task {
+            do {
+                if selectedTab == .activity {
+                    try await activityRepository.deleteActivityAlerts(alertIds: selectedIdsInCurrentTab)
+                    activityNotifications.removeAll { ids.contains($0.id) }
+                } else {
+                    try await keywordRepository.deleteKeywordAlerts(alertIds: selectedIdsInCurrentTab)
+                    keywordNotifications.removeAll { ids.contains($0.id) }
+                }
+                clearSelection()
+                isDeleteMode = false
+            } catch {
+                ToastManager.shared.show(.errorWithMessage("알림 삭제 중 오류가 발생했습니다."))
+            }
+        }
+    }
+    
+    func markSelectedAlertsAsRead() {
+        let ids = selectedIdsInCurrentTab
+        guard !ids.isEmpty else { return }
+        
+        Task {
+            do {
+                isLoading = true
+                if selectedTab == .activity {
+                    try await activityRepository.markActivityAlertsAsRead(alertIds: selectedIdsInCurrentTab)
+                    activityNotifications = activityNotifications.map { item in
+                        if ids.contains(item.id) {
+                            return ActivityNotification(
+                                id: item.id,
+                                notificationType: item.notificationType,
+                                notificationBoldText: item.notificationBoldText,
+                                fullText: item.fullText,
+                                isRead: true,
+                                createdDate: item.createdDate
+                            )
+                        }
+                        return item
+                    }
+                } else {
+                    try await keywordRepository.markKeywordAlertsAsRead(alertIds: selectedIdsInCurrentTab)
+                    keywordNotifications = keywordNotifications.map { item in
+                        if ids.contains(item.id) {
+                            return KeywordNotification(
+                                id: item.id,
+                                keyword: item.keyword,
+                                alertDate: item.alertDate,
+                                campaignCount: item.campaignCount,
+                                isRead: true
+                            )
+                        }
+                        return item
+                    }
+                }
+                
+                clearSelection()
+                isLoading = false
+            } catch {
+                ToastManager.shared.show(.errorWithMessage("알림 읽음 처리 중 오류가 발생했습니다."))
+            }
+        }
+    }
 
     // MARK: - Selection Helpers
     func isSelected(_ id: Int) -> Bool {

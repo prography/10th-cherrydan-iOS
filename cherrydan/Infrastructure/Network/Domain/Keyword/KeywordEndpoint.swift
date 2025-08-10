@@ -35,7 +35,7 @@ enum KeywordEndpoint: APIEndpoint {
         case .deleteUserKeyword, .deleteKeywordAlerts:
             .delete
         case .markKeywordAlertsAsRead:
-            .put
+            .patch
         }
     }
     

@@ -60,7 +60,7 @@ struct NotificationView: View {
                 .padding(.vertical, 8)
             
             ScrollView(.vertical, showsIndicators: false) {
-                LazyVStack(spacing: 12) {
+                LazyVStack(spacing: 0) {
                     if viewModel.selectedTab == .activity {
                         activityListSection
                     } else {
@@ -120,7 +120,7 @@ struct NotificationView: View {
         } else {
             ForEach(Array(zip(viewModel.keywordNotifications.indices, viewModel.keywordNotifications)), id: \.1.id) { index, notification in
                 Button(action: {
-                    router.push(to: .keywordAlertDetail(keyword: notification.keyword))
+                    router.push(to: .keywordAlertDetail(keyword: notification))
                 }) {
                     KeywordNotificationRow(
                         notification: notification,

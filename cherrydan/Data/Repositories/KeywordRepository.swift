@@ -44,10 +44,10 @@ class KeywordRepository {
     // MARK: - Keyword Alerts
     
     /// 내 키워드 알림 목록 조회
-    func getKeywordAlerts(page: Int = 0, size: Int = 20) async throws -> APIResponse<PageableResponse<KeywordNotificationDTO>> {
+    func getKeywordNotifications(page: Int = 0) async throws -> APIResponse<PageableResponse<KeywordNotification>> {
         let query: [String: String] = [
             "page": String(page),
-            "size": String(size),
+            "size": "20",
             "sort": "alertDate,desc"
         ]
         
@@ -58,7 +58,7 @@ class KeywordRepository {
     }
     
     /// 키워드 알림 삭제
-    func deleteKeywordAlerts(alertIds: [String]) async throws {
+    func deleteKeywordAlerts(alertIds: [Int]) async throws {
         let params = ["alertIds": alertIds]
         let _: EmptyResult = try await networkAPI.request(
             KeywordEndpoint.deleteKeywordAlerts,
@@ -67,7 +67,7 @@ class KeywordRepository {
     }
     
     // 키워드 알림 읽음 처리
-    func markKeywordAlertsAsRead(alertIds: [String]) async throws {
+    func markKeywordAlertsAsRead(alertIds: [Int]) async throws {
         let params = ["alertIds": alertIds]
         let _: EmptyResult = try await networkAPI.request(
             KeywordEndpoint.markKeywordAlertsAsRead,
@@ -80,13 +80,14 @@ class KeywordRepository {
     /// 특정 키워드로 맞춤형 캠페인 조회
     func getPersonalizedCampaignsByKeyword(
         keyword: String,
-        page: Int = 0,
-        size: Int = 20
+        date: String,
+        page: Int = 0
     ) async throws -> APIResponse<PageableResponse<CampaignDTO>> {
         let query: [String: String] = [
-            "keyword": keyword,
             "page": String(page),
-            "size": String(size)
+            "date": date,
+            "size": "20",
+            "keyword": keyword
         ]
         
         return try await networkAPI.request(

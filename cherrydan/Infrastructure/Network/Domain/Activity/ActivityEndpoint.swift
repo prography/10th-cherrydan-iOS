@@ -1,6 +1,7 @@
 enum ActivityEndpoint: APIEndpoint {
     case getActivityNotification
-    case deleteActivityNotifications(alerts: [String])
+    case deleteActivityNotifications
+    case markActivityAlertsAsRead
     
     case getKeywordNotification
     
@@ -10,6 +11,8 @@ enum ActivityEndpoint: APIEndpoint {
             "/activity/notifications"
         case .deleteActivityNotifications:
             "/activity/alerts"
+        case .markActivityAlertsAsRead:
+            "/activity/notifications/read"
             
         case .getKeywordNotification:
             "/keywords/alerts"
@@ -22,6 +25,8 @@ enum ActivityEndpoint: APIEndpoint {
                 .get
         case .deleteActivityNotifications:
                 .delete
+        case .markActivityAlertsAsRead:
+                .patch
             
         case .getKeywordNotification:
                 .get
