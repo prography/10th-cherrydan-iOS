@@ -10,7 +10,7 @@ class KeywordRepository {
     // MARK: - User Keywords
     
     /// 내 키워드 목록 조회
-    func getUserKeywords(page: Int = 0, size: Int = 20) async throws -> APIResponse<PageableResponse<UserKeywordResponseDTO>> {
+    func getUserKeywords(page: Int = 0, size: Int = 20) async throws -> APIResponse<[UserKeywordResponseDTO]> {
         let query: [String: String] = [
             "page": String(page),
             "size": String(size)
@@ -30,7 +30,7 @@ class KeywordRepository {
         
         let _: EmptyResult = try await networkAPI.request(
             KeywordEndpoint.addUserKeyword(keyword: keyword),
-            queryParameters: query
+            parameters: query
         )
     }
     
