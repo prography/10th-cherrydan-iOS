@@ -9,10 +9,10 @@ class ActivityRepository {
     
     // MARK: - Activity Alerts
     func getActivityNotifications(page: Int = 0) async throws ->APIResponse<PageableResponse<ActivityNotification>> {
-        let query:[String:String] = [
+        let query: [String:String] = [
             "page": String(page),
             "size": "20",
-            "sort": "activityNotifiedAt,asc"
+            "sort": "alertDate,desc"
         ]
         
         do {

@@ -3,19 +3,14 @@ enum ActivityEndpoint: APIEndpoint {
     case deleteActivityNotifications
     case markActivityAlertsAsRead
     
-    case getKeywordNotification
-    
     var path: String {
         switch self {
         case .getActivityNotification:
-            "/activity/notifications"
+            "/activity/bookmark-alerts"
         case .deleteActivityNotifications:
-            "/activity/alerts"
+            "/activity/bookmark-alerts"
         case .markActivityAlertsAsRead:
-            "/activity/notifications/read"
-            
-        case .getKeywordNotification:
-            "/keywords/alerts"
+            "/activity/bookmark-alerts/read"
         }
     }
     
@@ -27,9 +22,6 @@ enum ActivityEndpoint: APIEndpoint {
                 .delete
         case .markActivityAlertsAsRead:
                 .patch
-            
-        case .getKeywordNotification:
-                .get
         }
     }
     
