@@ -5,28 +5,34 @@ import SwiftUI
 class NotificationViewModel: ObservableObject {
     @Published var activityNotifications: [ActivityNotification] = []
     @Published var keywordNotifications: [KeywordNotification] = []
+    @Published var keywordCount: Int = 0
     @Published var selectedTab: NotificationType = .activity
+    @Published var selectedNotifications: Set<Int> = []
+    
     @Published var isLoading: Bool = false
-    @Published var errorMessage: String?
     @Published var hasNextPage: Bool = false
     @Published var isLoadingMore: Bool = false
     
     private let notificationRepository: NotificationRepository
+    private let keywordRepository: KeywordRepository
     private var currentPage: Int = 0
     private let pageSize: Int = 20
     
-    init(notificationRepository: NotificationRepository = NotificationRepository()) {
+    init(
+        notificationRepository: NotificationRepository = NotificationRepository(),
+        keywordRepository: KeywordRepository = KeywordRepository()
+    ) {
         self.notificationRepository = notificationRepository
-        Task {
-            await loadNotifications()
-        }
+        self.keywordRepository = keywordRepository
+        loadNotifications()
     }
     
-    func loadNotifications() async {
+    func loadNotifications() {
         if selectedTab == .activity {
-            await loadActivityNotifications(refresh: true)
+            loadActivityNotifications(refresh: true)
         } else {
-            await loadKeywordNotifications(refresh: true)
+            loadUserKeywordCount()
+            loadKeywordNotifications(refresh: true)
         }
     }
     
@@ -34,13 +40,12 @@ class NotificationViewModel: ObservableObject {
     func loadNextPage() {
         guard hasNextPage && !isLoadingMore else { return }
         
-        isLoadingMore = true
-        
         Task {
+            isLoadingMore = true
             if selectedTab == .activity {
-                await loadActivityNotifications(refresh: false)
+                loadActivityNotifications(refresh: false)
             } else {
-                await loadKeywordNotifications(refresh: false)
+                loadKeywordNotifications(refresh: false)
             }
             isLoadingMore = false
         }
@@ -53,64 +58,79 @@ class NotificationViewModel: ObservableObject {
         hasNextPage = false
         isLoadingMore = false
         
+        clearSelection()
+        loadNotifications()
+    }
+    
+    private func loadActivityNotifications(refresh: Bool = true) {
         Task {
-            await loadNotifications()
+            if refresh {
+                currentPage = 0
+                isLoading = true
+            }
+            
+            do {
+                let response = try await notificationRepository.getActivityNotifications(
+                    page: currentPage,
+                    size: pageSize
+                )
+                
+                if refresh {
+                    activityNotifications = response.result.content
+                } else {
+                    activityNotifications.append(contentsOf: response.result.content)
+                }
+                
+                hasNextPage = response.result.hasNext
+                currentPage = response.result.page + 1
+            } catch {
+                ToastManager.shared.show(.errorWithMessage("알림을 불러오는 중 오류가 발생했습니다."))
+            }
+            isLoading = false
         }
     }
     
-    private func loadActivityNotifications(refresh: Bool = true) async {
-        if refresh {
-            currentPage = 0
-            isLoading = true
-        }
-        
-        do {
-            let response = try await notificationRepository.getActivityNotifications(
-                page: currentPage,
-                size: pageSize
-            )
-            
+    private func loadKeywordNotifications(refresh: Bool = true) {
+        Task {
             if refresh {
-                activityNotifications = response.result.content
-            } else {
-                activityNotifications.append(contentsOf: response.result.content)
+                currentPage = 0
+                isLoading = true
             }
             
-            hasNextPage = response.result.hasNext
-            currentPage = response.result.page + 1
-        } catch {
-            print("NotificationViewModel Error: \(error)")
-            errorMessage = "알림을 불러오는 중 오류가 발생했습니다."
+            do {
+                let response = try await notificationRepository.getKeywordNotifications(
+                    page: currentPage,
+                    size: pageSize
+                )
+                
+                if refresh {
+                    keywordNotifications = response.result.content
+                } else {
+                    keywordNotifications.append(contentsOf: response.result.content)
+                }
+                
+                hasNextPage = response.result.hasNext
+                currentPage = response.result.page + 1
+            } catch {
+                print("NotificationViewModel Error: \(error)")
+                ToastManager.shared.show(.errorWithMessage("알림을 불러오는 중 오류가 발생했습니다."))
+            }
+             
+            isLoading = false
         }
-        
-        isLoading = false
     }
     
-    private func loadKeywordNotifications(refresh: Bool = true) async {
-        if refresh {
-            currentPage = 0
-            isLoading = true
-        }
-        
-        do {
-            let response = try await notificationRepository.getKeywordNotifications(
-                page: currentPage,
-                size: pageSize
-            )
-            
-            if refresh {
-                keywordNotifications = response.result.content
-            } else {
-                keywordNotifications.append(contentsOf: response.result.content)
+    private func loadUserKeywordCount() {
+        Task {
+            do {
+                isLoading = true
+                let response = try await keywordRepository.getUserKeywords()
+                keywordCount = response.result.count
+            } catch {
+                ToastManager.shared.show(.errorWithMessage("키워드 목록을 불러오는 중 오류가 발생했습니다."))
             }
-            
-            hasNextPage = response.result.hasNext
-            currentPage = response.result.page + 1
-        } catch {
-            print("NotificationViewModel Error: \(error)")
-            errorMessage = "알림을 불러오는 중 오류가 발생했습니다."
+            isLoading = false
         }
-        isLoading = false
     }
 //
 //    func markNotificationAsRead(notificationId: Int) async {
@@ -126,12 +146,31 @@ class NotificationViewModel: ObservableObject {
 //            errorMessage = "알림 상태를 업데이트하는 중 오류가 발생했습니다: \(error.localizedDescription)"
 //        }
 //    }
+
+    // MARK: - Selection Helpers
+    func isSelected(_ id: Int) -> Bool {
+        selectedNotifications.contains(id)
+    }
     
-    func refreshNotifications() async {
-        if selectedTab == .activity {
-            await loadActivityNotifications(refresh: true)
+    func toggleSelect(_ id: Int) {
+        if selectedNotifications.contains(id) {
+            selectedNotifications.remove(id)
         } else {
-            await loadKeywordNotifications(refresh: true)
+            selectedNotifications.insert(id)
         }
+    }
+    
+    func selectAll(_ ids: [Int]) {
+        selectedNotifications = Set(ids)
+    }
+    
+    func deselectAll(_ ids: [Int]) {
+        for id in ids {
+            selectedNotifications.remove(id)
+        }
+    }
+    
+    func clearSelection() {
+        selectedNotifications.removeAll()
     }
 }
