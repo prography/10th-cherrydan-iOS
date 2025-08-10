@@ -18,8 +18,7 @@ struct HomeView: View {
                     } else {
                         router.push(to: .notification)
                     }
-                },
-                onSearchClick: {
+                }, onSearchClick: {
                 if AuthManager.shared.isGuestMode {
                     PopupManager.shared.show(.loginNeeded(onClick: {
                         AuthManager.shared.leaveGuestMode()
@@ -139,8 +138,10 @@ struct HomeView: View {
             viewModel.toggleTag(tagData.name)
         }) {
             HStack(spacing: 2) {
-                if let imgName = tagData.imgName {
+                if let imgName = tagData.imgName, !imgName.isEmpty {
                     Image(imgName)
+                        .resizable()
+                        .frame(width: 16, height: 16)
                 } else if let imgUrl = tagData.imgUrl {
                     KFImage(URL(string: imgUrl))
                         .resizable()
