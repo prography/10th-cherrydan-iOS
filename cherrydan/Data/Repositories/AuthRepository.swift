@@ -10,7 +10,7 @@ class AuthRepository {
     
     func socialLogin(_ provider: String,_ token: String, userInfo: UserInfo?) async throws -> SocialLoginResponse {
         let fcmToken = KeychainManager.shared.getFcmToken()
-        let deviceModel = await UIDevice.current.model
+        let deviceModel = UIDevice.current.modelName
         var params: [String: String] = [
             "accessToken": token,
             "fcmToken": fcmToken ?? "",
