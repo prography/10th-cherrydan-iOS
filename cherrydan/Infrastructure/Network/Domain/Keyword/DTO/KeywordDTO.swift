@@ -12,14 +12,16 @@ struct UserKeywordResponseDTO: Codable {
 struct KeywordNotificationDTO: Codable {
     let id: Int
     let keyword: String
-    let alertDate: String
     let isRead: Bool
+    let campaignCount: Int
+    let alertDate: String
     
     func toKeywordNotification() -> KeywordNotification {
         return KeywordNotification(
             id: id,
             keyword: keyword,
             alertDate: alertDate,
+            campaignCount: campaignCount,
             isRead: isRead
         )
     }

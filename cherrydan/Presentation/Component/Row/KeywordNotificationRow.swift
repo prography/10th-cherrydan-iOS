@@ -10,15 +10,20 @@ struct KeywordNotificationRow: View {
             Button(action: onSelect) {
                 Image("check_circle_\(isSelected ? "filled" : "empty")")
             }
-            
             VStack(alignment: .leading, spacing: 4) {
                 (
                     Text(notification.keyword)
                         .font(.m5b)
                     +
-                    Text(" 캠페인이 등록되었어요. 지금 바로 확인해 보세요.")
-                        .font(.m5r)
+                    Text(" 캠페인이 ")
+                    +
+                    Text("\(notification.campaignCount)건")
+                        .font(.m5b)
+                        .foregroundColor(.mPink3)
+                    +
+                    Text(" 등록되었어요. 지금 바로 확인해 보세요.")
                 )
+                .font(.m5r)
                 .foregroundColor(.gray9)
                 .lineLimit(2)
                 .multilineTextAlignment(.leading)
