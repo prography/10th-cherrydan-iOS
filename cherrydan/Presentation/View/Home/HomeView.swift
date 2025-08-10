@@ -16,7 +16,7 @@ struct HomeView: View {
                             AuthManager.shared.leaveGuestMode()
                         }))
                     } else {
-                        router.push(to: .notification)
+                        router.push(to: .notification(tab: .activity))
                     }
                 }, onSearchClick: {
                 if AuthManager.shared.isGuestMode {

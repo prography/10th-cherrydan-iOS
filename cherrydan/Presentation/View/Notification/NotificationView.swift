@@ -2,7 +2,7 @@ import SwiftUI
 
 struct NotificationView: View {
     @EnvironmentObject var router: HomeRouter
-    @StateObject var viewModel: NotificationViewModel = NotificationViewModel()
+    @StateObject var viewModel: NotificationViewModel
     @State private var isDeleteMode: Bool = false
     
     // 현재 탭의 항목이 모두 선택되었는지 여부
@@ -31,6 +31,10 @@ struct NotificationView: View {
         }
     }
     
+    init(initialSelectedTab: NotificationType = .activity) {
+        _viewModel = StateObject(wrappedValue: NotificationViewModel(initialSelectedTab: initialSelectedTab))
+    }
+
     var body: some View {
         CDScreen(horizontalPadding: 0, isLoading: viewModel.isLoading || viewModel.isLoadingMore) {
             CDBackHeaderWithTitle(title: "알림") {
@@ -270,10 +274,6 @@ struct NotificationView: View {
     }
 }
 
-// MARK: - Dummy Data for Custom Notifications
-private var customNotifications: [ActivityNotification] {
-    return []
-}
 
 #Preview {
     NotificationView()

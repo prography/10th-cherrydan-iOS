@@ -38,7 +38,7 @@ struct HomeNavigationStack: View {
                 CDBottomTab(selectedTab: $selectedTab)
             }
         case .search: SearchView()
-        case .notification: NotificationView()
+        case .notification(let tab): NotificationView(initialSelectedTab: tab)
         case .selectRegion(let viewModel): SelectRegionView(viewModel: viewModel)
         case .campaignWeb(let siteNameKr, let campaignSiteUrl):
             CampaignWebView(siteNameKr: siteNameKr, campaignSiteUrl: campaignSiteUrl)

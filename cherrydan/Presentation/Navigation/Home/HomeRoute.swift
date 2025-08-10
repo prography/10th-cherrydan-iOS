@@ -3,7 +3,7 @@ import Foundation
 enum HomeRoute: BaseRoute {
     case home
     case search
-    case notification
+    case notification(tab: NotificationType)
     case campaignWeb(siteNameKr: String, campaignSiteUrl: String)
     case selectRegion(viewModel: HomeViewModel)
     case keywordSettings
@@ -26,7 +26,7 @@ enum HomeRoute: BaseRoute {
             "home_screen"
         case .search:
             "search_screen"
-        case .notification:
+        case .notification(_):
             "notification_screen"
         case .campaignWeb:
             "campaign_web_screen"

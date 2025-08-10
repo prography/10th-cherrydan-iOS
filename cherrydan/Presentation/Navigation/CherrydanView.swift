@@ -1,5 +1,6 @@
 import SwiftUI
 import FirebaseAnalytics
+import Combine
 
 struct CherrydanView: View {
     @StateObject private var viewModel = CherrydanViewModel()
@@ -14,6 +15,7 @@ struct CherrydanView: View {
     @StateObject private var myPageRouter = MyPageRouter()
     
     @State private var selectedTab = 0
+    @State private var cancellables = Set<AnyCancellable>()
     
     var body: some View {
         VStack {
@@ -70,6 +72,16 @@ struct CherrydanView: View {
         }
         .onChange(of: selectedTab) { _, newTab in
             logTabChange(newTab)
+        }
+        .onAppear {
+            NotificationCenter.default.publisher(for: .didTapPushNotification)
+                .receive(on: RunLoop.main)
+                .sink { notification in
+                    guard let tab = notification.userInfo?[PushRouteUserInfoKey.targetTab] as? NotificationType else { return }
+                    selectedTab = 0
+                    homeRouter.replace(with: .notification(tab: tab))
+                }
+                .store(in: &cancellables)
         }
         
     }

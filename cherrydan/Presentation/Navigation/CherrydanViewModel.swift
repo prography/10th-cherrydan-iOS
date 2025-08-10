@@ -8,7 +8,7 @@ class CherrydanViewModel: ObservableObject {
     private let myPageRepository: MyPageRepository
     
     private var currentAppVersion: String {
-        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.1"
+        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.2"
     }
     
     init(myPageRepository: MyPageRepository =  MyPageRepository()) {

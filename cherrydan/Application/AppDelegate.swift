@@ -7,6 +7,7 @@ import UIKit
 import Firebase
 import FirebaseMessaging
 import UserNotifications
+import SwiftUI
 
 final class AppDelegate: NSObject, UIApplicationDelegate {
     private let notificationCenter = UNUserNotificationCenter.current()
@@ -87,6 +88,27 @@ private extension AppDelegate {
     func handleNotificationData(_ userInfo: [AnyHashable: Any], isAppActive: Bool = true) {
         guard let messageType = userInfo["type"] as? String else { return }
         
+        // 서버 타입 → 앱 탭 매핑
+        let targetTab: NotificationType?
+        switch messageType {
+        case "keyword_campaign":
+            targetTab = .custom
+        case "activity_reminder":
+            targetTab = .activity
+        default:
+            targetTab = nil
+        }
+        
+        if let targetTab {
+            NotificationCenter.default.post(
+                name: .didTapPushNotification,
+                object: nil,
+                userInfo: [PushRouteUserInfoKey.targetTab: targetTab]
+            )
+            return
+        }
+        
+        // 기존 기타 타입 처리 분기 (필요 시 확장)
         switch messageType {
         case "chat":
             handleChatNotification(userInfo, isAppActive: isAppActive)
