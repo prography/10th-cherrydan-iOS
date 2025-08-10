@@ -24,6 +24,6 @@ enum MyPageEndpoint: APIEndpoint {
     }
     
     var tokenType: TokenType {
-        .accessToken
+        .none
     }
 }
