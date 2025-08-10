@@ -6,7 +6,7 @@ struct KeywordSettingsView: View {
     @FocusState private var isKeywordFocused: Bool
     
     var body: some View {
-        CDScreen(horizontalPadding: 0) {
+        CDScreen(horizontalPadding: 0, isLoading: viewModel.isLoading) {
             CDBackHeaderWithTitle(title: "키워드 알림 설정 (\(viewModel.userKeywords.count)/5)")
             .padding(.horizontal, 16)
             
@@ -18,11 +18,9 @@ struct KeywordSettingsView: View {
             .padding(.horizontal, 16)
             .padding(.top, 20)
         }
-        .overlay {
-            if viewModel.isLoading {
-                ProgressView()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-            }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            isKeywordFocused = false
         }
     }
     
@@ -45,7 +43,7 @@ struct KeywordSettingsView: View {
         .padding(.leading, 12)
         .frame(height: 48)
         .background(.gray2, in: RoundedRectangle(cornerRadius: 8))
-        .disabled(viewModel.newKeyword.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+//        .disabled(viewModel.newKeyword.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
     }
     
     private var myKeywordsSection: some View {
