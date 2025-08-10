@@ -30,7 +30,6 @@ struct WithdrawalView: View {
                     
                     Spacer(minLength: 40)
                     
-                    
                     Text("그동안 체리단을 사랑해 주셔서 감사합니다!")
                         .font(.m3b)
                         .foregroundStyle(.gray9)
@@ -126,15 +125,6 @@ struct WithdrawalView: View {
             }
             .contentShape(Rectangle())
         }
-    }
-    
-    private func performWithdrawal() {
-        // TODO: 회원탈퇴 API 호출
-        print("회원탈퇴 사유: \(selectedReasons.map { $0.title })")
-        
-        // 임시로 로그아웃 처리
-        AuthManager.shared.logout()
-        dismiss()
     }
 }
 
