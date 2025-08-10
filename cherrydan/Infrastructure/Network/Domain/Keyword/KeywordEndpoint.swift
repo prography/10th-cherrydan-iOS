@@ -1,10 +1,10 @@
 enum KeywordEndpoint: APIEndpoint {
-    case markKeywordAlertsAsRead(alertIds: [Int])
+    case markKeywordAlertsAsRead
     case getUserKeywords
     case addUserKeyword(keyword: String)
     case getPersonalizedCampaignsByKeyword(keyword: String)
     case getKeywordAlerts
-    case deleteKeywordAlerts(alertIds: [Int])
+    case deleteKeywordAlerts
     case deleteUserKeyword(keywordId: Int)
     
     var path: String {

@@ -24,7 +24,7 @@ struct KeywordNotificationRow: View {
                 .multilineTextAlignment(.leading)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
-                Text(notification.createdDate)
+                Text(notification.alertDate)
                     .font(.m5r)
                     .foregroundColor(.gray4)
             }
@@ -39,7 +39,6 @@ struct KeywordNotificationRow: View {
             Image("chevron_right")
             
         }
-        .padding(.top, 8)
-        .padding(.bottom, 16)
+        .padding(.vertical, 8)
     }
 }

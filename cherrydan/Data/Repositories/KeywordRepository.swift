@@ -30,7 +30,7 @@ class KeywordRepository {
         
         let _: EmptyResult = try await networkAPI.request(
             KeywordEndpoint.addUserKeyword(keyword: keyword),
-            parameters: query
+        parameters: query
         )
     }
     
@@ -58,20 +58,22 @@ class KeywordRepository {
     }
     
     /// 키워드 알림 삭제
-//    func deleteKeywordAlerts(alertIds: [Int]) async throws {
-//        let _: EmptyResult = try await networkAPI.request(
-//            KeywordEndpoint.deleteKeywordAlerts(alertIds: alertIds),
-//            parameters: alertIds
-//        )
-//    }
+    func deleteKeywordAlerts(alertIds: [String]) async throws {
+        let params = ["alertIds": alertIds]
+        let _: EmptyResult = try await networkAPI.request(
+            KeywordEndpoint.deleteKeywordAlerts,
+            parameters: params
+        )
+    }
     
-    /// 키워드 알림 읽음 처리
-//    func markKeywordAlertsAsRead(alertIds: [Int]) async throws {
-//        let _: EmptyResult = try await networkAPI.request(
-//            KeywordEndpoint.markKeywordAlertsAsRead(alertIds: alertIds),
-//            body: alertIds
-//        )
-//    }
+    // 키워드 알림 읽음 처리
+    func markKeywordAlertsAsRead(alertIds: [String]) async throws {
+        let params = ["alertIds": alertIds]
+        let _: EmptyResult = try await networkAPI.request(
+            KeywordEndpoint.markKeywordAlertsAsRead,
+            parameters: params
+        )
+    }
     
     // MARK: - Personalized Campaigns
     
