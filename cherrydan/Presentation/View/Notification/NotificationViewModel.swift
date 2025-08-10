@@ -19,11 +19,21 @@ class NotificationViewModel: ObservableObject {
     private var currentPage: Int = 0
     
     init(
+        initialSelectedTab: NotificationType = .activity,
         activityRepository: ActivityRepository = ActivityRepository(),
         keywordRepository: KeywordRepository = KeywordRepository()
     ) {
         self.activityRepository = activityRepository
         self.keywordRepository = keywordRepository
+        self.selectedTab = initialSelectedTab
+        
+        #if DEBUG
+        // 더미 데이터 선반영 후 네트워크 새로고침으로 덮어쓰기
+        self.activityNotifications = ActivityNotification.dummy(count: 10)
+        self.hasNextPage = false
+        self.isLoading = false
+        #endif
+        
         loadNotifications()
     }
     
@@ -181,11 +191,12 @@ class NotificationViewModel: ObservableObject {
                         if ids.contains(item.id) {
                             return ActivityNotification(
                                 id: item.id,
-                                notificationType: item.notificationType,
-                                notificationBoldText: item.notificationBoldText,
-                                fullText: item.fullText,
+                                campaignId: item.campaignId,
+                                campaignTitle: item.campaignTitle,
+                                applyEndDate: item.applyEndDate,
+                                alertDate: item.alertDate,
                                 isRead: true,
-                                createdDate: item.createdDate
+                                dday: item.dday
                             )
                         }
                         return item
