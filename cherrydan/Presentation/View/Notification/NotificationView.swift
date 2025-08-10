@@ -5,7 +5,6 @@ struct NotificationView: View {
     @StateObject var viewModel: NotificationViewModel = NotificationViewModel()
     @State private var selectedAll: Bool = false
     @State private var isDeleteMode: Bool = false
-    @State private var keywordNum = 2
     
     var body: some View {
         CDScreen(horizontalPadding: 0, isLoading: viewModel.isLoading) {
@@ -189,7 +188,7 @@ struct NotificationView: View {
                 .resizable()
                 .frame(width: 20, height: 20)
             
-            Text("알림 받는 키워드 \(keywordNum)개")
+            Text("알림 받는 키워드 \(viewModel.keywordNotifications.count)개")
                 .font(.m4r)
                 .foregroundColor(.gray9)
             
