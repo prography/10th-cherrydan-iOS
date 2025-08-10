@@ -105,7 +105,11 @@ class MyCampaignViewModel: ObservableObject {
         Task {
             do {
                 try await bookmarkRepository.cancelBookmark(campaignId: campaignId)
-                likedCampaigns.removeAll { $0.campaignId == campaignId }
+                if isShowingClosedCampaigns {
+                    likedClosedCampaigns.removeAll { $0.campaignId == campaignId }
+                } else {
+                    likedCampaigns.removeAll { $0.campaignId == campaignId }
+                }
             } catch {
                 print("북마크 토글 오류: \(error)")
                 ToastManager.shared.show(.errorWithMessage("북마크 처리 중 오류가 발생했습니다."))

@@ -157,6 +157,15 @@ struct MyCampaignView: View {
                         myCampaign: campaign,
                         buttonConfigs: [
                             ButtonConfig(
+                                text: "찜 취소하기",
+                                type: .smallGray,
+                                onClick: {
+                                    PopupManager.shared.show(.cancelZzim(onClick: {
+                                        viewModel.cancelBookmark(for: campaign.campaignId)
+                                    }))
+                                }
+                            ),
+                            ButtonConfig(
                                 text: "공고 확인하기",
                                 type: .smallWhite,
                                 onClick: {
