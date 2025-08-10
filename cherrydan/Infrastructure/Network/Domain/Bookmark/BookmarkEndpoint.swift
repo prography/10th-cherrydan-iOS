@@ -2,7 +2,8 @@ enum BookmarkEndpoint: APIEndpoint {
     case addBookmark(campaignId: Int)
     case cancelBookmark(campaignId: Int)
     case deleteBookmark(campaignId: Int)
-    case getBookmarks
+    case getOpenBookmarks
+    case getClosedBookmarks
     
     var path: String {
         switch self {
@@ -12,8 +13,10 @@ enum BookmarkEndpoint: APIEndpoint {
             "/campaigns/\(campaignId)/bookmark"
         case .deleteBookmark(let campaignId):
             "/campaigns/\(campaignId)/bookmark"
-        case .getBookmarks:
-            "/campaigns/bookmarks"
+        case .getOpenBookmarks:
+            "/campaigns/bookmarks/open"
+        case .getClosedBookmarks:
+            "/campaigns/bookmarks/closed"
         }
     }
     
@@ -25,7 +28,7 @@ enum BookmarkEndpoint: APIEndpoint {
             .patch
         case .deleteBookmark:
             .delete
-        case .getBookmarks:
+        case .getOpenBookmarks, .getClosedBookmarks:
             .get
         }
     }

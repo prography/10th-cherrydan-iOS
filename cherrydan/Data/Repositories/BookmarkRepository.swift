@@ -29,14 +29,27 @@ class BookmarkRepository {
     }
     
     /// 내 북마크 목록 조회
-    func getBookmarks(page: Int = 0, size: Int = 20) async throws -> BookmarkListResponseDTO {
+    func getOpenBookmarks(page: Int = 0) async throws -> PageableResponse<MyCampaignDTO> {
         let query = [
             "page": "\(page)",
-            "size": "\(size)"
+            "size": "20"
         ]
         
-        let response: APIResponse<BookmarkListResponseDTO> = try await networkAPI.request(
-            BookmarkEndpoint.getBookmarks,
+        let response: APIResponse<PageableResponse<MyCampaignDTO>> = try await networkAPI.request(
+            BookmarkEndpoint.getOpenBookmarks,
+            queryParameters: query
+        )
+        return response.result
+    }
+    
+    func getClosedBookmarks(page: Int = 0) async throws -> PageableResponse<MyCampaignDTO> {
+        let query = [
+            "page": "\(page)",
+            "size": "20"
+        ]
+        
+        let response: APIResponse<PageableResponse<MyCampaignDTO>> = try await networkAPI.request(
+            BookmarkEndpoint.getClosedBookmarks,
             queryParameters: query
         )
         return response.result
