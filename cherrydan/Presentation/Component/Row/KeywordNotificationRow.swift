@@ -10,6 +10,7 @@ struct KeywordNotificationRow: View {
             Button(action: onSelect) {
                 Image("check_circle_\(isSelected ? "filled" : "empty")")
             }
+            
             VStack(alignment: .leading, spacing: 4) {
                 (
                     Text(notification.keyword)
@@ -44,6 +45,6 @@ struct KeywordNotificationRow: View {
             Image("chevron_right")
             
         }
-        .padding(.vertical, 8)
+        .padding(.vertical, 16)
     }
 }

@@ -41,6 +41,7 @@ struct CDBackHeaderWithTitle<Content: View>: View {
             }
         }
         .frame(height: 40)
+        .padding(.bottom, 12)
         .background(.gray0)
     }
 }
