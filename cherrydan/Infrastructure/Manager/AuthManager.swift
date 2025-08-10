@@ -53,9 +53,8 @@ final class AuthManager: ObservableObject {
     }
     
     func login(_ accessToken: String, _ refreshToken: String, _ nickname: String? = nil) {
-        isLoggedIn = true
-        
         KeychainManager.shared.saveTokens(accessToken, refreshToken)
+        isLoggedIn = true
         
         if let nickname {
             let finalNickname = nickname.isEmpty ? "회원" : nickname
