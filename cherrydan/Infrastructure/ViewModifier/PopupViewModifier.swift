@@ -15,7 +15,7 @@ struct PopupViewModifier: ViewModifier {
                             .edgesIgnoringSafeArea(.all)
                             .opacity(isAnimating ? 0.3 : 0.0)
                             .onTapGesture {
-                                if popupType.config.isOptional { dismissPopup() }
+                                if popupType.config.isDismissNeeded { dismissPopup() }
                             }
                             .animation(.spring(duration: 0.1), value: isAnimating)
                         

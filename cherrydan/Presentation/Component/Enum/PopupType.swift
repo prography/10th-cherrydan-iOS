@@ -5,6 +5,7 @@ enum PopupType {
     case updateOptional(onClick:() -> Void)
     case loginNeeded(onClick:() -> Void)
     case loginWithDuplicatedAccount(account: String)
+    case cancelZzim(onClick:() -> Void)
     case custom(PopupConfig)
     
     var config: PopupConfig {
@@ -14,7 +15,7 @@ enum PopupType {
                 image: nil,
                 title: "새로운 버전 안내",
                 description: "더 나은 서비스 제공을 위해\n새로운 기능과 개선사항이 추가되었어요",
-                isOptional: false,
+                isDismissNeeded: false,
                 buttons: [
                     ButtonConfig(text: "지금 업데이트하기", type: .largePrimary, onClick: onClick)
                 ],
@@ -25,7 +26,6 @@ enum PopupType {
                 image: nil,
                 title: "새로운 버전 안내",
                 description: "더 나은 서비스 제공을 위해\n새로운 기능과 개선사항이 추가되었어요",
-                isOptional: true,
                 buttons: [
                     ButtonConfig(text: "닫기", type: .largeGray, onClick: {}),
                     ButtonConfig(text: "업데이트하기", type: .largePrimary, onClick: onClick)
@@ -37,7 +37,6 @@ enum PopupType {
                 image: nil,
                 title: "로그인 필요",
                 description: "로그인이 필요한 기능입니다!",
-                isOptional: true,
                 buttons: [
                     ButtonConfig(text: "닫기", type: .largeGray, onClick: {}),
                     ButtonConfig(text: "로그인", type: .largePrimary, onClick: onClick)
@@ -49,9 +48,19 @@ enum PopupType {
                 image: nil,
                 title: "이미 가입된 계정이 있습니다.\n로그인 해주세요.",
                 description: account,
-                isOptional: true,
                 buttons: [
                     ButtonConfig(text: "확인", type: .largePrimary, onClick: {})
+                ],
+                buttonLayout: .horizontal
+            )
+        case .cancelZzim(let onClick):
+            PopupConfig(
+                image: nil,
+                title: "찜 목록에서 제거할까요?",
+                description: "이후 홈화면에서 다시 추가할 수 있어요.",
+                buttons: [
+                    ButtonConfig(text: "취소", type: .largeGray, onClick: {}),
+                    ButtonConfig(text: "제거", type: .largePrimary, onClick: onClick)
                 ],
                 buttonLayout: .horizontal
             )
@@ -65,7 +74,7 @@ struct PopupConfig {
     let image: String?
     let title: String
     let description: String
-    let isOptional: Bool
+    let isDismissNeeded: Bool
     let buttons: [ButtonConfig]
     let buttonLayout: ButtonLayout
     
@@ -73,14 +82,14 @@ struct PopupConfig {
         image: String? = nil,
         title: String,
         description: String,
-        isOptional: Bool = true,
+        isDismissNeeded: Bool = true,
         buttons: [ButtonConfig],
         buttonLayout: ButtonLayout = .vertical
     ) {
         self.image = image
         self.title = title
         self.description = description
-        self.isOptional = isOptional
+        self.isDismissNeeded = isDismissNeeded
         self.buttons = buttons
         self.buttonLayout = buttonLayout
     }
