@@ -27,19 +27,17 @@ struct CDBackHeaderWithTitle<Content: View>: View {
                 }
             }) {
                 Image("chevron_left")
+                
+                if let title {
+                    Text(title)
+                        .font(.t3)
+                        .foregroundStyle(.gray9)
+                }
             }
-            if let title {
-                Text(title)
-                    .font(.t3)
-                    .foregroundStyle(.gray9)
-            }
-            
-            Spacer()
             
             if let rightContent {
                 rightContent()
-            } else {
-                Color.clear
+                    .frame(maxWidth: .infinity, alignment: .trailing)
             }
         }
         .frame(height: 40)
