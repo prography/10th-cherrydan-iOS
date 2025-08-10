@@ -9,7 +9,10 @@ struct SelectRegionView: View {
             CDBackHeaderWithTitle(title: "지역선택")
                 .padding(.horizontal, 16)
             
-            RegionListView { regionGroup, subRegion in
+            RegionListView(
+                currentRegionGroup: viewModel.selectedRegionGroup,
+                currentSubRegion: viewModel.selectedSubRegion
+            ) { regionGroup, subRegion in
                 viewModel.selectRegion(regionGroup, subRegion)
                 dismiss()
             }
