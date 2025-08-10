@@ -80,4 +80,20 @@ extension String {
         
         return .orderedSame
     }
+
+    /// 의미 있는 텍스트가 포함되어 있는지 여부를 반환합니다.
+    /// - 기준: 공백/개행을 제거한 뒤, 완성형 한글(가-힣) 또는 영문/숫자가 1자 이상 포함되어야 합니다.
+    /// - 예: "ㅎㅎ", "ㅋㅋ", "ㅠㅠ" 등 자모만으로 이루어진 문자열은 false를 반환합니다.
+    func containsMeaningfulText() -> Bool {
+        let trimmed = self.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return false }
+        return trimmed.range(of: "[가-힣A-Za-z0-9]", options: .regularExpression) != nil
+    }
+
+    /// 한글 자모(자음/모음)가 1자 이상 포함되어 있는지 여부를 반환합니다.
+    /// 포함 블록: Hangul Jamo, Hangul Compatibility Jamo, Hangul Jamo Extended-A/B
+    func containsHangulJamo() -> Bool {
+        let pattern = "[\\u1100-\\u11FF\\u3130-\\u318F\\uA960-\\uA97F\\uD7B0-\\uD7FF]"
+        return self.range(of: pattern, options: .regularExpression) != nil
+    }
 }

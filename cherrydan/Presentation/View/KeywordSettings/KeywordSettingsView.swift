@@ -87,9 +87,7 @@ struct KeywordSettingsView: View {
             Spacer()
             
             Button(action: {
-                Task {
-                    await viewModel.deleteKeyword(keywordId: keyword.id)
-                }
+                viewModel.deleteKeyword(keyword: keyword)
             }) {
                 Image(systemName: "xmark")
                     .font(.system(size: 14, weight: .medium))

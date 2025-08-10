@@ -33,8 +33,16 @@ struct NotificationView: View {
     
     var body: some View {
         CDScreen(horizontalPadding: 0, isLoading: viewModel.isLoading || viewModel.isLoadingMore) {
-            CDBackHeaderWithTitle(title: "알림")
-                .padding(.horizontal, 16)
+            CDBackHeaderWithTitle(title: "알림") {
+                if !viewModel.isDeleteMode {
+                    Button(action: {
+                        viewModel.isDeleteMode = true
+                    }){
+                        Image("trash")
+                    }
+                }
+            }
+            .padding(.horizontal, 16)
             
             tabSection
                 .padding(.horizontal, 16)
@@ -226,31 +234,36 @@ struct NotificationView: View {
             
             Spacer()
             
-            if viewModel.selectedTab == .activity {
-                Button(action: {
-                    // 모든 알림을 읽음 처리
-                }) {
-                    Text("읽음")
-                        .font(.m4r)
-                        .foregroundColor(.gray5)
-                }
-            } else {
+            let hasSelectionInCurrentTab = !viewModel.selectedNotifications.intersection(Set(currentIds)).isEmpty
+            if viewModel.isDeleteMode {
                 HStack(spacing: 4){
-                    Button(action: {}) {
+                    Button(action: { viewModel.deleteSelectedAlerts() }) {
                         Text("삭제")
-                            .foregroundColor(.mPink3)
+                            .font(.m4b)
+                            .foregroundColor(hasSelectionInCurrentTab ? .mPink3 : .gray5)
                     }
+                    .disabled(!hasSelectionInCurrentTab)
                     
                     Rectangle()
                         .fill(.gray4)
                         .frame(width: 1, height: 12)
                     
-                    Button(action: {}) {
+                    Button(action: {
+                        viewModel.isDeleteMode = false
+                    }) {
                         Text("취소")
                             .foregroundColor(.gray9)
+                            .font(.m4b)
                     }
                 }
-                .font(.m4b)
+            } else {
+                Button(action: { viewModel.markSelectedAlertsAsRead() }) {
+                    Text("읽음")
+                }
+                .font(hasSelectionInCurrentTab ? .m4b : .m4r)
+                .foregroundColor(hasSelectionInCurrentTab ? .mPink3 : .gray5)
+                .disabled(!hasSelectionInCurrentTab)
+                
             }
         }
         .frame(height: 32)

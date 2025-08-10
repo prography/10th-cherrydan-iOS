@@ -25,7 +25,6 @@ class KeywordSettingsViewModel: ObservableObject {
                 let response = try await keywordRepository.getUserKeywords()
                 userKeywords = response.result.map { $0.toUserKeyword() }
             } catch {
-                print("KeywordSettingsViewModel Error: \(error)")
                 ToastManager.shared.show(.errorWithMessage("키워드 목록을 불러오는 중 오류가 발생했습니다."))
             }
             
@@ -41,6 +40,17 @@ class KeywordSettingsViewModel: ObservableObject {
         guard !trimmedKeyword.isEmpty else {
             return (false, "키워드를 입력해주세요.")
         }
+
+        // 의미 있는 텍스트 포함 여부 체크 (완성형 한글/영문/숫자 최소 1자)
+        guard trimmedKeyword.containsMeaningfulText() else {
+            return (false, "\"\(trimmedKeyword)\" 키워드는 추가할 수 없습니다")
+        }
+        
+        // 한글 자모(자음/모음) 포함 시 무효 처리
+        if trimmedKeyword.containsHangulJamo() {
+            return (false, "\"\(trimmedKeyword)\" 키워드는 추가할 수 없습니다")
+        }
+        
         
         // 글자수 체크
         if trimmedKeyword.count < minKeywordLength {
@@ -79,6 +89,7 @@ class KeywordSettingsViewModel: ObservableObject {
             do {
                 isLoading = true
                 try await keywordRepository.addUserKeyword(keyword: newKeyword.trimmingCharacters(in: .whitespacesAndNewlines))
+                ToastManager.shared.show(.success("키워드 알림이 등록되었습니다"))
                 newKeyword = ""
                 loadUserKeywords() // 목록 새로고침
             } catch {
@@ -90,18 +101,18 @@ class KeywordSettingsViewModel: ObservableObject {
         }
     }
     
-    func deleteKeyword(keywordId: Int) async {
-        isLoading = true
-        
-        do {
-            try await keywordRepository.deleteUserKeyword(keywordId: keywordId)
-            loadUserKeywords()
-        } catch {
-            print("KeywordSettingsViewModel Delete Error: \(error)")
-            ToastManager.shared.show(.errorWithMessage("키워드 삭제 중 오류가 발생했습니다."))
+    func deleteKeyword(keyword: UserKeyword) {
+        Task {
+            do {
+                isLoading = true
+                try await keywordRepository.deleteUserKeyword(keywordId: keyword.id)
+                ToastManager.shared.show(.success("\"\(keyword.keyword)\" 키워드 삭제가 완료되었습니다."))
+                loadUserKeywords()
+            } catch {
+                ToastManager.shared.show(.errorWithMessage("키워드 삭제 중 오류가 발생했습니다."))
+            }
+            isLoading = false
         }
-        
-        isLoading = false
     }
     
     /// 키워드 등록 가능 여부 확인
