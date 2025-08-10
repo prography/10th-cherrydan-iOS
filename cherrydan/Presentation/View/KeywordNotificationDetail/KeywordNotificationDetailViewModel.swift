@@ -1,7 +1,7 @@
 import Foundation
 
 @MainActor
-class KeywordAlertDetailViewModel: ObservableObject {
+class KeywordNotificationDetailViewModel: ObservableObject {
     @Published var campaigns: [Campaign] = []
     @Published var campaignCount: Int = 0
     @Published var isLoading: Bool = false
@@ -63,7 +63,7 @@ class KeywordAlertDetailViewModel: ObservableObject {
                 hasNextPage = response.result.hasNext
                 currentPage = response.result.page + 1
             } catch {
-                print("KeywordAlertDetailViewModel LoadMore Error: \(error)")
+                print("KeywordNotificationDetailViewModel LoadMore Error: \(error)")
                 ToastManager.shared.show(.errorWithMessage("추가 캠페인을 불러오는 중 오류가 발생했습니다."))
             }
             

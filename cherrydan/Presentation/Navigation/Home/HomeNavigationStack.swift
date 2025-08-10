@@ -43,7 +43,7 @@ struct HomeNavigationStack: View {
         case .campaignWeb(let siteNameKr, let campaignSiteUrl):
             CampaignWebView(siteNameKr: siteNameKr, campaignSiteUrl: campaignSiteUrl)
         case .keywordSettings: KeywordSettingsView()
-        case .keywordAlertDetail(let keyword): KeywordAlertDetailView(keyword: keyword)
+        case .keywordAlertDetail(let keyword): KeywordNotificationDetailView(keyword: keyword)
         }
     }
 }

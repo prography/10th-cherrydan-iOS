@@ -1,11 +1,11 @@
 import SwiftUI
 
-struct KeywordAlertDetailView: View {
+struct KeywordNotificationDetailView: View {
     @EnvironmentObject var router: HomeRouter
-    @StateObject private var viewModel: KeywordAlertDetailViewModel
+    @StateObject private var viewModel: KeywordNotificationDetailViewModel
     
     init(keyword: KeywordNotification) {
-        self._viewModel = StateObject(wrappedValue: KeywordAlertDetailViewModel(keyword: keyword))
+        self._viewModel = StateObject(wrappedValue: KeywordNotificationDetailViewModel(keyword: keyword))
     }
     
     var body: some View {
