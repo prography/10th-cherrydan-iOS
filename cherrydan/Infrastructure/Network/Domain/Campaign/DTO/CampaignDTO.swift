@@ -7,10 +7,14 @@ struct CampaignDTO: Codable {
     let applicantCount: Int?
     let recruitCount: Int?
     let imageUrl: String?
+    let isBookmarked: Bool?
     let campaignPlatformImageUrl: String?
     let campaignType: String?
     let competitionRate: Double?
-    let campaignSite: String?
+    let campaignSite: String? // 추후 fade-out 예정 -> campaignSiteKr과 동일
+    let campaignSiteKr: String?
+    let campaignSiteEn: String?
+    let campaignSiteUrl: String?
     let snsPlatforms: [String]
     
     func toCampaign() -> Campaign {
@@ -23,11 +27,17 @@ struct CampaignDTO: Codable {
             applicantCount: applicantCount ?? 0,
             recruitCount: recruitCount ?? 0,
             imageUrl: imageUrl ?? "",
-            campaignPlatformImageUrl: campaignPlatformImageUrl ?? "",
+            isBookmarked: isBookmarked ?? false,
             campaignType: CampaignType(rawValue: campaignType ?? "REGION") ?? .product,
             competitionRate: competitionRate ?? 0.0,
-            campaignSite: CampaignPlatformType(rawValue: campaignSite ?? "레뷰") ?? .chvu,
-            snsPlatforms: snsPlatforms.compactMap { SocialPlatformType.from(displayName: $0) }
+            campaignSite: CampaignPlatform(
+                siteNameKr: campaignSiteKr ?? "레뷰",
+                siteNameEn: campaignSiteEn ?? "revu",
+                cdnUrl: campaignSiteUrl ?? ""
+            ),
+            snsPlatforms: snsPlatforms.compactMap { snsPlatform in
+                SNSPlatformType.allCases.first(where:{ $0.displayName == snsPlatform})
+            },
         )
     }
 }

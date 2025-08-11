@@ -14,7 +14,7 @@ struct CategoryDetailView: View {
     
     var body: some View {
         ZStack {
-            CDScreen(horizontalPadding: 0) {
+            CDScreen(horizontalPadding: 0, isLoading: viewModel.isLoading) {
                 CDBackHeaderWithTitle(title: headerTitle){
                     Button(action: {router.push(to: .search)}) {
                         Image("search_bg")
@@ -35,10 +35,10 @@ struct CategoryDetailView: View {
                         GridItem(.flexible(), spacing: 8)
                     ], spacing: 16) {
                         ForEach(viewModel.campaigns) { campaign in
-                            CampaignCardView(campaign: campaign) // 카드 최대 높이 제한
+                            CampaignCardView(campaign: campaign){} // 카드 최대 높이 제한
                                 .onTapGesture {
                                     router.push(to: .campaignWeb(
-                                        campaignSite: campaign.campaignSite,
+                                        siteNameKr: campaign.campaignSite.siteNameKr,
                                         campaignSiteUrl: campaign.detailUrl
                                     ))
                                 }
@@ -49,11 +49,6 @@ struct CategoryDetailView: View {
                     .padding(.bottom, 120)
                 }
                 
-                if viewModel.isLoading {
-                    ProgressView()
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .background(Color.black.opacity(0.2))
-                }
             }
         }
         .sheet(isPresented: $isFilterPresent) {

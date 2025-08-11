@@ -5,7 +5,6 @@ import NaverThirdPartyLogin
 import GoogleSignIn
 
 public enum UserDefaultKeys {
-    static let isLoggedIn = "isLoggedIn"
     static let isDarkMode = "isDarkMode"
     static let lastLoggedInPlatform = "lastLoggedInPlatform"
     static let userNickname = "userNickname"
@@ -14,14 +13,12 @@ public enum UserDefaultKeys {
 @MainActor
 final class AuthManager: ObservableObject {
     static let shared = AuthManager()
-    @Published private(set) var isLoggedIn: Bool = true
+    @Published private(set) var isLoggedIn: Bool = false
     @Published private(set) var isGuestMode: Bool = false
     @Published private(set) var lastLoggedInPlatform: LoginPlatform?
     @Published private(set) var userNickname: String = "회원"
     
     private init() {
-        self.isLoggedIn = UserDefaults.standard.bool(forKey: UserDefaultKeys.isLoggedIn)
-        
         // 마지막 로그인 플랫폼 불러오기
         if let platformString = UserDefaults.standard.string(forKey: UserDefaultKeys.lastLoggedInPlatform) {
             self.lastLoggedInPlatform = LoginPlatform(rawValue: platformString)
@@ -49,12 +46,21 @@ final class AuthManager: ObservableObject {
         let finalNickname = nickname?.isEmpty == false ? nickname! : "회원"
         userNickname = finalNickname
         
-        KeychainManager.shared.saveToken(result.tokens.accessToken)
-        KeychainManager.shared.saveRefreshToken(result.tokens.refreshToken)
+        KeychainManager.shared.saveTokens(result.tokens.accessToken, result.tokens.refreshToken)
         
-        UserDefaults.standard.set(true, forKey: UserDefaultKeys.isLoggedIn)
         UserDefaults.standard.set(platform.rawValue, forKey: UserDefaultKeys.lastLoggedInPlatform)
         UserDefaults.standard.set(finalNickname, forKey: UserDefaultKeys.userNickname)
+    }
+    
+    func login(_ accessToken: String, _ refreshToken: String, _ nickname: String? = nil) {
+        KeychainManager.shared.saveTokens(accessToken, refreshToken)
+        isLoggedIn = true
+        
+        if let nickname {
+            let finalNickname = nickname.isEmpty ? "회원" : nickname
+            userNickname = finalNickname
+            UserDefaults.standard.set(finalNickname, forKey: UserDefaultKeys.userNickname)
+        }
     }
     
     func logout() {
@@ -66,11 +72,10 @@ final class AuthManager: ObservableObject {
         lastLoggedInPlatform = nil
         userNickname = "회원"
         
-        UserDefaults.standard.set(false, forKey: UserDefaultKeys.isLoggedIn)
         UserDefaults.standard.removeObject(forKey: UserDefaultKeys.lastLoggedInPlatform)
         UserDefaults.standard.removeObject(forKey: UserDefaultKeys.userNickname)
         
-        KeychainManager.shared.clearToken()
+        KeychainManager.shared.clearTokens()
     }
     
     func updateNickname(_ nickname: String) {

@@ -11,12 +11,11 @@ struct MyPageView: View {
     var body: some View {
         CDScreen(horizontalPadding: 0) {
             CDHeaderWithLeftContent {
-                    Text("마이페이지")
-                        .font(.t1)
-                        .foregroundStyle(.gray9)
-                }
-                .padding(.top, 6)
-                .padding(.horizontal, 16)
+                Text("마이페이지")
+                    .font(.t1)
+                    .foregroundStyle(.gray9)
+            }
+            .padding(.horizontal, 16)
             
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {

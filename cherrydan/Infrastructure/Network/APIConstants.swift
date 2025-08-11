@@ -1,5 +1,4 @@
 struct APIConstants {
-    static let isServerDevelopment = true
-    static let isUserDevelopment = true
-    static let baseUrl = isServerDevelopment ? "https://cherrydan.com/api" : "http://43.201.140.227:8080/api"
+    static let isServerDevelopment = false
+    static let baseUrl = isServerDevelopment ? "https://dev.cherrydan.com/api" :  "https://cherrydan.com/api"
 }

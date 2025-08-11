@@ -3,17 +3,25 @@ import Foundation
 enum MyCampaignRoute: BaseRoute {
     case category
     case categoryDetail
+    case campaignWeb(siteNameKr: String, campaignSiteUrl: String)
     
     var id: String {
-        String(describing: self)
+        switch self {
+        case .campaignWeb(let siteNameKr, _):
+            "campaignWeb_\(siteNameKr)"
+        default:
+            String(describing: self)
+        }
     }
     
     var analyticsName: String {
         switch self {
         case .category:
-        "category_screen"
+            "category_screen"
         case .categoryDetail:
             "category_detail_screen"
+        case .campaignWeb:
+            "campaign_web_screen"
         }
     }
     

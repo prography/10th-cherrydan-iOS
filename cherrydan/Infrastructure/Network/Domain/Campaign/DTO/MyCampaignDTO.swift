@@ -1,35 +1,33 @@
 struct MyCampaignDTO: Codable {
     let id: Int
     let campaignId: Int
-    let userId: Int
-    let reviewerAnnouncementStatus: String
-    let statusLabel: String
-    let title: String
-    let benefit: String
-    let detailUrl: String
-    let imageUrl: String
-    let campaignPlatformImageUrl: String
-    let applicantCount: Int
-    let recruitCount: Int
+    let campaignTitle: String?
+    let campaignDetailUrl: String?
+    let campaignImageUrl: String?
+    let campaignPlatformImageUrl: String?
+    let benefit: String?
+    let applicantCount: Int?
+    let recruitCount: Int?
     let snsPlatforms: [String]
-    let campaignSite: String
+    let reviewerAnnouncementStatus: String?
+    let campaignSite: String?
     
     func toMyCampaign() -> MyCampaign {
         MyCampaign(
             id: id,
             campaignId: campaignId,
-            userId: userId,
-            reviewerAnnouncementStatus: reviewerAnnouncementStatus,
-            statusLabel: statusLabel,
-            title: title,
-            benefit: benefit,
-            detailUrl: detailUrl,
-            imageUrl: imageUrl,
-            campaignPlatformImageUrl: campaignPlatformImageUrl,
-            applicantCount: applicantCount,
-            recruitCount: recruitCount,
-            snsPlatforms: snsPlatforms.map { SocialPlatformType(rawValue: $0) ?? .instagram },
-            campaignSite: CampaignPlatformType(rawValue: campaignSite) ?? .revu
+            campaignTitle: campaignTitle ?? "",
+            campaignDetailUrl: campaignDetailUrl ?? "",
+            campaignImageUrl: campaignImageUrl ?? "",
+            campaignPlatformImageUrl: campaignPlatformImageUrl ?? "",
+            benefit: benefit ?? "",
+            applicantCount: applicantCount ?? 0,
+            recruitCount: recruitCount ?? 0,
+            snsPlatforms: snsPlatforms.compactMap { snsPlatform in
+                SNSPlatformType.allCases.first(where:{ $0.displayName == snsPlatform})
+            },
+            reviewerAnnouncementStatus: reviewerAnnouncementStatus ?? "",
+            campaignSite: campaignSite ?? ""
         )
     }
 }

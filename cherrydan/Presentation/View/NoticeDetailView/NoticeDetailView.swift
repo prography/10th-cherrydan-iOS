@@ -4,7 +4,6 @@ struct NoticeDetailView: View {
     let noticeId: String
     @State private var notice: Notice?
     @State private var isLoading: Bool = true
-    @State private var errorMessage: String?
     
     private let noticeBoardRepository = NoticeBoardRepository()
     
@@ -111,7 +110,7 @@ struct NoticeDetailView: View {
                         .font(.system(size: 40))
                         .foregroundColor(.gray4)
                     
-                    Text(errorMessage ?? "공지사항을 찾을 수 없습니다.")
+                    Text("공지사항을 찾을 수 없습니다.")
                         .font(.m4r)
                         .foregroundColor(.gray5)
                         .multilineTextAlignment(.center)
@@ -126,10 +125,9 @@ struct NoticeDetailView: View {
     
     private func loadNoticeDetail() async {
         isLoading = true
-        errorMessage = nil
         
         guard let id = Int(noticeId) else {
-            errorMessage = "잘못된 공지사항 ID입니다."
+            ToastManager.shared.show(.errorWithMessage("잘못된 공지사항 ID입니다."))
             isLoading = false
             return
         }
@@ -139,7 +137,7 @@ struct NoticeDetailView: View {
             notice = Notice(from: response.result)
         } catch {
             print("Notice detail loading error: \(error)")
-            errorMessage = "공지사항을 불러오는 중 오류가 발생했습니다."
+            ToastManager.shared.show(.errorWithMessage("공지사항을 불러오는 중 오류가 발생했습니다."))
         }
         
         isLoading = false

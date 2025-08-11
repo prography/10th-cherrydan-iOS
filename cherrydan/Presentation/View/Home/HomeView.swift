@@ -9,7 +9,16 @@ struct HomeView: View {
     
     var body: some View {
         CDScreen(horizontalPadding: 0) {
-            CDHeaderWithLeftContent(onSearchClick: {
+            CDHeaderWithLeftContent(
+                onNotificationClick: {
+                    if AuthManager.shared.isGuestMode {
+                        PopupManager.shared.show(.loginNeeded(onClick: {
+                            AuthManager.shared.leaveGuestMode()
+                        }))
+                    } else {
+                        router.push(to: .notification(tab: .activity))
+                    }
+                }, onSearchClick: {
                 if AuthManager.shared.isGuestMode {
                     PopupManager.shared.show(.loginNeeded(onClick: {
                         AuthManager.shared.leaveGuestMode()
@@ -128,14 +137,19 @@ struct HomeView: View {
         return Button(action: {
             viewModel.toggleTag(tagData.name)
         }) {
-            HStack {
-                if let img = tagData.imgUrl {
-                    KFImage(URL(string: img))
+            HStack(spacing: 2) {
+                if let imgName = tagData.imgName, !imgName.isEmpty {
+                    Image(imgName)
+                        .resizable()
+                        .frame(width: 16, height: 16)
+                } else if let imgUrl = tagData.imgUrl {
+                    KFImage(URL(string: imgUrl))
                         .resizable()
                         .onFailure { error in
                             print("Image loading failed: \(error)")
                         }
-                        .frame(width: 20, height: 20)
+                        .frame(width: 16, height: 16)
+                        .padding(.trailing, 4)
                 }
                 
                 Text(tagData.name)
@@ -157,11 +171,19 @@ struct HomeView: View {
             ForEach(Array(zip(viewModel.campaigns.indices, viewModel.campaigns)), id: \.1.id) { index, campaign in
                 Button(action:{
                     router.push(to: .campaignWeb(
-                        campaignSite: campaign.campaignSite,
+                        siteNameKr: campaign.campaignSite.siteNameKr,
                         campaignSiteUrl: campaign.detailUrl
                     ))
                 }){
-                    CampaignCardView(campaign: campaign)
+                    CampaignCardView(campaign: campaign) {
+                        if AuthManager.shared.isGuestMode {
+                            PopupManager.shared.show(.loginNeeded(onClick: {
+                                AuthManager.shared.leaveGuestMode()
+                            }))
+                        } else {
+                            viewModel.toggleBookmark(for: campaign)
+                        }
+                    }
                 }
                 .onAppear {
                     if index == viewModel.campaigns.count - 10 && viewModel.hasMorePages && !viewModel.isLoadingMore {

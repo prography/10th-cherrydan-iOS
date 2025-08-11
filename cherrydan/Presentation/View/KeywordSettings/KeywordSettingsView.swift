@@ -1,0 +1,103 @@
+import SwiftUI
+
+struct KeywordSettingsView: View {
+    @Environment(\.dismiss) private var dismiss
+    @StateObject private var viewModel = KeywordSettingsViewModel()
+    @FocusState private var isKeywordFocused: Bool
+    
+    var body: some View {
+        CDScreen(horizontalPadding: 0, isLoading: viewModel.isLoading) {
+            CDBackHeaderWithTitle(title: "키워드 알림 설정 (\(viewModel.userKeywords.count)/5)")
+            .padding(.horizontal, 16)
+            
+            VStack(spacing: 24) {
+                keywordInputSection
+                myKeywordsSection
+                Spacer()
+            }
+            .padding(.horizontal, 16)
+            .padding(.top, 20)
+        }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            isKeywordFocused = false
+        }
+    }
+    
+    private var keywordInputSection: some View {
+        HStack(spacing: 12) {
+            TextField("검색어를 입력해 주세요.", text: $viewModel.newKeyword)
+                .focused($isKeywordFocused)
+                .onSubmit {
+                    viewModel.addKeyword()
+                }
+            
+            Button(action: viewModel.addKeyword) {
+                Text("등록")
+                    .foregroundColor(.gray5)
+                    .padding(.horizontal, 12)
+            }
+        }
+        .font(.m5r)
+        .foregroundStyle(.gray4)
+        .padding(.leading, 12)
+        .frame(height: 48)
+        .background(.gray2, in: RoundedRectangle(cornerRadius: 8))
+//        .disabled(viewModel.newKeyword.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+    }
+    
+    private var myKeywordsSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("나의 키워드")
+                .font(.m3b)
+                .foregroundColor(.gray9)
+            
+            if viewModel.userKeywords.isEmpty {
+                VStack(spacing: 12) {
+                    Image(systemName: "magnifyingglass")
+                        .font(.system(size: 40))
+                        .foregroundColor(.gray4)
+                    
+                    Text("등록된 키워드가 없습니다")
+                        .font(.m4r)
+                        .foregroundColor(.gray5)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 40)
+            } else {
+                LazyVStack(spacing: 0) {
+                    ForEach(viewModel.userKeywords) { keyword in
+                        keywordRow(keyword)
+                        if keyword.id != viewModel.userKeywords.last?.id {
+                            Divider()
+                                .background(Color.gray2)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    private func keywordRow(_ keyword: UserKeyword) -> some View {
+        HStack {
+            Text(keyword.keyword)
+                .font(.m4r)
+                .foregroundColor(.gray9)
+            
+            Spacer()
+            
+            Button(action: {
+                viewModel.deleteKeyword(keyword: keyword)
+            }) {
+                Image(systemName: "xmark")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(.gray5)
+            }
+        }
+        .padding(.vertical, 16)
+    }
+}
+
+#Preview {
+    KeywordSettingsView()
+} 

@@ -37,13 +37,13 @@ struct CDBottomSheet<Content: View>: View {
     var body: some View {
         VStack(spacing: 0) {
             headerView
-                .padding(.bottom, 12)
+                .padding(.bottom, 24)
             content
             Spacer()
             buttonView
         }
         .padding(.horizontal, horizontalPadding)
-        .padding(.top, hasHeader ? 16 : 40)
+        .padding(.top, 28)
         .frame(maxWidth: .infinity, maxHeight: height)
         .presentationDetents([.height(height)])
         .presentationDragIndicator(hasHeader ? .hidden : .visible)

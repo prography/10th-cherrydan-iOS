@@ -176,12 +176,4 @@ enum SubRegion: String, CaseIterable, Codable {
         case .jeju: return "제주"
         }
     }
-    
-    static func from(displayName: String) -> SubRegion? {
-        return SubRegion.allCases.first { $0.displayName == displayName }
-    }
-    
-    static func from(id: Int) -> SubRegion? {
-        return SubRegion.allCases.first { $0.id == id }
-    }
 } 

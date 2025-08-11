@@ -3,7 +3,21 @@ import SwiftUI
 struct RegionListView: View {
     @State private var selectedRegionGroup: RegionGroup? = nil
     
+    let currentRegionGroup: RegionGroup?
+    let currentSubRegion: SubRegion?
     let onSelectRegion: ((RegionGroup?, SubRegion?) -> Void)
+    
+    init(
+        currentRegionGroup: RegionGroup? = nil,
+        currentSubRegion: SubRegion? = nil,
+        onSelectRegion: @escaping ((RegionGroup?, SubRegion?) -> Void)
+    ) {
+        self.currentRegionGroup = currentRegionGroup
+        self.currentSubRegion = currentSubRegion
+        self.onSelectRegion = onSelectRegion
+        let initialGroup = currentRegionGroup ?? (currentSubRegion.flatMap { RegionGroup.regionGroup(for: $0) })
+        _selectedRegionGroup = State(initialValue: initialGroup)
+    }
     
     var body: some View {
         regionSelectSection
@@ -79,14 +93,15 @@ struct RegionListView: View {
     @ViewBuilder
     private func regionTitleButton(_ regionGroup: RegionGroup) -> some View {
         let isSelected = regionGroup == selectedRegionGroup
+        let isModelSelectedWholeGroup = (currentRegionGroup == regionGroup && currentSubRegion == nil)
         
         Button(action: {
             onSelectRegion(regionGroup, nil)
         }){
             HStack {
                 Text("\(regionGroup.displayName)\(regionGroup == .seoul ? " 전체." : ".")")
-                    .font(isSelected ? .m4b : .m4r)
-                    .foregroundStyle(isSelected ? .white : .gray9)
+                    .font(isModelSelectedWholeGroup ? .m4b : (isSelected ? .m4b : .m4r))
+                    .foregroundStyle(!isModelSelectedWholeGroup && !isSelected ? .gray9 : .gray0)
                     .padding(.horizontal, isSelected ? 16 : 0)
                     .padding(.vertical, 8)
                     .background(isSelected ? .mPink2 : .clear, in: RoundedRectangle(cornerRadius: 99))
@@ -103,9 +118,10 @@ struct RegionListView: View {
         Button(action: {
             onSelectRegion(nil, subregion)
         }) {
+            let isModelSelectedSub = (currentSubRegion == subregion)
             Text(subregion.displayName)
-                .font(.m5r)
-                .foregroundStyle(.gray9)
+                .font(isModelSelectedSub ? .m5b : .m5r)
+                .foregroundStyle(isModelSelectedSub ? .mPink3 : .gray9)
                 .frame(width: 110, height: 40, alignment: .leading)
         }
     }

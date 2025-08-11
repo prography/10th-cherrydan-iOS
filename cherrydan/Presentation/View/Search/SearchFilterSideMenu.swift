@@ -17,7 +17,6 @@ struct SearchFilterSideMenu: View {
                 Spacer()
                 
                 VStack(spacing: 0) {
-                    // 헤더
                     HStack {
                         Text("필터")
                             .font(.m3b)
@@ -246,8 +245,8 @@ struct SearchFilterSideMenu: View {
                     viewModel.updateSnsPlatforms([])
                 }
                 
-                ForEach(SocialPlatformType.allCases, id: \.self) { platform in
-                    filterButton(platform.rawValue, isSelected: viewModel.selectedSnsPlatforms.contains(platform)) {
+                ForEach(SNSPlatformType.allCases, id: \.self) { platform in
+                    filterButton(platform.displayName, isSelected: viewModel.selectedSnsPlatforms.contains(platform)) {
                         toggleSelection(platform, in: viewModel.selectedSnsPlatforms) { newSelection in
                             viewModel.updateSnsPlatforms(newSelection)
                         }
@@ -267,8 +266,8 @@ struct SearchFilterSideMenu: View {
                     viewModel.updateCampaignPlatforms([])
                 }
                 
-                ForEach(CampaignPlatformType.allCases, id: \.self) { platform in
-                    filterButton(platform.rawValue, isSelected: viewModel.selectedCampaignPlatforms.contains(platform)) {
+                ForEach(viewModel.campaignPlatforms, id: \.self) { platform in
+                    filterButton(platform.siteNameKr, isSelected: viewModel.selectedCampaignPlatforms.contains(platform)) {
                         toggleSelection(platform, in: viewModel.selectedCampaignPlatforms) { newSelection in
                             viewModel.updateCampaignPlatforms(newSelection)
                         }

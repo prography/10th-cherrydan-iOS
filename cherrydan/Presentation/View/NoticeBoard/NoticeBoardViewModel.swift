@@ -17,7 +17,6 @@ class NoticeBoardViewModel: ObservableObject {
     @Published var notices: [Notice] = []
     @Published var selectedFilter: NoticeFilter = .popular
     @Published var isLoading: Bool = true
-    @Published var errorMessage: String? = nil
     
     private let noticeBoardRepository: NoticeBoardRepository
     
@@ -41,14 +40,13 @@ class NoticeBoardViewModel: ObservableObject {
     
     func loadNoticeBoard() async {
         isLoading = true
-        errorMessage = nil
         
         do {
             let response = try await noticeBoardRepository.getNoticeBoard()
             notices = response.result.content.map { Notice(from: $0) }
         } catch {
             print("Notice board loading error: \(error)")
-            errorMessage = "공지사항을 불러오는 중 오류가 발생했습니다."
+            ToastManager.shared.show(.errorWithMessage("공지사항을 불러오는 중 오류가 발생했습니다."))
             // API 실패 시 더미 데이터 로드
             loadDummyData()
         }

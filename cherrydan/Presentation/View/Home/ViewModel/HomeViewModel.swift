@@ -6,7 +6,6 @@ import AuthenticationServices
 @MainActor
 class HomeViewModel: ObservableObject {
     @Published var isLoading: Bool = false
-    @Published var errorMessage: String? = nil
     @Published var campaigns: [Campaign] = []
     @Published var banners: [NoticeBoardBanner] = []
     @Published var selectedSortType: SortType = .popular
@@ -26,6 +25,7 @@ class HomeViewModel: ObservableObject {
     
     private let campaignAPI: CampaignRepository
     private let noticeBoardAPI: NoticeBoardRepository
+    private let bookmarkAPI: BookmarkRepository
     
     var regionGroups: [RegionGroup] {
         if let selectedRegionGroup {
@@ -62,10 +62,12 @@ class HomeViewModel: ObservableObject {
     
     init(
         campaignAPI: CampaignRepository = CampaignRepository(),
-        noticeBoardAPI: NoticeBoardRepository = NoticeBoardRepository()
+        noticeBoardAPI: NoticeBoardRepository = NoticeBoardRepository(),
+        bookmarkAPI: BookmarkRepository = BookmarkRepository()
     ) {
         self.campaignAPI = campaignAPI
         self.noticeBoardAPI = noticeBoardAPI
+        self.bookmarkAPI = bookmarkAPI
         initializeFetch()
     }
     
@@ -79,7 +81,7 @@ class HomeViewModel: ObservableObject {
                 banners = response.result.map{$0.toNoticeBoardBanner()}
             } catch {
                 print("Error fetching banners: \(error)")
-                errorMessage = "캠페인을 불러오는 중 오류가 발생했습니다."
+                ToastManager.shared.show(.errorWithMessage("캠페인을 불러오는 중 오류가 발생했습니다."))
             }
             
             isLoading = false
@@ -104,7 +106,11 @@ class HomeViewModel: ObservableObject {
                 sort: selectedSortType,
                 page: currentPage
             )
-            
+        case .reporter:
+            response = try await campaignAPI.getCampaignByReporter(
+                sort: selectedSortType,
+                page: currentPage
+            )
         case .product:
             response = try await campaignAPI.getCampaignByProduct(
                 getProductCategoriesForCurrentCategory(),
@@ -147,7 +153,7 @@ class HomeViewModel: ObservableObject {
                 campaigns = try await fetchCampaigns(for: selectedCategory)
             } catch {
                 print("Error fetching campaigns: \(error)")
-                errorMessage = "캠페인을 불러오는 중 오류가 발생했습니다."
+                ToastManager.shared.show(.errorWithMessage("캠페인을 불러오는 중 오류가 발생했습니다."))
             }
             
             isLoading = false
@@ -167,7 +173,7 @@ class HomeViewModel: ObservableObject {
                 campaigns.append(contentsOf: newCampaigns)
             } catch {
                 print("Error loading next page: \(error)")
-                errorMessage = "추가 캠페인을 불러오는 중 오류가 발생했습니다."
+                ToastManager.shared.show(.errorWithMessage("추가 캠페인을 불러오는 중 오류가 발생했습니다."))
                 // 에러 발생 시 currentPage를 다시 원래대로 복원
                 currentPage -= 1
             }
@@ -202,7 +208,6 @@ class HomeViewModel: ObservableObject {
         initializeFetch()
     }
     
-    /// 지역 변경
     func selectRegion(_ regionGroup: RegionGroup? = nil, _ subRegion: SubRegion? = nil) {
         selectedRegionGroup = nil
         selectedSubRegion = nil
@@ -218,20 +223,21 @@ class HomeViewModel: ObservableObject {
         initializeFetch()
     }
     
-    /// 태그 선택/해제
+    /// 태그 선택/해제 (단일 선택)
     func toggleTag(_ tag: String) {
         if tag == "전체" {
             selectedTags = ["전체"]
         } else {
+            // 전체 태그가 선택되어 있으면 제거
             selectedTags.remove("전체")
             
+            // 현재 선택된 태그와 동일한 태그를 클릭한 경우
             if selectedTags.contains(tag) {
-                selectedTags.remove(tag)
-                if selectedTags.isEmpty {
-                    selectedTags.insert("전체")
-                }
+                // 선택 해제하고 전체로 설정
+                selectedTags = ["전체"]
             } else {
-                selectedTags.insert(tag)
+                // 다른 태그를 선택한 경우, 기존 선택을 모두 제거하고 새로운 태그만 선택
+                selectedTags = [tag]
             }
         }
         
@@ -243,28 +249,18 @@ class HomeViewModel: ObservableObject {
         case .all:
             return []
         case .region:
-            return [TagData(imgUrl: nil, name: "전체")] + LocalCategory.allCases.map{TagData(imgUrl: nil, name: $0.displayName)}
+            return [TagData(name: "전체")] + LocalCategory.allCases.map{ TagData(name: $0.displayName) }
+        case .reporter:
+            return []
         case .product:
-            return [TagData(imgUrl: nil, name: "전체")] + ProductCategory.allCases.map{TagData(imgUrl: nil, name: $0.displayName)}
+            return [TagData(name: "전체")] + ProductCategory.allCases.map{ TagData(name: $0.displayName) }
         case .snsPlatform:
-            return [TagData(imgUrl: nil, name: "전체")] + SocialPlatformType.allCases.map{TagData(imgUrl: nil, name: $0.rawValue)}
+            return [TagData(name: "전체")] + SNSPlatformType.allCases.map{ TagData(imgName: $0.imageName, name: $0.displayName) }
         case .campaignPlatform:
-            return getCampaignPlatformTabs()
+            return [TagData(name: "전체")] + campaignPlatforms.map { TagData(imgUrl: $0.cdnUrl, name: $0.siteNameKr) }
         }
     }
     
-    
-    func getCampaignPlatformTabs() -> [TagData] {
-        // 캐시된 데이터가 있으면 반환
-        if !campaignPlatforms.isEmpty {
-            return [TagData(imgUrl: nil, name: "전체")] + campaignPlatforms.map { TagData(imgUrl: $0.cdnUrl, name: $0.siteNameKr) }
-        }
-        
-        // 로딩 중이거나 캐시된 데이터가 없으면 빈 배열 반환
-        return []
-    }
-    
-    @MainActor
     private func loadCampaignPlatforms() async {
         guard !isLoadingCampaignPlatforms else { return }
         
@@ -281,13 +277,12 @@ class HomeViewModel: ObservableObject {
     }
     
     // MARK: - Private Helper Methods
-    
     /// 현재 카테고리와 선택된 태그에 따른 지역 카테고리 반환
     private func getLocalCategoriesForCurrentCategory() -> [LocalCategory] {
         guard selectedCategory == .region else { return [] }
         
         return selectedTags.compactMap { tag in
-            LocalCategory.from(displayName: tag)
+            LocalCategory.allCases.first(where: { $0.displayName == tag} )
         }
     }
     
@@ -296,25 +291,49 @@ class HomeViewModel: ObservableObject {
         guard selectedCategory == .product else { return [] }
         
         return selectedTags.compactMap { tag in
-            ProductCategory.from(displayName: tag)
+            ProductCategory.allCases.first(where: { $0.displayName == tag} )
         }
     }
     
     /// 현재 카테고리와 선택된 태그에 따른 SNS 플랫폼 반환
-    private func getSocialPlatformsForCurrentCategory() -> [SocialPlatformType] {
+    private func getSocialPlatformsForCurrentCategory() -> [SNSPlatformType] {
         guard selectedCategory == .snsPlatform else { return [] }
         
         return selectedTags.compactMap { tag in
-            SocialPlatformType.from(displayName: tag)
+            SNSPlatformType.allCases.first(where: { $0.displayName == tag} )
         }
     }
     
     /// 현재 카테고리와 선택된 태그에 따른 캠페인 플랫폼 반환
-    private func getCampaignPlatformsForCurrentCategory() -> [CampaignPlatformType] {
+    private func getCampaignPlatformsForCurrentCategory() -> [CampaignPlatform] {
         guard selectedCategory == .campaignPlatform else { return [] }
         
         return selectedTags.compactMap { tag in
-            CampaignPlatformType.from(displayName: tag)
+            campaignPlatforms.first(where: {$0.siteNameKr == tag})
+        }
+    }
+    
+    // MARK: - 북마크 관련 메서드
+    
+    /// 북마크 토글 (추가/취소)
+    func toggleBookmark(for campaign: Campaign) {
+        Task {
+            do {
+                if campaign.isBookmarked {
+                    try await bookmarkAPI.cancelBookmark(campaignId: campaign.id)
+                    if let index = campaigns.firstIndex(where: { $0.id == campaign.id }) {
+                        campaigns[index].isBookmarked = false
+                    }
+                } else {
+                    try await bookmarkAPI.addBookmark(campaignId: campaign.id)
+                    if let index = campaigns.firstIndex(where: { $0.id == campaign.id }) {
+                        campaigns[index].isBookmarked = true
+                    }
+                }
+            } catch {
+                print("북마크 토글 오류: \(error)")
+                ToastManager.shared.show(.errorWithMessage("북마크 처리 중 오류가 발생했습니다."))
+            }
         }
     }
 }

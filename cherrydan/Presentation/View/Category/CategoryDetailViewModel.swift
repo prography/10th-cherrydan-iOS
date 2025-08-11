@@ -8,7 +8,6 @@ class CategoryDetailViewModel: ObservableObject {
     @Published var campaigns: [Campaign] = []
     @Published var totalCount: Int = 0
     @Published var isLoading: Bool = false
-    @Published var errorMessage: String? = nil
     @Published var selectedTabIndex: Int = 0
     
     private let campaignRepository: CampaignRepository
@@ -25,7 +24,6 @@ class CategoryDetailViewModel: ObservableObject {
     
     func loadCampaigns() {
         isLoading = true
-        errorMessage = nil
         
         
 //        Task {

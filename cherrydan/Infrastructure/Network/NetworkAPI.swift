@@ -2,7 +2,6 @@ import Foundation
 
 class NetworkAPI {
     private let session = URLSession.shared
-    
     private var isRefreshing = false
     private var refreshTask: Task<LoginResult, Error>? = nil
     private let refreshQueue = DispatchQueue(label: "com.cherrydan.tokenRefreshQueue")
@@ -22,34 +21,33 @@ class NetworkAPI {
                     }
                     return
                 }
-
+                
                 let task = Task<LoginResult, Error> {
                     guard let refreshToken = KeychainManager.shared.getRefreshToken() else {
                         throw APIError.unauthorized
                     }
-
+                    
                     let params: [String: Any] = ["refreshToken": refreshToken]
-
+                    
                     do {
                         let response: APIResponse<LoginResult> = try await self.request(AuthEndpoint.refresh, parameters: params)
-
-                        KeychainManager.shared.saveToken(response.result.accessToken)
-                        KeychainManager.shared.saveRefreshToken(response.result.refreshToken)
-
+                        
+                        KeychainManager.shared.saveTokens(response.result.accessToken, response.result.refreshToken)
+                        
                         return response.result
                     } catch let error as APIError {
                         if case .unauthorized = error {
-                            // ⛔️ refreshToken 자체가 만료된 상태 → 로그아웃 처리
                             DispatchQueue.main.async {
                                 AuthManager.shared.logout()
                             }
                         }
+                        
                         throw error
                     }
                 }
-
+                
                 self.refreshTask = task
-
+                
                 Task {
                     do {
                         let result = try await task.value
@@ -67,12 +65,12 @@ class NetworkAPI {
             }
         }
     }
-
     
     func request<T: Decodable>(
         _ endpoint: APIEndpoint,
         parameters: [String: Any]? = nil,
-        queryParameters: [String: String]? = nil
+        queryParameters: [String: String]? = nil,
+        hasRetried: Bool = false
     ) async throws -> T {
         var urlString = APIConstants.baseUrl + endpoint.path
         
@@ -140,12 +138,20 @@ class NetworkAPI {
             // 성공적인 응답인지 확인 (200-299 상태 코드)
             guard (200...299).contains(httpResponse.statusCode) else {
                 if httpResponse.statusCode == 401 {
-                    do {
-//                        print("▶️▶️ Response: \(String(data: data, encoding: .utf8) ?? "Unable to decode response")")
-                        _ = try await refreshToken()
-                        
-                        return try await request(endpoint, parameters: parameters, queryParameters: queryParameters)
-                    } catch {
+                    switch endpoint.tokenType {
+                    case .accessToken where !hasRetried:
+                        do {
+                            _ = try await refreshToken()
+                            return try await request(
+                                endpoint,
+                                parameters: parameters,
+                                queryParameters: queryParameters,
+                                hasRetried: true
+                            )
+                        } catch {
+                            throw APIError.unauthorized
+                        }
+                    default:
                         throw APIError.unauthorized
                     }
                 }
@@ -169,12 +175,14 @@ class NetworkAPI {
                     throw apiError
                 }
             }
+            
+            print(error)
             throw APIError(error: error)
         }
     }
     
     private func handleError(_ error: APIError) {
-        DispatchQueue.main.async {
+        Task { @MainActor in
             switch error {
             case .unauthorized:
                 AuthManager.shared.logout()

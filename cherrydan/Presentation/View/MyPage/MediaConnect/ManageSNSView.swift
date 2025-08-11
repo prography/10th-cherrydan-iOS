@@ -28,7 +28,7 @@ struct ManageSNSView: View {
             SNSBottomSheet(
                 platformType: viewModel.selectedPlatformType,
                 onConnect: { url in
-                    viewModel.connectSNS(platformType: viewModel.selectedPlatformType, url: url)
+//                    viewModel.connectSNS(platformType: viewModel.selectedPlatformType, url: url)
                 }
             )
         }
@@ -45,13 +45,7 @@ struct ManageSNSView: View {
                 }
             }
         )
-        .alert("오류", isPresented: .constant(viewModel.errorMessage != nil)) {
-            Button("확인") {
-                viewModel.errorMessage = nil
-            }
-        } message: {
-            Text(viewModel.errorMessage ?? "")
-        }
+
     }
     
     private var mediaItemSection: some View {
@@ -63,7 +57,7 @@ struct ManageSNSView: View {
         }
     }
     
-    private func mediaItem(platformType: SocialPlatformType) -> some View {
+    private func mediaItem(platformType: SNSPlatformType) -> some View {
         let isConnected = viewModel.isConnected(for: platformType)
         let url = viewModel.getURL(for: platformType)
         
@@ -71,7 +65,7 @@ struct ManageSNSView: View {
             HStack(spacing: 4) {
                 Image(platformType.imageName)
                 
-                Text(platformType.rawValue)
+                Text(platformType.displayName)
                     .font(.m5r)
                     .foregroundStyle(.gray9)
             }
@@ -94,7 +88,7 @@ struct ManageSNSView: View {
                 isConnected ? "연결 해제" : "연결하기",
                 type: isConnected ? .gray : .primary
             ) {
-                viewModel.handleButtonTap(for: platformType)
+//                viewModel.handleButtonTap(for: platformType)
             }
             .frame(maxWidth: .infinity, alignment: .trailing)
             .padding(.bottom, 12)

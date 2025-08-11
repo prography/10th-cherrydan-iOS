@@ -7,9 +7,9 @@ struct Campaign: Identifiable, Equatable {
     let applicantCount: Int
     let recruitCount: Int
     let imageUrl: String
-    let campaignPlatformImageUrl: String
+    var isBookmarked: Bool
     let campaignType: CampaignType  // 열거형 사용
     let competitionRate: Double
-    let campaignSite: CampaignPlatformType
-    let snsPlatforms: [SocialPlatformType]
+    let campaignSite: CampaignPlatform
+    let snsPlatforms: [SNSPlatformType]
 }

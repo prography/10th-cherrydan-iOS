@@ -38,10 +38,12 @@ struct HomeNavigationStack: View {
                 CDBottomTab(selectedTab: $selectedTab)
             }
         case .search: SearchView()
-        case .notification: NotificationView()
+        case .notification(let tab): NotificationView(initialSelectedTab: tab)
         case .selectRegion(let viewModel): SelectRegionView(viewModel: viewModel)
-        case .campaignWeb(let campaignSite, let campaignSiteUrl):
-            CampaignWebView(campaignSite: campaignSite, campaignSiteUrl: campaignSiteUrl)
+        case .campaignWeb(let siteNameKr, let campaignSiteUrl):
+            CampaignWebView(siteNameKr: siteNameKr, campaignSiteUrl: campaignSiteUrl)
+        case .keywordSettings: KeywordSettingsView()
+        case .keywordAlertDetail(let keyword): KeywordNotificationDetailView(keyword: keyword)
         }
     }
 }

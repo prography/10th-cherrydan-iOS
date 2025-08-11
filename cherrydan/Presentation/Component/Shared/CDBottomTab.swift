@@ -7,7 +7,7 @@ struct CDBottomTab: View {
 //        ("category","카테고리"),
 //        ("notice_board","체리단 소식"),
         ("home","홈"),
-//        ("my_campaign","내 체험단"),
+        ("my_campaign","내 체험단"),
         ("my","마이페이지")
     ]
     
@@ -22,7 +22,7 @@ struct CDBottomTab: View {
                     let isFocused = selectedTab == index
                     
                     Button(action: {
-                        if AuthManager.shared.isGuestMode, index == 1 {
+                        if AuthManager.shared.isGuestMode, index != 0 {
                             PopupManager.shared.show(.loginNeeded(onClick: {
                                 AuthManager.shared.leaveGuestMode()
                             }))

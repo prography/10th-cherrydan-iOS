@@ -56,7 +56,9 @@ struct CDPopup: View {
                         type: buttonConfig.type
                     ) {
                         buttonConfig.onClick()
-                        hidePopup()
+                        if type.config.isDismissNeeded {
+                            hidePopup()
+                        }
                     }
                 }
             }
@@ -68,7 +70,9 @@ struct CDPopup: View {
                         type: buttonConfig.type
                     ) {
                         buttonConfig.onClick()
-                        hidePopup()
+                        if type.config.isDismissNeeded {
+                            hidePopup()
+                        }
                     }
                 }
             }

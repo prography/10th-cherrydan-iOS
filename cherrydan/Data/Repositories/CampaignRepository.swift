@@ -56,6 +56,25 @@ class CampaignRepository {
         return response.result
     }
     
+    func getCampaignByReporter(
+        sort: SortType = .popular,
+        page: Int = 0
+    ) async throws -> PageableResponse<CampaignDTO> {
+        do {
+            let query: [String: String] = [
+                "sort": sort.rawValue,
+                "page": "\(page)",
+            ]
+            
+            let response: APIResponse<PageableResponse<CampaignDTO>> = try await networkAPI.request(CampaignEndpoint.getCampaignByReporter, queryParameters: query)
+            return response.result
+        } catch {
+            print("CampaignRepository Error: \(error)")
+            throw error
+        }
+    }
+    
+    
     /// - Note: HomeView 내부 `제품` 탭에서 호출합니다.
     func getCampaignByProduct(
         _ product: [ProductCategory] = [],
@@ -79,7 +98,7 @@ class CampaignRepository {
     
     /// - Note: HomeView 내부 `SNS 플랫폼` 탭에서 호출합니다.
     func getCampaignBySNSPlatform(
-        _ snsPlatform: [SocialPlatformType] = [],
+        _ snsPlatform: [SNSPlatformType] = [],
         sort: SortType = .popular,
         page: Int = 0
     ) async throws -> PageableResponse<CampaignDTO> {
@@ -100,7 +119,7 @@ class CampaignRepository {
     
     /// - Note: HomeView 내부 `캠페인 플랫폼` 탭에서 호출합니다.
     func getCampaignByCampaignPlatform(
-        _ campaignPlatform: [CampaignPlatformType] = [],
+        _ campaignPlatform: [CampaignPlatform] = [],
         sort: SortType = .popular,
         page: Int = 0
     ) async throws -> PageableResponse<CampaignDTO> {
@@ -110,7 +129,7 @@ class CampaignRepository {
         ]
         
         if !campaignPlatform.isEmpty {
-            query["platform"] = campaignPlatform.map { $0.imageName }.joined(separator: ",")
+            query["platform"] = campaignPlatform.map { $0.siteNameEn }.joined(separator: ",")
         } else {
             query["platform"] = "all"
         }
@@ -131,7 +150,6 @@ class CampaignRepository {
             throw error
         }
     }
-    
     
     /// - Note: SearchView 내부 `검색 단계`에서 호출합니다.
     func searchCampaign(_ keyword: String) async throws -> [CampaignDTO] {
@@ -154,8 +172,8 @@ class CampaignRepository {
         subRegions: [SubRegion] = [],
         local: [LocalCategory] = [],
         product: [ProductCategory] = [],
-        snsPlatform: [SocialPlatformType] = [],
-        campaignPlatform: [CampaignPlatformType] = [],
+        snsPlatform: [SNSPlatformType] = [],
+        campaignPlatform: [CampaignPlatform] = [],
         sort: SortType = .popular,
         page: Int = 0,
         focusedCategory: CampaignType? = nil,
@@ -204,7 +222,7 @@ class CampaignRepository {
             }
         case .campaignPlatform:
             if !campaignPlatform.isEmpty {
-                queryParameters["campaignPlatform"] = campaignPlatform.map { $0.imageName }.joined(separator: ",")
+                queryParameters["campaignPlatform"] = campaignPlatform.map { $0.siteNameEn }.joined(separator: ",")
             } else {
                 queryParameters["campaignPlatform"] = "all"
             }
@@ -225,7 +243,7 @@ class CampaignRepository {
                 queryParameters["snsPlatform"] = "all"
             }
             if !campaignPlatform.isEmpty {
-                queryParameters["campaignPlatform"] = campaignPlatform.map { $0.imageName }.joined(separator: ",")
+                queryParameters["campaignPlatform"] = campaignPlatform.map { $0.siteNameEn }.joined(separator: ",")
             } else {
                 queryParameters["campaignPlatform"] = "all"
             }

@@ -18,23 +18,29 @@ class SearchViewModel: ObservableObject {
     @Published var selectedSubRegions: [SubRegion] = []
     @Published var selectedLocalCategories: [LocalCategory] = []
     @Published var selectedProductCategories: [ProductCategory] = []
-    @Published var selectedSnsPlatforms: [SocialPlatformType] = []
-    @Published var selectedCampaignPlatforms: [CampaignPlatformType] = []
+    @Published var selectedSnsPlatforms: [SNSPlatformType] = []
+    @Published var selectedCampaignPlatforms: [CampaignPlatform] = []
     @Published var selectedSortType: SortType = .popular
+    
+    @Published var campaignPlatforms: [CampaignPlatform] = []
     
     private let campaignRepository: CampaignRepository
     private let searchRecordRepository: SearchRecordRepository
+    private let bookmarkRepository: BookmarkRepository
     private var cancellables = Set<AnyCancellable>()
     
     init(
         campaignRepository: CampaignRepository = CampaignRepository(),
-        searchRecordRepository: SearchRecordRepository = SearchRecordRepository()
+        searchRecordRepository: SearchRecordRepository = SearchRecordRepository(),
+        bookmarkRepository: BookmarkRepository = BookmarkRepository()
     ) {
         self.campaignRepository = campaignRepository
         self.searchRecordRepository = searchRecordRepository
+        self.bookmarkRepository = bookmarkRepository
         
         setupSearchTextObserver()
         loadRecentSearches()
+        loadCampaignPlatforms()
     }
     
     // MARK: - 텍스트 변경 감지 및 디바운스
@@ -134,6 +140,19 @@ class SearchViewModel: ObservableObject {
         }
         
         isLoading = false
+    }
+    
+    private func loadCampaignPlatforms() {
+        Task {
+            do {
+                isLoading = true
+                campaignPlatforms = try await campaignRepository.getCampaignSites()
+                isLoading = false
+            } catch {
+                isLoading = false
+                print("Error loading campaign platforms: \(error)")
+            }
+        }
     }
     
     // MARK: - 다음 페이지 로드
@@ -249,14 +268,14 @@ class SearchViewModel: ObservableObject {
         }
     }
     
-    func updateSnsPlatforms(_ snsPlatforms: [SocialPlatformType]) {
+    func updateSnsPlatforms(_ snsPlatforms: [SNSPlatformType]) {
         selectedSnsPlatforms = snsPlatforms
         if isSubmitted {
             refreshSearch()
         }
     }
     
-    func updateCampaignPlatforms(_ campaignPlatforms: [CampaignPlatformType]) {
+    func updateCampaignPlatforms(_ campaignPlatforms: [CampaignPlatform]) {
         selectedCampaignPlatforms = campaignPlatforms
         
         if isSubmitted {
@@ -298,6 +317,31 @@ class SearchViewModel: ObservableObject {
         
         if isSubmitted {
             refreshSearch()
+        }
+    }
+    
+    // MARK: - 북마크 관련 메서드
+    
+    /// 북마크 토글 (추가/취소)
+    func toggleBookmark(for campaign: Campaign) {
+        Task {
+            do {
+                if campaign.isBookmarked {
+                    // 북마크 취소
+                    try await bookmarkRepository.cancelBookmark(campaignId: campaign.id)
+                } else {
+                    // 북마크 추가
+                    try await bookmarkRepository.addBookmark(campaignId: campaign.id)
+                }
+                
+                // UI 업데이트: 해당 캠페인의 북마크 상태 토글
+                if let index = searchResults.firstIndex(where: { $0.id == campaign.id }) {
+                    searchResults[index].isBookmarked.toggle()
+                }
+            } catch {
+                print("북마크 토글 오류: \(error)")
+                // 에러 처리 - 필요시 Published 변수로 관리할 수 있음
+            }
         }
     }
 } 

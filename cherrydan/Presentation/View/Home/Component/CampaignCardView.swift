@@ -3,6 +3,8 @@ import Kingfisher
 
 struct CampaignCardView: View {
     let campaign: Campaign
+    let onToggle: () -> Void
+    @State private var didFailToLoadThumbnailImage: Bool = false
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -14,26 +16,53 @@ struct CampaignCardView: View {
     
     private var thumbnail: some View {
         GeometryReader { geometry in
-            ZStack(alignment: .topLeading) {
-                KFImage(URL(string: campaign.imageUrl))
-                    .resizable()
-                    .placeholder {
-                        RoundedRectangle(cornerRadius: 4)
-                            .fill(Color.gray.opacity(0.3))
-                            .overlay(
-                                ProgressView()
-                            )
+            ZStack {
+                Group {
+                    if didFailToLoadThumbnailImage || URL(string: campaign.imageUrl) == nil {
+                        Image("placeholder")
+                            .resizable()
+                    } else {
+                        KFImage(URL(string: campaign.imageUrl))
+                            .resizable()
+                            .placeholder {
+                                RoundedRectangle(cornerRadius: 4)
+                                    .fill(Color.gray.opacity(0.3))
+                                    .overlay(
+                                        ProgressView()
+                                    )
+                            }
+                            .onFailure { error in
+                                print("Image loading failed: \(error)")
+                                didFailToLoadThumbnailImage = true
+                            }
+                            .onSuccess { _ in
+                                didFailToLoadThumbnailImage = false
+                            }
                     }
-                    .onFailure { error in
-                        print("Image loading failed: \(error)")
+                }
+                .aspectRatio(contentMode: .fill)
+                .frame(width: geometry.size.width, height: 168)
+                .overlay(
+                    VStack {
+                        Spacer()
+                        LinearGradient(
+                            gradient: Gradient(colors: [
+                                Color.gray9.opacity(0.0),
+                                Color.gray9.opacity(0.7)
+                            ]),
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                        .frame(height: 44)
                     }
-                    .aspectRatio(contentMode: .fill)
-                    
-                    .frame(width: geometry.size.width, height: 168)
-                    .cornerRadius(4)
-                    .clipped()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+                )
+                .cornerRadius(4)
+                .onChange(of: campaign.imageUrl) { _, _ in
+                    didFailToLoadThumbnailImage = false
+                }
                 
-                Text(campaign.campaignSite.rawValue)
+                Text(campaign.campaignSite.siteNameKr)
                     .font(.m6r)
                     .foregroundStyle(.pBlue)
                     .padding(.horizontal, 12)
@@ -47,6 +76,15 @@ struct CampaignCardView: View {
                             topTrailingRadius: 0
                         )
                     )
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                
+                Button(action: {
+                    onToggle()
+                }) {
+                    Image("like\(campaign.isBookmarked ? "_filled" : "")")
+                        .padding(4)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
             }
         }
         .frame(maxWidth: .infinity)
@@ -88,12 +126,12 @@ struct CampaignCardView: View {
     }
     
     private var platformStatus: some View {
-        HStack(spacing: 8) {
+        VStack(alignment: .leading, spacing: 4) {
             ForEach(Array(campaign.snsPlatforms.prefix(2)), id: \.self) { sns in
                 HStack(spacing: 4) {
                     Image(sns.imageName)
                     
-                    Text(sns.rawValue)
+                    Text(sns.displayName)
                         .font(.m6r)
                         .foregroundStyle(.gray9)
                 }

@@ -42,7 +42,11 @@ enum CampaignEndpoint: APIEndpoint {
     }
     
     var tokenType: TokenType {
-        .none
+        if let _ = KeychainManager.shared.getAccessToken() {
+            .accessToken
+        } else {
+            .none
+        }
     }
 }
 

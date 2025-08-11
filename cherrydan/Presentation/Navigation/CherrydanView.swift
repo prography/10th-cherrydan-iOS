@@ -1,9 +1,12 @@
 import SwiftUI
 import FirebaseAnalytics
+import Combine
 
 struct CherrydanView: View {
+    @StateObject private var viewModel = CherrydanViewModel()
     @StateObject private var authManager = AuthManager.shared
     @StateObject private var popupManager = PopupManager.shared
+    @StateObject private var toastManager = ToastManager.shared
     
     @StateObject private var homeRouter = HomeRouter()
     @StateObject private var categoryRouter = CategoryRouter()
@@ -11,18 +14,32 @@ struct CherrydanView: View {
     @StateObject private var myCampaignRouter = MyCampaignRouter()
     @StateObject private var myPageRouter = MyPageRouter()
     
-    @StateObject private var viewModel = CherrydanViewModel()
     @State private var selectedTab = 0
+    @State private var cancellables = Set<AnyCancellable>()
     
     var body: some View {
-        Group {
-            if authManager.isLoggedIn {
+        VStack {
+            if viewModel.isInitializing {
+                ZStack {
+                    Color.pBeige
+                    
+                    Image("logo_img")
+                    
+                    ProgressView()
+                        .offset(y: 96)
+                }
+                .ignoresSafeArea()
+            } else if authManager.isLoggedIn {
                 VStack(spacing: 0) {
                     switch(selectedTab) {
                     case 0:
                         HomeNavigationStack(selectedTab: $selectedTab)
                             .environmentObject(homeRouter)
+                    
                     case 1:
+                        MyCampaignNavigationStack(selectedTab: $selectedTab)
+                            .environmentObject(myCampaignRouter)
+                    case 2:
                         MyPageNavigationStack(selectedTab: $selectedTab)
                             .environmentObject(myPageRouter)
                     default:
@@ -40,6 +57,10 @@ struct CherrydanView: View {
             isPresented: $popupManager.popupPresented,
             data: popupManager.currentPopupType
         )
+        .presentToast(
+            isPresented: $toastManager.toastPresented,
+            data: toastManager.currentToastType
+        )
         .onChange(of: authManager.isLoggedIn) { _, isLoggedIn in
             if !isLoggedIn {
                 homeRouter.reset()
@@ -51,6 +72,16 @@ struct CherrydanView: View {
         }
         .onChange(of: selectedTab) { _, newTab in
             logTabChange(newTab)
+        }
+        .onAppear {
+            NotificationCenter.default.publisher(for: .didTapPushNotification)
+                .receive(on: RunLoop.main)
+                .sink { notification in
+                    guard let tab = notification.userInfo?[PushRouteUserInfoKey.targetTab] as? NotificationType else { return }
+                    selectedTab = 0
+                    homeRouter.replace(with: .notification(tab: tab))
+                }
+                .store(in: &cancellables)
         }
         
     }

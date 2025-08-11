@@ -3,14 +3,18 @@ import Foundation
 enum HomeRoute: BaseRoute {
     case home
     case search
-    case notification
-    case campaignWeb(campaignSite: CampaignPlatformType, campaignSiteUrl: String)
+    case notification(tab: NotificationType)
+    case campaignWeb(siteNameKr: String, campaignSiteUrl: String)
     case selectRegion(viewModel: HomeViewModel)
+    case keywordSettings
+    case keywordAlertDetail(keyword: KeywordNotification)
     
     var id: String {
         switch self {
-        case .campaignWeb(let campaignSite, _):
-            "campaignWeb_\(campaignSite.rawValue)"
+        case .campaignWeb(let siteNameKr, _):
+            "campaignWeb_\(siteNameKr)"
+        case .keywordAlertDetail(let keyword):
+            "keywordAlertDetail_\(keyword)"
         default:
             String(describing: self)
         }
@@ -22,12 +26,16 @@ enum HomeRoute: BaseRoute {
             "home_screen"
         case .search:
             "search_screen"
-        case .notification:
+        case .notification(_):
             "notification_screen"
         case .campaignWeb:
             "campaign_web_screen"
         case .selectRegion:
             "select_region_screen"
+        case .keywordSettings:
+            "keyword_settings_screen"
+        case .keywordAlertDetail:
+            "keyword_alert_detail_screen"
         }
     }
     
