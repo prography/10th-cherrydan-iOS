@@ -29,9 +29,18 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
         instance?.appName = "Cherrdan"  // 애플리케이션 이름
         
         FirebaseApp.configure()
+        /// - Note: 백그라운드에서 FCM 등록 및 토큰 생성&갱신을 수행하여, Messaging.messaging().token이 nil로 나올 가능성을 최소화합니다.
+        Messaging.messaging().isAutoInitEnabled = true
         Messaging.messaging().delegate = self
         
         setupPushNotifications(application)
+        // 앱 시작 시 토큰 선획득 (권한과 무관하게 가능)
+        Task {
+            let token = await Messaging.fetchFCMToken()
+            if let token {
+                KeychainManager.shared.saveFcmToken(token)
+            }
+        }
         
         return true
     }
@@ -57,6 +66,16 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
         didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
     ) {
         Messaging.messaging().apnsToken = deviceToken
+        // APNs 토큰 등록 직후 FCM 토큰을 추가 시도하여 저장
+        Task {
+            let token = await Messaging.fetchFCMToken()
+            if let token {
+                KeychainManager.shared.saveFcmToken(token)
+                print("FCM token saved after APNs token set")
+            } else {
+                print("FCM token still nil after APNs token set")
+            }
+        }
     }
 }
 
@@ -67,18 +86,17 @@ private extension AppDelegate {
         
         Task {
             do {
-                let granted = try await notificationCenter.requestAuthorization(options: [.alert, .badge, .sound])
-                
-                guard granted else {
-                    print("🔔 알림 권한이 거부되었습니다.")
-                    return
-                }
-                
+                // 권한과 무관하게 APNs 등록을 항상 수행하여 FCM 토큰 발급 안정화
                 await MainActor.run {
                     application.registerForRemoteNotifications()
                 }
                 
-                print("🔔 알림 권한이 허용되었습니다.")
+                let granted = try await notificationCenter.requestAuthorization(options: [.alert, .badge, .sound])
+                if granted {
+                    print("🔔 알림 권한이 허용되었습니다.")
+                } else {
+                    print("🔔 알림 권한이 거부되었습니다.")
+                }
             } catch {
                 print("🔔 알림 권한 요청 중 오류 발생: \(error.localizedDescription)")
             }
@@ -106,16 +124,6 @@ private extension AppDelegate {
                 userInfo: [PushRouteUserInfoKey.targetTab: targetTab]
             )
             return
-        }
-        
-        // 기존 기타 타입 처리 분기 (필요 시 확장)
-        switch messageType {
-        case "chat":
-            handleChatNotification(userInfo, isAppActive: isAppActive)
-        case "reminder":
-            handleReminderNotification(userInfo, isAppActive: isAppActive)
-        default:
-            print("🔔 알 수 없는 알림 타입: \(messageType)")
         }
     }
     
@@ -158,5 +166,6 @@ extension AppDelegate: MessagingDelegate {
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
         guard let token = fcmToken else { return }
         KeychainManager.shared.saveFcmToken(token)
+        print("Token:", token)
     }
 }

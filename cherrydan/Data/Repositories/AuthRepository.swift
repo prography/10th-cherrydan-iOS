@@ -1,5 +1,6 @@
 import Foundation
 import UIKit
+import FirebaseMessaging
 
 class AuthRepository {
     private let networkAPI: NetworkAPI
@@ -9,8 +10,16 @@ class AuthRepository {
     }
     
     func socialLogin(_ provider: String,_ token: String, userInfo: UserInfo?) async throws -> SocialLoginResponse {
-        let fcmToken = KeychainManager.shared.getFcmToken()
-        let deviceModel = UIDevice.current.modelName
+        var fcmToken = KeychainManager.shared.getFcmToken()
+        if fcmToken == nil || fcmToken?.isEmpty == true {
+            // 로그인 직전 강제 토큰 획득 시도
+            fcmToken = await Messaging.fetchFCMToken()
+            if let token = fcmToken, token.isEmpty == false {
+                KeychainManager.shared.saveFcmToken(token)
+            }
+        }
+        let deviceModel = await UIDevice.current.modelName
+    
         var params: [String: String] = [
             "accessToken": token,
             "fcmToken": fcmToken ?? "",
