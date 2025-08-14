@@ -35,17 +35,11 @@ class CherrydanViewModel: ObservableObject {
     }
     
     private func handleAuthState() async {
-        if let refreshToken = KeychainManager.shared.getRefreshToken(), !refreshToken.isEmpty {
-            do {
-                let refreshResult = try await NetworkAPI().refreshToken()
-                print("리프레시 토큰 존재 & 재발급 완료하여 자동 로그인")
-                AuthManager.shared.login(refreshResult.accessToken, refreshResult.refreshToken)
-            } catch {
-                print("리프레시 토큰 존재 & 재발급 실패하여 자동 로그아웃")
-                AuthManager.shared.logout()
-            }
+        let refreshSuccess = await TokenManager.shared.ensureValidToken()
+        if refreshSuccess {
+            AuthManager.shared.isLoggedIn = true
         } else {
-            print("리프레시 토큰 존재하지 않아 자동 로그아웃")
+            print("리프레시 토큰 존재 & 재발급 실패하여 자동 로그아웃")
             AuthManager.shared.logout()
         }
     }

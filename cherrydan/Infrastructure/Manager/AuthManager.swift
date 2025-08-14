@@ -13,7 +13,7 @@ public enum UserDefaultKeys {
 @MainActor
 final class AuthManager: ObservableObject {
     static let shared = AuthManager()
-    @Published private(set) var isLoggedIn: Bool = false
+    @Published var isLoggedIn: Bool = false
     @Published private(set) var isGuestMode: Bool = false
     @Published private(set) var lastLoggedInPlatform: LoginPlatform?
     @Published private(set) var userNickname: String = "회원"
