@@ -61,7 +61,7 @@ struct CherrydanView: View {
             isPresented: $toastManager.toastPresented,
             data: toastManager.currentToastType
         )
-        .onChange(of: authManager.isLoggedIn) { _, isLoggedIn in
+        .onChange(of: authManager.isLoggedIn) { isLoggedIn in
             if !isLoggedIn {
                 homeRouter.reset()
                 noticeBoardRouter.reset()
@@ -70,7 +70,7 @@ struct CherrydanView: View {
                 selectedTab = 0
             }
         }
-        .onChange(of: selectedTab) { _, newTab in
+        .onChange(of: selectedTab) { newTab in
             logTabChange(newTab)
         }
         .onAppear {

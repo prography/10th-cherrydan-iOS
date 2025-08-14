@@ -70,10 +70,10 @@ struct MyCampaignRow: View {
             
             (
                 Text("신청 \(myCampaign.applicantCount)/")
-                    .foregroundStyle(.gray9)
+                    .foregroundColor(.gray9)
                 +
                 Text("\(myCampaign.recruitCount)명")
-                    .foregroundStyle(.gray4)
+                    .foregroundColor(.gray4)
             )
             .font(.m5r)
         }
