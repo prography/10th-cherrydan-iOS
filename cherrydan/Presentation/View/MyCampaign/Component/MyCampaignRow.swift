@@ -83,7 +83,9 @@ struct MyCampaignRow: View {
         VStack(alignment: .leading, spacing: 4) {
             ForEach(myCampaign.snsPlatforms.prefix(2), id: \.self) { platform in
                 HStack(spacing: 4) {
-                    Image(platform.imageName)
+                    if !platform.imageName.isEmpty {
+                        Image(platform.imageName)
+                    }
                     
                     Text(platform.displayName)
                         .font(.m5r)

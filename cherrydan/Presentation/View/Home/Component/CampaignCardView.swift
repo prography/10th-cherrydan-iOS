@@ -129,7 +129,9 @@ struct CampaignCardView: View {
         VStack(alignment: .leading, spacing: 4) {
             ForEach(Array(campaign.snsPlatforms.prefix(2)), id: \.self) { sns in
                 HStack(spacing: 4) {
-                    Image(sns.imageName)
+                    if !sns.imageName.isEmpty {
+                        Image(sns.imageName)
+                    }
                     
                     Text(sns.displayName)
                         .font(.m6r)

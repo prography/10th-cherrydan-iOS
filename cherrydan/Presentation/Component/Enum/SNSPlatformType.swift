@@ -25,6 +25,20 @@ enum SNSPlatformType: CaseIterable, Codable {
         }
     }
     
+    var apiValue: String {
+        switch self {
+        case .blog: "blog"
+        case .instagram: "insta"
+        case .youtube: "youtube"
+        case .tiktok: "tiktok"
+        case .clip: "clip"
+        case .reels: "reels"
+        case .thread: "thread"
+        case .shorts: "shorts"
+        case .etc: "etc"
+        }
+    }
+    
     var displayName: String {
         switch self {
         case .blog: "네이버 블로그"
@@ -35,7 +49,7 @@ enum SNSPlatformType: CaseIterable, Codable {
         case .clip: "네이버 클립"
         case .reels: "인스타그램 릴스"
         case .shorts: "유튜브 쇼츠"
-        case .etc: "기타"
+        case .etc: "기타 SNS"
         }
     }
     

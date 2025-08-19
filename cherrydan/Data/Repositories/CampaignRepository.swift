@@ -108,7 +108,7 @@ class CampaignRepository {
         ]
         
         if !snsPlatform.isEmpty {
-            query["platform"] = snsPlatform.map { $0.imageName }.joined(separator: ",")
+            query["platform"] = snsPlatform.map { $0.apiValue }.joined(separator: ",")
         } else {
             query["platform"] = "all"
         }
