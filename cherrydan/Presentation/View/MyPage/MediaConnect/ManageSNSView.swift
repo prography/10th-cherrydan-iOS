@@ -4,7 +4,7 @@ struct ManageSNSView: View {
     @StateObject private var viewModel = ManageSNSViewModel()
     
     var body: some View {
-        CDScreen(horizontalPadding: 0) {
+        CDScreen(horizontalPadding: 0, isLoading: viewModel.isLoading) {
             CDBackHeaderWithTitle(title: "SNS 자동로그인")
                 .padding(.horizontal, 16)
             
@@ -32,20 +32,6 @@ struct ManageSNSView: View {
                 }
             )
         }
-        .overlay(
-            Group {
-                if viewModel.isLoading {
-                    Color.black.opacity(0.3)
-                        .ignoresSafeArea()
-                        .overlay(
-                            ProgressView()
-                                .tint(.white)
-                                .scaleEffect(1.5)
-                        )
-                }
-            }
-        )
-
     }
     
     private var mediaItemSection: some View {
@@ -63,7 +49,9 @@ struct ManageSNSView: View {
         
         return VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: 4) {
-                Image(platformType.imageName)
+                if !platformType.imageName.isEmpty {
+                    Image(platformType.imageName)
+                }
                 
                 Text(platformType.displayName)
                     .font(.m5r)

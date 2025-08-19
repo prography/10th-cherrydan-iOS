@@ -13,7 +13,7 @@ struct SearchView: View {
     
     var body: some View {
         ZStack {
-            CDScreen(horizontalPadding: 0) {
+            CDScreen(horizontalPadding: 0, isLoading: viewModel.isLoading) {
                 headerSection
                 
                 ScrollView {
@@ -39,11 +39,6 @@ struct SearchView: View {
                     viewModel: viewModel,
                     isPresented: $showFilterSideMenu
                 )
-            }
-            
-            if viewModel.isLoading {
-                ProgressView()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
             }
         }
         .sheet(isPresented: $showSortBottomSheet) {
@@ -161,18 +156,6 @@ struct SearchView: View {
                 }
             }
             .padding(.horizontal, 16)
-            
-            if viewModel.isLoading && viewModel.currentPage > 0 {
-                HStack {
-                    Spacer()
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle())
-                        .scaleEffect(0.8)
-                    Spacer()
-                }
-                .frame(height: 60)
-                .padding(.horizontal, 16)
-            }
         }
         .padding(.top, 24)
     }

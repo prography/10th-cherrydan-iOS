@@ -47,7 +47,6 @@ struct OnboardingView: View {
             .frame(maxWidth: .infinity,alignment: .center)
             .background(.pBeige)
             
-            // 로딩 오버레이
             if viewModel.isLoading {
                 Color.black.opacity(0.3)
                     .ignoresSafeArea()

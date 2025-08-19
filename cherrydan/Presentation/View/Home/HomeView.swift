@@ -8,7 +8,7 @@ struct HomeView: View {
     @State private var showSortBottomSheet = false
     
     var body: some View {
-        CDScreen(horizontalPadding: 0) {
+        CDScreen(horizontalPadding: 0, isLoading: viewModel.isLoading || viewModel.isLoadingMore) {
             CDHeaderWithLeftContent(
                 onNotificationClick: {
                     if AuthManager.shared.isGuestMode {
@@ -78,7 +78,7 @@ struct HomeView: View {
             if viewModel.selectedCategory == .region {
                 HStack(spacing: 0) {
                     Button(action: {
-                        router.push(to: .selectRegion(viewModel: viewModel))
+                        showRegionSideMenu = true
                     }) {
                         HStack(spacing: 4) {
                             Text(viewModel.selectedRegion)
