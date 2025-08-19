@@ -371,9 +371,9 @@ struct SearchFilterSideMenu: View {
     private func datePickerField(date: Date?, isEnd: Bool, action: @escaping () -> Void) -> some View {
         var isFocusing: Bool {
             if isEnd {
-                viewModel.showDatePicker && !viewModel.isSelectingStartDate
+                viewModel.selectedEndDate != nil
             } else {
-                viewModel.showDatePicker && viewModel.isSelectingStartDate
+                viewModel.selectedStartDate != nil
             }
         }
         
