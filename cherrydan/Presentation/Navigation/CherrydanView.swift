@@ -35,7 +35,6 @@ struct CherrydanView: View {
                     case 0:
                         HomeNavigationStack(selectedTab: $selectedTab)
                             .environmentObject(homeRouter)
-                    
                     case 1:
                         MyCampaignNavigationStack(selectedTab: $selectedTab)
                             .environmentObject(myCampaignRouter)
@@ -61,7 +60,7 @@ struct CherrydanView: View {
             isPresented: $toastManager.toastPresented,
             data: toastManager.currentToastType
         )
-        .onChange(of: authManager.isLoggedIn) { isLoggedIn in
+        .onChange(of: authManager.isLoggedIn) { _, isLoggedIn in
             if !isLoggedIn {
                 homeRouter.reset()
                 noticeBoardRouter.reset()
@@ -70,7 +69,7 @@ struct CherrydanView: View {
                 selectedTab = 0
             }
         }
-        .onChange(of: selectedTab) { newTab in
+        .onChange(of: selectedTab) { _, newTab in
             logTabChange(newTab)
         }
         .onAppear {
@@ -92,6 +91,8 @@ struct CherrydanView: View {
         case 0:
             screenName = "home_main_screen"
         case 1:
+            screenName = "my_campaign_screen"
+        case 2:
             screenName = "my_page_main_screen"
         default:
             screenName = "unknown_tab_screen"

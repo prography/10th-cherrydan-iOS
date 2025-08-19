@@ -21,7 +21,7 @@ enum MyCampaignRoute: BaseRoute {
         case .categoryDetail:
             "category_detail_screen"
         case .campaignWeb:
-            "campaign_web_screen"
+            "my_campaign_web_screen"
         }
     }
     

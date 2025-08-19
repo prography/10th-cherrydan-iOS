@@ -100,13 +100,13 @@ struct SearchFilterSideMenu: View {
                             )
                             
                             // 마감일
-//                            filterSection(
-//                                title: "마감일",
-//                                sectionKey: "deadline",
-//                                content: {
-//                                    deadlineFilterContent
-//                                }
-//                            )
+                            filterSection(
+                                title: "마감일",
+                                sectionKey: "deadline",
+                                content: {
+                                    deadlineFilterContent
+                                }
+                            )
                         }
                         .padding(.bottom, 34) // SafeArea bottom 고려
                     }
@@ -278,12 +278,75 @@ struct SearchFilterSideMenu: View {
     }
     
     private var deadlineFilterContent: some View {
-        VStack(spacing: 12) {
-            Text("마감일 기능은 추후 구현 예정입니다.")
-                .font(.m5r)
-                .foregroundStyle(.gray5)
-                .padding(.horizontal, 16)
-                .padding(.bottom, 16)
+        VStack(spacing: 0) {
+            HStack(spacing: 0) {
+                datePickerField(
+                    date: viewModel.selectedStartDate,
+                    isEnd: false,
+                    action: {
+                        viewModel.showDatePickerForStartDate()
+                    }
+                )
+                
+                Text("~")
+                    .font(.m5r)
+                    .foregroundStyle(.gray9)
+                
+                datePickerField(
+                    date: viewModel.selectedEndDate,
+                    isEnd: true,
+                    action: {
+                        viewModel.showDatePickerForEndDate()
+                    }
+                )
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 20)
+            
+            if viewModel.showDatePicker {
+                Button(action: {
+                    viewModel.confirmDateSelection()
+                }) {
+                    Text("확인")
+                        .font(.m4b)
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 52)
+                        .background(.mPink3)
+                }
+                .padding(.bottom, 20)
+                
+                HStack(spacing: 0) {
+                    Picker("", selection: $viewModel.selectedYear) {
+                        ForEach(viewModel.years, id: \.self) { year in
+                            Text("\(String(year))년")
+                                .tag(year)
+                        }
+                    }
+                    .pickerStyle(.wheel)
+                    .frame(maxWidth: .infinity)
+                    
+                    Picker("Month", selection: $viewModel.selectedMonth) {
+                        ForEach(viewModel.months, id: \.self) { month in
+                            Text("\(month)월")
+                                .tag(month)
+                        }
+                    }
+                    .pickerStyle(.wheel)
+                    .frame(maxWidth: .infinity)
+                    
+                    Picker("Day", selection: $viewModel.selectedDay) {
+                        ForEach(viewModel.days, id: \.self) { day in
+                            Text("\(day)일")
+                                .tag(day)
+                        }
+                    }
+                    .pickerStyle(.wheel)
+                    .frame(maxWidth: .infinity)
+                }
+                .padding(.horizontal, 8)
+                .padding(.bottom, 20)
+            }
         }
     }
     
@@ -302,6 +365,37 @@ struct SearchFilterSideMenu: View {
             .background(.gray1)
         }
         .animation(.fastEaseInOut, value: isSelected)
+    }
+    
+    @ViewBuilder
+    private func datePickerField(date: Date?, isEnd: Bool, action: @escaping () -> Void) -> some View {
+        var isFocusing: Bool {
+            if isEnd {
+                viewModel.showDatePicker && !viewModel.isSelectingStartDate
+            } else {
+                viewModel.showDatePicker && viewModel.isSelectingStartDate
+            }
+        }
+        
+        Button(action: action) {
+            HStack(spacing: 4) {
+                if let date {
+                    Text(DateFormatter.yyyyMMdd.string(from: date))
+                        .font(.m5r)
+                        .foregroundStyle(isFocusing ? .mPink3 : .gray9)
+                } else {
+                    Text(DateFormatter.yyyyMMdd.string(from: Date()))
+                        .font(.m5r)
+                        .foregroundStyle(isFocusing ? .mPink3 : .gray5)
+                }
+                
+                Image("calendar")
+                    .renderingMode(.template)
+                    .foregroundStyle(isFocusing ? .mPink3 : .gray9)
+            }
+            .padding(.horizontal, 8)
+            .frame(height: 48)
+        }
     }
     
     private func toggleSelection<T: Hashable>(_ item: T, in array: [T], updateHandler: @escaping ([T]) -> Void) {

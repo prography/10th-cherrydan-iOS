@@ -35,7 +35,7 @@ enum MyPageRoute: BaseRoute {
             "withdrawal_screen"
             
         case .myPageDetail(let type):
-            "privacy_policy_screen\(type.rawValue)"
+            "my_page_web_screen_\(type.rawValue)"
         }
     }
     
@@ -47,3 +47,6 @@ enum MyPageRoute: BaseRoute {
     }
 }
 
+// 안드로이드 앱 패키지 이름
+// 마켓 URL
+// 키 해시

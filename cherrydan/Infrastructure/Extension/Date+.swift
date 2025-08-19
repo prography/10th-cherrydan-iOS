@@ -15,4 +15,26 @@ extension Date {
             return "발표 \(-days)일 남음"
         }
     }
-} 
+    
+    func toString() -> String {
+        return DateFormatter.yyyyMMdd.string(from: self)
+    }
+    
+    func toStringWithDash() -> String {
+        return DateFormatter.yyyyMMddWithDash.string(from: self)
+    }
+}
+
+extension DateFormatter {
+    static let yyyyMMdd: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy.MM.dd"
+        return formatter
+    }()
+    
+    static let yyyyMMddWithDash: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter
+    }()
+}

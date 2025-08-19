@@ -174,9 +174,10 @@ class CampaignRepository {
         product: [ProductCategory] = [],
         snsPlatform: [SNSPlatformType] = [],
         campaignPlatform: [CampaignPlatform] = [],
+        applyStart: String? = nil,
+        applyEnd: String? = nil,
         sort: SortType = .popular,
         page: Int = 0,
-        focusedCategory: CampaignType? = nil,
         isReporter: Bool = false
     ) async throws -> PageableResponse<CampaignDTO> {
         var queryParameters: [String: String] = [
@@ -201,52 +202,42 @@ class CampaignRepository {
             }.joined(separator: ",")
         }
         
-        switch focusedCategory {
-        case .region:
-            if !local.isEmpty {
-                queryParameters["local"] = local.map { $0.rawValue }.joined(separator: ",")
-            } else {
-                queryParameters["local"] = "all"
-            }
-        case .product:
-            if !product.isEmpty {
-                queryParameters["product"] = product.map { $0.rawValue }.joined(separator: ",")
-            } else {
-                queryParameters["product"] = "all"
-            }
-        case .snsPlatform:
-            if !snsPlatform.isEmpty {
-                queryParameters["snsPlatform"] = snsPlatform.map { $0.imageName }.joined(separator: ",")
-            } else {
-                queryParameters["snsPlatform"] = "all"
-            }
-        case .campaignPlatform:
-            if !campaignPlatform.isEmpty {
-                queryParameters["campaignPlatform"] = campaignPlatform.map { $0.siteNameEn }.joined(separator: ",")
-            } else {
-                queryParameters["campaignPlatform"] = "all"
-            }
-        default:
-            if !local.isEmpty {
-                queryParameters["local"] = local.map { $0.rawValue }.joined(separator: ",")
-            } else {
-                queryParameters["local"] = "all"
-            }
-            if !product.isEmpty {
-                queryParameters["product"] = product.map { $0.rawValue }.joined(separator: ",")
-            } else {
-                queryParameters["product"] = "all"
-            }
-            if !snsPlatform.isEmpty {
-                queryParameters["snsPlatform"] = snsPlatform.map { $0.imageName }.joined(separator: ",")
-            } else {
-                queryParameters["snsPlatform"] = "all"
-            }
-            if !campaignPlatform.isEmpty {
-                queryParameters["campaignPlatform"] = campaignPlatform.map { $0.siteNameEn }.joined(separator: ",")
-            } else {
-                queryParameters["campaignPlatform"] = "all"
-            }
+        if !local.isEmpty {
+            queryParameters["local"] = local.map { $0.rawValue }.joined(separator: ",")
+        } else {
+            queryParameters["local"] = "all"
+        }
+        
+        if !product.isEmpty {
+            queryParameters["product"] = product.map { $0.rawValue }.joined(separator: ",")
+        } else {
+            queryParameters["product"] = "all"
+        }
+        
+        if !snsPlatform.isEmpty {
+            queryParameters["snsPlatform"] = snsPlatform.map { $0.imageName }.joined(separator: ",")
+        } else {
+            queryParameters["snsPlatform"] = "all"
+        }
+        
+        if !campaignPlatform.isEmpty {
+            queryParameters["campaignPlatform"] = campaignPlatform.map { $0.siteNameEn }.joined(separator: ",")
+        } else {
+            queryParameters["campaignPlatform"] = "all"
+        }
+        
+        if !local.isEmpty {
+            queryParameters["local"] = local.map { $0.rawValue }.joined(separator: ",")
+        } else {
+            queryParameters["local"] = "all"
+        }
+        
+        if let applyStart {
+            queryParameters["applyStart"] = applyStart
+        }
+        
+        if let applyEnd {
+            queryParameters["applyEnd"] = applyEnd
         }
         
         if isReporter {

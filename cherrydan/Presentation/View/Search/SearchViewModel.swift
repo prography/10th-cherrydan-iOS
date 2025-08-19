@@ -21,6 +21,14 @@ class SearchViewModel: ObservableObject {
     @Published var selectedSnsPlatforms: [SNSPlatformType] = []
     @Published var selectedCampaignPlatforms: [CampaignPlatform] = []
     @Published var selectedSortType: SortType = .popular
+    @Published var selectedStartDate: Date? = nil
+    @Published var selectedEndDate: Date? = nil
+    @Published var showDatePicker: Bool = false
+    
+    @Published var selectedYear: Int = Calendar.current.component(.year, from: Date())
+    @Published var selectedMonth: Int = Calendar.current.component(.month, from: Date())
+    @Published var selectedDay: Int = Calendar.current.component(.day, from: Date())
+    @Published var isSelectingStartDate: Bool = true
     
     @Published var campaignPlatforms: [CampaignPlatform] = []
     
@@ -119,9 +127,10 @@ class SearchViewModel: ObservableObject {
                 product: selectedProductCategories,
                 snsPlatform: selectedSnsPlatforms,
                 campaignPlatform: selectedCampaignPlatforms,
+                applyStart: selectedStartDate?.toStringWithDash(),
+                applyEnd: selectedEndDate?.toStringWithDash(),
                 sort: selectedSortType,
                 page: currentPage,
-                focusedCategory: .all,
                 isReporter: false
             )
             
@@ -287,6 +296,88 @@ class SearchViewModel: ObservableObject {
         if isSubmitted {
             refreshSearch()
         }
+    }
+    
+    func updateStartDate(_ date: Date?) {
+        selectedStartDate = date
+        if isSubmitted {
+            refreshSearch()
+        }
+    }
+    
+    func updateEndDate(_ date: Date?) {
+        selectedEndDate = date
+        if isSubmitted {
+            refreshSearch()
+        }
+    }
+    
+    func confirmDateSelection() {
+        let calendar = Calendar.current
+        var components = DateComponents()
+        components.year = selectedYear
+        components.month = selectedMonth
+        components.day = selectedDay
+        
+        if let date = calendar.date(from: components) {
+            if isSelectingStartDate {
+                selectedStartDate = date
+            } else {
+                selectedEndDate = date
+            }
+        }
+        
+        showDatePicker = false
+        
+        Task {
+            await performSearch()
+        }
+    }
+    
+    func showDatePickerForStartDate() {
+        isSelectingStartDate = true
+        let calendar = Calendar.current
+        let today = Date()
+        selectedYear = calendar.component(.year, from: selectedStartDate ?? today)
+        selectedMonth = calendar.component(.month, from: selectedStartDate ?? today)
+        selectedDay = calendar.component(.day, from: selectedStartDate ?? today)
+        
+        showDatePicker = true
+    }
+    
+    func showDatePickerForEndDate() {
+        isSelectingStartDate = false
+        let calendar = Calendar.current
+        let today = Date()
+        
+        selectedYear = calendar.component(.year, from: selectedEndDate ?? today)
+        selectedMonth = calendar.component(.month, from: selectedEndDate ?? today)
+        selectedDay = calendar.component(.day, from: selectedEndDate ?? today)
+        
+        showDatePicker = true
+    }
+    
+    var years: [Int] {
+        let currentYear = Calendar.current.component(.year, from: Date())
+        let offset = 10
+        return Array((currentYear-offset)...(currentYear+offset))
+    }
+    
+    var months: [Int] {
+        return Array(1...12)
+    }
+    
+    var days: [Int] {
+        let calendar = Calendar.current
+        var components = DateComponents()
+        components.year = selectedYear
+        components.month = selectedMonth
+        
+        if let date = calendar.date(from: components),
+           let range = calendar.range(of: .day, in: .month, for: date) {
+            return Array(range)
+        }
+        return Array(1...31)
     }
     
     func updateSortType(_ sortType: SortType) {
