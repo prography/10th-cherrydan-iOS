@@ -52,27 +52,14 @@ final class AuthManager: ObservableObject {
         UserDefaults.standard.set(finalNickname, forKey: UserDefaultKeys.userNickname)
     }
     
-    func login(_ accessToken: String, _ refreshToken: String, _ nickname: String? = nil) {
-        KeychainManager.shared.saveTokens(accessToken, refreshToken)
-        isLoggedIn = true
-        
-        if let nickname {
-            let finalNickname = nickname.isEmpty ? "회원" : nickname
-            userNickname = finalNickname
-            UserDefaults.standard.set(finalNickname, forKey: UserDefaultKeys.userNickname)
-        }
-    }
-    
     func logout() {
         if let platform = lastLoggedInPlatform {
             performPlatformLogout(platform)
         }
         
         isLoggedIn = false
-        lastLoggedInPlatform = nil
         userNickname = "회원"
-        
-        UserDefaults.standard.removeObject(forKey: UserDefaultKeys.lastLoggedInPlatform)
+
         UserDefaults.standard.removeObject(forKey: UserDefaultKeys.userNickname)
         
         KeychainManager.shared.clearTokens()
