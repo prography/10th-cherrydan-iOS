@@ -120,8 +120,8 @@ struct MyCampaignView: View {
     private var closedCampaignListSection: some View {
         VStack(spacing: 0) {
             Button(action: {
-                    viewModel.isShowingClosedCampaigns = false
-                    viewModel.handleToggleClosed(false)
+                viewModel.isShowingClosedCampaigns = false
+                viewModel.handleToggleClosed(false)
             }) {
                 HStack(spacing: 0) {
                     Image("chevron_left")
@@ -135,9 +135,8 @@ struct MyCampaignView: View {
             
             if viewModel.likedClosedCampaigns.isEmpty {
                 closedSectionPlaceholder
-            } else {
-                closedSection
             }
+            closedSection
         }
         .background(.gray1)
     }
