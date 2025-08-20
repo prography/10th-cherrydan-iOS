@@ -7,27 +7,40 @@ struct MyCampaignView: View {
     var body: some View {
         CDScreen(
             horizontalPadding: 0,
-            isLoading: viewModel.isLoading || viewModel.isLoadingMore && !viewModel.isShowingClosedCampaigns
+            isLoading: viewModel.isLoading && !viewModel.isShowingClosedCampaigns
         ) {
-            CDHeaderWithRightContent(title: "내 체험단"){}
-                .padding(.horizontal, 16)
+            CDHeaderWithRightContent(title: "내 체험단"){
+                if !viewModel.isDeleteMode {
+                    Button(action: {
+                        viewModel.isDeleteMode = true
+                    }){
+                        Image("trash")
+                    }
+                }
+            }
+            .padding(.horizontal, 16)
             
             tabSection
-                .padding(.horizontal, 16)
+                .padding(.top, 24)
             
-            Text("찜한 공고")
-                .font(.m3b)
-                .foregroundStyle(.mPink3)
-                .padding(16)
-            
+            campaignListSection
+        }
+        .animation(.mediumSpring, value: viewModel.isShowingClosedCampaigns)
+    }
+    
+    @ViewBuilder
+    private var campaignListSection: some View {
+        switch viewModel.selectedCampaignStatus {
+        case .apply:
             if !viewModel.isShowingClosedCampaigns {
                 openSection
             } else {
                 closedCampaignListSection
                     .transition(.move(edge: .trailing))
             }
+        default:
+            openSection
         }
-        .animation(.mediumSpring, value: viewModel.isShowingClosedCampaigns)
     }
     
     private var openSectionPlaceholder: some View {
@@ -42,11 +55,11 @@ struct MyCampaignView: View {
     
     private var openSection: some View {
         ScrollView(.vertical, showsIndicators: false) {
-            if viewModel.likedCampaigns.isEmpty {
+            if viewModel.mainCampaigns.isEmpty {
                 openSectionPlaceholder
             } else {
                 LazyVStack(spacing: 20) {
-                    ForEach(Array(zip(viewModel.likedCampaigns.indices, viewModel.likedCampaigns)), id: \.1.id) { index, campaign in
+                    ForEach(Array(zip(viewModel.mainCampaigns.indices, viewModel.mainCampaigns)), id: \.1.id) { index, campaign in
                         MyCampaignRow(
                             myCampaign: campaign,
                             buttonConfigs: [
@@ -65,7 +78,7 @@ struct MyCampaignView: View {
                                     onClick: {
                                         router.push(to: .campaignWeb(
                                             siteNameKr: campaign.campaignSite,
-                                            campaignSiteUrl: campaign.campaignDetailUrl
+                                            campaignSiteUrl: campaign.detailUrl
                                         ))
                                     }
                                 )
@@ -73,9 +86,9 @@ struct MyCampaignView: View {
                         )
                         .onAppear {
                             if !viewModel.isShowingClosedCampaigns,
-                               index == viewModel.likedCampaigns.count - 10,
+                               index == viewModel.mainCampaigns.count - 10,
                                viewModel.hasMoreOpenPages,
-                               !viewModel.isLoadingMore {
+                               !viewModel.isLoading {
                                 viewModel.loadNextPage()
                             }
                         }
@@ -84,6 +97,7 @@ struct MyCampaignView: View {
                 }
                 .padding(.horizontal, 16)
             }
+            
             closedSectionButton
         }
         .transition(.move(edge: .leading))
@@ -124,7 +138,7 @@ struct MyCampaignView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(16)
             
-            if viewModel.likedClosedCampaigns.isEmpty {
+            if viewModel.closedCampaigns.isEmpty {
                 closedSectionPlaceholder
             }
             closedSection
@@ -142,7 +156,7 @@ struct MyCampaignView: View {
     private var closedSection: some View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack(spacing: 16) {
-                ForEach(Array(zip(viewModel.likedClosedCampaigns.indices, viewModel.likedClosedCampaigns)), id: \.1.id) { index, campaign in
+                ForEach(Array(zip(viewModel.closedCampaigns.indices, viewModel.closedCampaigns)), id: \.1.id) { index, campaign in
                     MyCampaignRow(
                         myCampaign: campaign,
                         buttonConfigs: [
@@ -161,7 +175,7 @@ struct MyCampaignView: View {
                                 onClick: {
                                     router.push(to: .campaignWeb(
                                         siteNameKr: campaign.campaignSite,
-                                        campaignSiteUrl: campaign.campaignDetailUrl
+                                        campaignSiteUrl: campaign.detailUrl
                                     ))
                                 }
                             )
@@ -169,9 +183,9 @@ struct MyCampaignView: View {
                     )
                     .onAppear {
                         if viewModel.isShowingClosedCampaigns,
-                           index == viewModel.likedClosedCampaigns.count - 10,
+                           index == viewModel.closedCampaigns.count - 10,
                            viewModel.hasMoreClosedPages,
-                           !viewModel.isLoadingMore {
+                           !viewModel.isLoading {
                             viewModel.loadNextPage()
                         }
                     }
@@ -182,7 +196,7 @@ struct MyCampaignView: View {
         .padding(.top, 16)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .overlay {
-            if viewModel.isLoadingMore && viewModel.isShowingClosedCampaigns {
+            if viewModel.isLoading && viewModel.isShowingClosedCampaigns {
                 ProgressView().frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
             }
         }
@@ -190,14 +204,16 @@ struct MyCampaignView: View {
     
     private var tabSection: some View {
         VStack(spacing: 0) {
-            HStack(spacing: 24) {
-                ForEach(CampaignStatusType.allCases, id: \.self) { status in
-                    tabItem(status)
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 24) {
+                    ForEach(CampaignStatusType.allCases, id: \.self) { status in
+                        tabItem(status)
+                    }
                 }
+                .padding(.horizontal, 16)
             }
             
             Divider()
-                .background(.gray2)
         }
     }
     
