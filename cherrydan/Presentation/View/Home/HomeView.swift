@@ -4,60 +4,80 @@ import Kingfisher
 struct HomeView: View {
     @EnvironmentObject var router: HomeRouter
     @StateObject private var viewModel = HomeViewModel()
+    
     @State private var showCampaignPopup = false
     @State private var showSortBottomSheet = false
+    @State private var showRegionSideMenu = false
     
     var body: some View {
-        CDScreen(horizontalPadding: 0, isLoading: viewModel.isLoading || viewModel.isLoadingMore) {
-            CDHeaderWithLeftContent(
-                onNotificationClick: {
-                    if AuthManager.shared.isGuestMode {
-                        PopupManager.shared.show(.loginNeeded(onClick: {
-                            AuthManager.shared.leaveGuestMode()
-                        }))
-                    } else {
-                        router.push(to: .notification(tab: .activity))
+        ZStack {
+            CDScreen(horizontalPadding: 0, isLoading: viewModel.isLoading || viewModel.isLoadingMore) {
+                CDHeaderWithLeftContent(
+                    onNotificationClick: {
+                        if AuthManager.shared.isGuestMode {
+                            PopupManager.shared.show(.loginNeeded(onClick: {
+                                AuthManager.shared.leaveGuestMode()
+                            }))
+                        } else {
+                            router.push(to: .notification(tab: .activity))
+                        }
+                    }, onSearchClick: {
+                        if AuthManager.shared.isGuestMode {
+                            PopupManager.shared.show(.loginNeeded(onClick: {
+                                AuthManager.shared.leaveGuestMode()
+                            }))
+                        } else {
+                            router.push(to: .search)
+                        }
+                    }) {
+                        HStack(spacing: 16) {
+                            Text("체리단")
+                                .font(.t1)
+                                .foregroundStyle(.gray9)
+                        }
                     }
-                }, onSearchClick: {
-                if AuthManager.shared.isGuestMode {
-                    PopupManager.shared.show(.loginNeeded(onClick: {
-                        AuthManager.shared.leaveGuestMode()
-                    }))
-                } else {
-                    router.push(to: .search)
-                }
-            }) {
-                HStack(spacing: 16) {
-                    Text("체리단")
-                        .font(.t1)
-                        .foregroundStyle(.gray9)
+                    .padding(.horizontal, 16)
+                
+                ScrollView(.vertical, showsIndicators: false) {
+                    LazyVStack(alignment: .leading, spacing: 0) {
+                        //                    CampaignBanner(banners: viewModel.banners)
+                        //                        .padding(.top, 8)
+                        //                        .padding(.bottom, 16)
+                        
+                        CDTabSection(
+                            selectedCategory: $viewModel.selectedCategory,
+                            onCategoryChanged: viewModel.selectCategory
+                        )
+                        
+                        Divider()
+                            .padding(.bottom, 16)
+                        
+                        sortSection
+                        tagSection
+                        campaignGridSection
+                    }
                 }
             }
-            .padding(.horizontal, 16)
             
-            ScrollView(.vertical, showsIndicators: false) {
-                LazyVStack(alignment: .leading, spacing: 0) {
-//                    CampaignBanner(banners: viewModel.banners)
-//                        .padding(.top, 8)
-//                        .padding(.bottom, 16)
-                    
-                    CDTabSection(
-                        selectedCategory: $viewModel.selectedCategory,
-                        onCategoryChanged: viewModel.selectCategory
-                    )
-                    
-                    Divider()
-                        .padding(.bottom, 16)
-                    
-                    sortSection
-                    tagSection
-                    campaignGridSection
-                }
-            }
-            .overlay {
-                if viewModel.isLoading || viewModel.isLoadingMore {
-                    loadingIndicator
-                }
+            if showRegionSideMenu {
+                Color.black.opacity(0.3)
+                    .ignoresSafeArea(.all, edges: .all)
+                    .onTapGesture {
+                        showRegionSideMenu = false
+                    }
+                
+                RegionSelectionSideMenu(
+                    currentRegionGroup: viewModel.selectedRegionGroup,
+                    currentSubRegion: viewModel.selectedSubRegion,
+                    onSelectRegion: { regionGroup, subRegion in
+                        viewModel.selectRegion(regionGroup, subRegion)
+                        showRegionSideMenu = false
+                    },
+                    onDismiss: {
+                        showRegionSideMenu = false
+                    }
+                )
+                .transition(.move(edge: .trailing))
             }
         }
         .sheet(isPresented: $showSortBottomSheet) {
@@ -67,7 +87,8 @@ struct HomeView: View {
                 onSortTypeSelected: viewModel.selectSortType
             )
         }
-        .animation(.fastEaseInOut, value: viewModel.selectedSortType)
+        .animation(.fastSpring, value: viewModel.selectedSortType)
+        .animation(.mediumSpring, value: showRegionSideMenu)
 //        .onViewDidLoad {
 //            viewModel.fetchBannerData()
 //        }
