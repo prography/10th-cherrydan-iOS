@@ -94,7 +94,7 @@ struct MyCampaignRow: View {
             }
             
             HStack(spacing: 4) {
-                KFImage(URL(string: myCampaign.campaignPlatformImageUrl))
+                KFImage(URL(string: myCampaign.imageUrl))
                     .resizable()
                     .onFailure { error in
                         print("Image loading failed: \(error)")
