@@ -1,6 +1,7 @@
 import Foundation
 import UIKit
 import FirebaseMessaging
+import UserNotifications
 
 class AuthRepository {
     private let networkAPI: NetworkAPI
@@ -18,7 +19,12 @@ class AuthRepository {
                 KeychainManager.shared.saveFcmToken(token)
             }
         }
+        
         let deviceModel = await UIDevice.current.modelName
+        
+        // 알림 권한 상태 확인
+        let notificationSettings = await UNUserNotificationCenter.current().notificationSettings()
+        let isNotificationAllowed = notificationSettings.authorizationStatus == .authorized
     
         var params: [String: String] = [
             "accessToken": token,
@@ -26,7 +32,8 @@ class AuthRepository {
             "deviceType": "iOS",
             "deviceModel": deviceModel,
             "osVersion": "\(ProcessInfo.processInfo.operatingSystemVersionString)",
-            "appVersion": "\(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0")"
+            "appVersion": "\(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0")",
+            "isAllowed": isNotificationAllowed ? "true" : "false"
         ]
         
         // 사용자 정보가 있는 경우 추가
