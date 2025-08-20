@@ -43,8 +43,7 @@ struct CampaignCardView: View {
                 .aspectRatio(contentMode: .fill)
                 .frame(width: geometry.size.width, height: 168)
                 .overlay(
-                    VStack {
-                        Spacer()
+                    ZStack(alignment: .bottomTrailing) {
                         LinearGradient(
                             gradient: Gradient(colors: [
                                 Color.gray9.opacity(0.0),
@@ -54,8 +53,16 @@ struct CampaignCardView: View {
                             endPoint: .bottom
                         )
                         .frame(height: 44)
+                        
+                        Button(action: {
+                            onToggle()
+                        }) {
+                            Image("like\(campaign.isBookmarked ? "_filled" : "")")
+                                .padding(4)
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
                     }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 )
                 .cornerRadius(4)
                 .onChange(of: campaign.imageUrl) { _, _ in
@@ -77,14 +84,6 @@ struct CampaignCardView: View {
                         )
                     )
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                
-                Button(action: {
-                    onToggle()
-                }) {
-                    Image("like\(campaign.isBookmarked ? "_filled" : "")")
-                        .padding(4)
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
             }
         }
         .frame(maxWidth: .infinity)
