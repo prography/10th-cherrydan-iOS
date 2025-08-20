@@ -89,10 +89,10 @@ class HomeViewModel: ObservableObject {
     }
     
     
-    func fetchCampaigns(for category: CampaignType) async throws -> [Campaign] {
+    func fetchCampaigns() async throws -> [Campaign] {
         let response: PageableResponse<CampaignDTO>
         
-        switch category {
+        switch selectedCategory {
         case .all:
             response = try await campaignAPI.getAllCampaign(
                 sort: selectedSortType,
@@ -150,7 +150,7 @@ class HomeViewModel: ObservableObject {
         
         Task {
             do {
-                campaigns = try await fetchCampaigns(for: selectedCategory)
+                campaigns = try await fetchCampaigns()
             } catch {
                 print("Error fetching campaigns: \(error)")
                 ToastManager.shared.show(.errorWithMessage("캠페인을 불러오는 중 오류가 발생했습니다."))
@@ -169,7 +169,7 @@ class HomeViewModel: ObservableObject {
         
         Task {
             do {
-                let newCampaigns = try await fetchCampaigns(for: selectedCategory)
+                let newCampaigns = try await fetchCampaigns()
                 campaigns.append(contentsOf: newCampaigns)
             } catch {
                 print("Error loading next page: \(error)")
