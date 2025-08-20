@@ -1,22 +1,37 @@
-enum MyCampaignStatusType: String, CaseIterable, Codable {
+enum CampaignStatusType: CaseIterable, Codable {
     case apply
     case selected
-    case nonSelected
+    case notSelected
     case registered
     case ended
     
-    var title: String {
+    var apiValue: String {
         switch self {
         case .apply:
-            "찜"
+            "APPLY"
         case .selected:
-            "신청"
-        case .nonSelected:
-            "미선정"
+            "SELECTED"
+        case .notSelected:
+            "NOT_SELECTED"
         case .registered:
-            "등록"
+            "REGISTERED"
         case .ended:
-            "종료"
+            "ENDED"
+        }
+    }
+    
+    var displayText: String {
+        switch self {
+        case .apply:
+            "관심 공고"
+        case .selected:
+            "지원한 공고"
+        case .notSelected:
+            "선정 결과"
+        case .registered:
+            "리뷰 작성 중"
+        case .ended:
+            "작성 완료"
         }
     }
 }

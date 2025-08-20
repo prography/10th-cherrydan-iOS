@@ -4,6 +4,7 @@ import Foundation
 class MyCampaignViewModel: ObservableObject {
     @Published var likedCampaigns: [MyCampaign] = []
     @Published var likedClosedCampaigns: [MyCampaign] = []
+    @Published var selectedCampaignStatus: CampaignStatusType = .apply
     
     @Published var isLoading: Bool = false
     

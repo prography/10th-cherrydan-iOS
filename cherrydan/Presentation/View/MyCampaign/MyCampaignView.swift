@@ -3,16 +3,6 @@ import SwiftUI
 struct MyCampaignView: View {
     @EnvironmentObject private var router: MyCampaignRouter
     @StateObject private var viewModel = MyCampaignViewModel()
-//    @State private var selectedTab = 1 // 신청 탭이 기본 선택
-    
-    
-    private let tabData = [
-        ("찜한 공고", 2),
-//        ("신청", 3),
-//        ("선정", 2),
-//        ("등록", 1),
-//        ("종료", 1)
-    ]
     
     var body: some View {
         CDScreen(
@@ -22,8 +12,9 @@ struct MyCampaignView: View {
             CDHeaderWithRightContent(title: "내 체험단"){}
                 .padding(.horizontal, 16)
             
-            //            tabSection
-            //                .padding(.horizontal, 16)
+            tabSection
+                .padding(.horizontal, 16)
+            
             Text("찜한 공고")
                 .font(.m3b)
                 .foregroundStyle(.mPink3)
@@ -197,39 +188,43 @@ struct MyCampaignView: View {
         }
     }
     
-//    private var tabSection: some View {
-//        VStack(spacing: 0) {
-//            HStack(spacing: 24) {
-//                ForEach(0..<tabData.count, id: \.self) { index in
-//                    tabItem(index)
-//                }
-//            }
-//            
-//            Divider()
-//                .background(.gray2)
-//        }
-//    }
-//    private func tabItem(_ index: Int) -> some View {
-//        Button(action: {
-//            selectedTab = index
-//        }) {
-//            VStack(spacing: 8) {
-//                HStack(spacing: 4) {
-//                    Text(tabData[index].0)
+    private var tabSection: some View {
+        VStack(spacing: 0) {
+            HStack(spacing: 24) {
+                ForEach(CampaignStatusType.allCases, id: \.self) { status in
+                    tabItem(status)
+                }
+            }
+            
+            Divider()
+                .background(.gray2)
+        }
+    }
+    
+    @ViewBuilder
+    private func tabItem(_ status: CampaignStatusType) -> some View {
+        let isSelected = status == viewModel.selectedCampaignStatus
+        Button(action: {
+            viewModel.selectedCampaignStatus = status
+        }) {
+            
+            VStack(spacing: 8) {
+                HStack(spacing: 4) {
+                    Text(status.displayText)
+                        .font(.m4b)
+                        .foregroundStyle(isSelected ? .mPink3 : .gray5)
+                    
+//                    Text(viewModel.)
 //                        .font(.m4b)
-//                        .foregroundStyle(selectedTab == index ? .mPink3 : .gray5)
-//                    
-//                    Text("\(tabData[index].1)")
-//                        .font(.m4b)
-//                        .foregroundStyle(selectedTab == index ? .mPink3 : .gray5)
-//                }
-//                
-//                Rectangle()
-//                    .fill(selectedTab == index ? .mPink3 : .clear)
-//                    .frame(height: 2)
-//            }
-//        }
-//    }
+//                        .foregroundStyle(isSelected ? .mPink3 : .gray5)
+                }
+                
+                Rectangle()
+                    .fill(isSelected ? .mPink3 : .clear)
+                    .frame(height: 2)
+            }
+        }
+    }
 }
 
 #Preview {
