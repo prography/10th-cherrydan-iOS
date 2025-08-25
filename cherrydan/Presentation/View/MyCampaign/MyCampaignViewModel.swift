@@ -16,7 +16,13 @@ class MyCampaignViewModel: ObservableObject {
     ///         `선정 결과`: 선정되지 않은 공고
     @Published var closedCampaigns: [MyCampaign] = []
     
-    @Published var selectedCampaignStatus: CampaignStatusType = .apply
+    @Published var selectedCampaignStatus: CampaignStatusCategory = .liked {
+        didSet {
+            if oldValue != selectedCampaignStatus {
+                fetchCampaignsForSelectedStatus()
+            }
+        }
+    }
     
     @Published var isLoading: Bool = false
     @Published var isDeleteMode: Bool = false
@@ -29,24 +35,26 @@ class MyCampaignViewModel: ObservableObject {
     @Published var hasMoreClosedPages: Bool = true
     
     private let bookmarkRepository: BookmarkRepository
-    private let campaignRepository: CampaignStatusRepository
+    private let campaignStatusRepository: CampaignStatusRepository
     
     init(
         campaignRepository: CampaignStatusRepository = CampaignStatusRepository(),
         bookmarkRepository: BookmarkRepository = BookmarkRepository()
     ) {
-        self.campaignRepository = campaignRepository
+        self.campaignStatusRepository = campaignRepository
         self.bookmarkRepository = bookmarkRepository
         initializeFetch()
-        Task {
-            try await fetchCampaigns()
-        }
     }
     
     func initializeFetch()  {
+        fetchCampaignsForSelectedStatus()
+    }
+    
+    func fetchCampaignsForSelectedStatus() {
         isLoading = true
         currentOpenPage = 0
         currentClosedPage = 0
+        isShowingClosedCampaigns = false
         
         mainCampaigns = []
         subCampaigns = []
@@ -57,49 +65,44 @@ class MyCampaignViewModel: ObservableObject {
         
         Task {
             do {
-                let response: PageableResponse<MyCampaignDTO> = try await bookmarkRepository.getOpenBookmarks(
-                    page: currentOpenPage
-                )
-                mainCampaigns = response.content.map { $0.toMyCampaign() }
-                hasMoreOpenPages = response.hasNext
+                switch selectedCampaignStatus {
+                case .liked:
+                    let response: PageableResponse<MyCampaignDTO> = try await bookmarkRepository.getOpenBookmarks(page: currentOpenPage)
+                    mainCampaigns = response.content.map { $0.toMyCampaign() }
+                    hasMoreOpenPages = response.hasNext
+                    
+                case .applied:
+                    if let statusType = selectedCampaignStatus.primaryStatusType {
+                        let response: PageableResponse<MyCampaignDTO> = try await campaignStatusRepository.getMyCampaings(for: statusType, page: currentOpenPage)
+                        mainCampaigns = response.content.map { $0.toMyCampaign() }
+                        hasMoreOpenPages = response.hasNext
+                    }
+                    
+                case .result:
+                    if let statusType = selectedCampaignStatus.primaryStatusType {
+                        let response: PageableResponse<MyCampaignDTO> = try await campaignStatusRepository.getMyCampaings(for: statusType, page: currentOpenPage)
+                        mainCampaigns = response.content.map { $0.toMyCampaign() }
+                        hasMoreOpenPages = response.hasNext
+                    }
+                    
+                case .writingReview:
+                    if let statusType = selectedCampaignStatus.primaryStatusType {
+                        let response: PageableResponse<MyCampaignDTO> = try await campaignStatusRepository.getMyCampaings(for: statusType, page: currentOpenPage)
+                        mainCampaigns = response.content.map { $0.toMyCampaign() }
+                        hasMoreOpenPages = response.hasNext
+                    }
+                    
+                case .writingDone:
+                    if let statusType = selectedCampaignStatus.primaryStatusType {
+                        let response: PageableResponse<MyCampaignDTO> = try await campaignStatusRepository.getMyCampaings(for: statusType, page: currentOpenPage)
+                        mainCampaigns = response.content.map { $0.toMyCampaign() }
+                        hasMoreOpenPages = response.hasNext
+                    }
+                }
             } catch {
                 print("Error fetching campaigns: \(error)")
             }
             isLoading = false
-        }
-    }
-    
-    func fetchCampaigns() async throws {
-        let response: [MyCampaignDTO]
-        
-        switch selectedCampaignStatus {
-        case .apply:
-            response = try await campaignRepository.getAllMyStatus().apply
-        case .selected:
-            response = try await campaignRepository.getAllMyStatus().selected
-        case .notSelected:
-            response = try await campaignRepository.getAllMyStatus().notSelected
-        case .registered:
-            response = try await campaignRepository.getAllMyStatus().registered
-        case .ended:
-            response = try await campaignRepository.getAllMyStatus().ended
-        }
-        
-        mainCampaigns = response.map { $0.toMyCampaign() }
-    }
-    
-    func loadNextPage() {
-        switch selectedCampaignStatus {
-        case .apply:
-            loadNextPageForApply()
-        case .selected:
-            loadNextPageForApply()
-        case .notSelected:
-            loadNextPageForApply()
-        case .registered:
-            loadNextPageForApply()
-        case .ended:
-            loadNextPageForApply()
         }
     }
 
@@ -112,9 +115,22 @@ class MyCampaignViewModel: ObservableObject {
             
             Task {
                 do {
-                    let response: PageableResponse<MyCampaignDTO> = try await bookmarkRepository.getClosedBookmarks(page: currentClosedPage)
-                    closedCampaigns = response.content.map { $0.toMyCampaign() }
-                    hasMoreClosedPages = response.hasNext
+                    switch selectedCampaignStatus {
+                    case .liked:
+                        let response: PageableResponse<MyCampaignDTO> = try await bookmarkRepository.getClosedBookmarks(page: currentClosedPage)
+                        closedCampaigns = response.content.map { $0.toMyCampaign() }
+                        hasMoreClosedPages = response.hasNext
+                        
+                    case .result:
+                        if let statusType = selectedCampaignStatus.secondaryStatusType {
+                            let response: PageableResponse<MyCampaignDTO> = try await campaignStatusRepository.getMyCampaings(for: statusType, page: currentClosedPage)
+                            closedCampaigns = response.content.map { $0.toMyCampaign() }
+                            hasMoreClosedPages = response.hasNext
+                        }
+                        
+                    default:
+                        break
+                    }
                 } catch {
                     print("Error fetching closed campaigns: \(error)")
                 }
@@ -138,40 +154,262 @@ class MyCampaignViewModel: ObservableObject {
             }
         }
     }
+    
+    var mainSectionTitle: String {
+        selectedCampaignStatus.mainSectionTitle
+    }
+    
+    var closedSectionTitle: String? {
+        selectedCampaignStatus.closedSectionTitle
+    }
+    
+    var hasClosedSection: Bool {
+        selectedCampaignStatus.closedSectionTitle != nil
+    }
+    
+    func getMainButtonConfigs(for campaign: MyCampaign, router: MyCampaignRouter) -> [ButtonConfig] {
+        switch selectedCampaignStatus {
+        case .liked:
+            return [
+                ButtonConfig(
+                    text: "찜 취소하기",
+                    type: .smallGray,
+                    onClick: {
+                        PopupManager.shared.show(.cancelZzim(onClick: {
+                            self.cancelBookmark(for: campaign.campaignId)
+                        }))
+                    }
+                ),
+                ButtonConfig(
+                    text: "지원 완료로 변경",
+                    type: .smallPrimary,
+                    onClick: {
+                        router.push(to: .campaignWeb(
+                            siteNameKr: campaign.campaignSite,
+                            campaignSiteUrl: campaign.detailUrl
+                        ))
+                    }
+                )
+            ]
+            
+        case .applied:
+            return [
+                ButtonConfig(
+                    text: "공고 보기",
+                    type: .smallGray,
+                    onClick: {
+                        router.push(to: .campaignWeb(
+                            siteNameKr: campaign.campaignSite,
+                            campaignSiteUrl: campaign.detailUrl
+                        ))
+                    }
+                ),
+                ButtonConfig(
+                    text: "결과 발표일 업데",
+                    type: .smallPrimary,
+                    onClick: {
+                        router.push(to: .campaignWeb(
+                            siteNameKr: campaign.campaignSite,
+                            campaignSiteUrl: campaign.detailUrl
+                        ))
+                    }
+                )
+            ]
+            
+        case .result:
+            return [
+                ButtonConfig(
+                    text: "공고 보기",
+                    type: .smallGray,
+                    onClick: {
+                        router.push(to: .campaignWeb(
+                            siteNameKr: campaign.campaignSite,
+                            campaignSiteUrl: campaign.detailUrl
+                        ))
+                    }
+                ),
+                ButtonConfig(
+                    text: "발표 완료 버튼",
+                    type: .smallPrimary,
+                    onClick: {
+                        router.push(to: .campaignWeb(
+                            siteNameKr: campaign.campaignSite,
+                            campaignSiteUrl: campaign.detailUrl
+                        ))
+                    }
+                )
+            ]
+            
+        case .writingReview:
+            return [
+                ButtonConfig(
+                    text: "공고 보기",
+                    type: .smallGray,
+                    onClick: {
+                        router.push(to: .campaignWeb(
+                            siteNameKr: campaign.campaignSite,
+                            campaignSiteUrl: campaign.detailUrl
+                        ))
+                    }
+                ),
+                ButtonConfig(
+                    text: "리뷰 작성 완료",
+                    type: .smallPrimary,
+                    onClick: {
+                        router.push(to: .campaignWeb(
+                            siteNameKr: campaign.campaignSite,
+                            campaignSiteUrl: campaign.detailUrl
+                        ))
+                    }
+                )
+            ]
+            
+        case .writingDone:
+            return [
+                ButtonConfig(
+                    text: "공고 보기",
+                    type: .smallWhite,
+                    onClick: {
+                        router.push(to: .campaignWeb(
+                            siteNameKr: campaign.campaignSite,
+                            campaignSiteUrl: campaign.detailUrl
+                        ))
+                    }
+                ),
+                ButtonConfig(
+                    text: "리뷰 결과 확인",
+                    type: .smallPrimary,
+                    onClick: {
+                        router.push(to: .campaignWeb(
+                            siteNameKr: campaign.campaignSite,
+                            campaignSiteUrl: campaign.detailUrl
+                        ))
+                    }
+                )
+            ]
+        }
+    }
+    
+    func getClosedButtonConfigs(for campaign: MyCampaign, router: MyCampaignRouter) -> [ButtonConfig] {
+        switch selectedCampaignStatus {
+        case .liked:
+            return [
+                ButtonConfig(
+                    text: "찜 취소하기",
+                    type: .smallGray,
+                    onClick: {
+                        PopupManager.shared.show(.cancelZzim(onClick: {
+                            self.cancelBookmark(for: campaign.campaignId)
+                        }))
+                    }
+                ),
+                ButtonConfig(
+                    text: "공고 확인하기",
+                    type: .smallWhite,
+                    onClick: {
+                        router.push(to: .campaignWeb(
+                            siteNameKr: campaign.campaignSite,
+                            campaignSiteUrl: campaign.detailUrl
+                        ))
+                    }
+                )
+            ]
+            
+        case .result:
+            return [
+                ButtonConfig(
+                    text: "공고 보기",
+                    type: .smallGray,
+                    onClick: {
+                        router.push(to: .campaignWeb(
+                            siteNameKr: campaign.campaignSite,
+                            campaignSiteUrl: campaign.detailUrl
+                        ))
+                    }
+                ),
+                ButtonConfig(
+                    text: "리뷰어 결과 확인",
+                    type: .smallWhite,
+                    onClick: {
+                        router.push(to: .campaignWeb(
+                            siteNameKr: campaign.campaignSite,
+                            campaignSiteUrl: campaign.detailUrl
+                        ))
+                    }
+                )
+            ]
+            
+        default:
+            return []
+        }
+    }
 }
 
 extension MyCampaignViewModel {
-    private func loadNextPageForApply() {
+    func loadNextPage() {
         if isShowingClosedCampaigns {
-            guard hasMoreClosedPages && !isLoading else { return }
-            isLoading = true
-            currentClosedPage += 1
-            Task {
-                do {
-                    let response: PageableResponse<MyCampaignDTO> = try await bookmarkRepository.getClosedBookmarks(page: currentClosedPage)
-                    closedCampaigns.append(contentsOf: response.content.map { $0.toMyCampaign() })
-                    hasMoreClosedPages = response.hasNext
-                } catch {
-                    print("Error loading next closed page: \(error)")
-                    currentClosedPage -= 1
-                }
-                isLoading = false
-            }
+            loadNextClosedPage()
         } else {
-            guard hasMoreOpenPages && !isLoading else { return }
-            isLoading = true
-            currentOpenPage += 1
-            Task {
-                do {
+            loadNextMainPage()
+        }
+    }
+    
+    private func loadNextMainPage() {
+        guard hasMoreOpenPages && !isLoading else { return }
+        isLoading = true
+        currentOpenPage += 1
+        
+        Task {
+            do {
+                switch selectedCampaignStatus {
+                case .liked:
                     let response: PageableResponse<MyCampaignDTO> = try await bookmarkRepository.getOpenBookmarks(page: currentOpenPage)
                     mainCampaigns.append(contentsOf: response.content.map { $0.toMyCampaign() })
                     hasMoreOpenPages = response.hasNext
-                } catch {
-                    print("Error loading next open page: \(error)")
-                    currentOpenPage -= 1
+                    
+                case .applied, .result, .writingReview, .writingDone:
+                    if let statusType = selectedCampaignStatus.primaryStatusType {
+                        let response: PageableResponse<MyCampaignDTO> = try await campaignStatusRepository.getMyCampaings(for: statusType, page: currentOpenPage)
+                        mainCampaigns.append(contentsOf: response.content.map { $0.toMyCampaign() })
+                        hasMoreOpenPages = response.hasNext
+                    }
                 }
-                isLoading = false
+            } catch {
+                print("Error loading next main page: \(error)")
+                currentOpenPage -= 1
             }
+            isLoading = false
+        }
+    }
+    
+    private func loadNextClosedPage() {
+        guard hasMoreClosedPages && !isLoading else { return }
+        isLoading = true
+        currentClosedPage += 1
+        
+        Task {
+            do {
+                switch selectedCampaignStatus {
+                case .liked:
+                    let response: PageableResponse<MyCampaignDTO> = try await bookmarkRepository.getClosedBookmarks(page: currentClosedPage)
+                    closedCampaigns.append(contentsOf: response.content.map { $0.toMyCampaign() })
+                    hasMoreClosedPages = response.hasNext
+                    
+                case .result:
+                    if let statusType = selectedCampaignStatus.secondaryStatusType {
+                        let response: PageableResponse<MyCampaignDTO> = try await campaignStatusRepository.getMyCampaings(for: statusType, page: currentClosedPage)
+                        closedCampaigns.append(contentsOf: response.content.map { $0.toMyCampaign() })
+                        hasMoreClosedPages = response.hasNext
+                    }
+                    
+                default:
+                    break
+                }
+            } catch {
+                print("Error loading next closed page: \(error)")
+                currentClosedPage -= 1
+            }
+            isLoading = false
         }
     }
 }

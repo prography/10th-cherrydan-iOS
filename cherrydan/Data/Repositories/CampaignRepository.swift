@@ -60,18 +60,13 @@ class CampaignRepository {
         sort: SortType = .popular,
         page: Int = 0
     ) async throws -> PageableResponse<CampaignDTO> {
-        do {
-            let query: [String: String] = [
-                "sort": sort.rawValue,
-                "page": "\(page)",
-            ]
-            
-            let response: APIResponse<PageableResponse<CampaignDTO>> = try await networkAPI.request(CampaignEndpoint.getCampaignByReporter, queryParameters: query)
-            return response.result
-        } catch {
-            print("CampaignRepository Error: \(error)")
-            throw error
-        }
+        let query: [String: String] = [
+            "sort": sort.rawValue,
+            "page": "\(page)",
+        ]
+        
+        let response: APIResponse<PageableResponse<CampaignDTO>> = try await networkAPI.request(CampaignEndpoint.getCampaignByReporter, queryParameters: query)
+        return response.result
     }
     
     

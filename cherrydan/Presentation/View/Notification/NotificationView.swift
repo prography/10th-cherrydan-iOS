@@ -59,9 +59,17 @@ struct NotificationView: View {
                     .padding(.horizontal, 16)
             }
             
-            selectSection
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
+            CDSelectSection(
+                isDeleteMode: $viewModel.isDeleteMode,
+                toggleSelectAll: toggleSelectAll,
+                rightButtonText: "읽음",
+                onRightButtonClick: viewModel.markSelectedAlertsAsRead,
+                onClickDelete: viewModel.deleteSelectedAlerts,
+                isAllSelected: isAllSelected,
+                isSelectionValid: !viewModel.selectedNotifications.intersection(Set(currentIds)).isEmpty
+            )
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
             
             ScrollView(.vertical, showsIndicators: false) {
                 LazyVStack(spacing: 0) {
@@ -222,55 +230,6 @@ struct NotificationView: View {
                 .background(.gray2, in: RoundedRectangle(cornerRadius: 24))
             }
         }
-    }
-    
-    private var selectSection: some View {
-        HStack(alignment: .center, spacing: 12) {
-            Button(action: { toggleSelectAll() }) {
-                HStack(spacing: 2){
-                    Image("check_circle_\(isAllSelected ? "filled" : "empty")")
-                    
-                    Text("모두 선택")
-                        .font(.m4r)
-                        .foregroundColor(.gray9)
-                }
-            }
-            
-            Spacer()
-            
-            let hasSelectionInCurrentTab = !viewModel.selectedNotifications.intersection(Set(currentIds)).isEmpty
-            if viewModel.isDeleteMode {
-                HStack(spacing: 4){
-                    Button(action: { viewModel.deleteSelectedAlerts() }) {
-                        Text("삭제")
-                            .font(.m4b)
-                            .foregroundColor(hasSelectionInCurrentTab ? .mPink3 : .gray5)
-                    }
-                    .disabled(!hasSelectionInCurrentTab)
-                    
-                    Rectangle()
-                        .fill(.gray4)
-                        .frame(width: 1, height: 12)
-                    
-                    Button(action: {
-                        viewModel.isDeleteMode = false
-                    }) {
-                        Text("취소")
-                            .foregroundColor(.gray9)
-                            .font(.m4b)
-                    }
-                }
-            } else {
-                Button(action: { viewModel.markSelectedAlertsAsRead() }) {
-                    Text("읽음")
-                }
-                .font(hasSelectionInCurrentTab ? .m4b : .m4r)
-                .foregroundColor(hasSelectionInCurrentTab ? .mPink3 : .gray5)
-                .disabled(!hasSelectionInCurrentTab)
-                
-            }
-        }
-        .frame(height: 32)
     }
 }
 

@@ -7,8 +7,13 @@ class CampaignStatusRepository {
         self.networkAPI = networkAPI
     }
     
-    func getAllMyStatus() async throws -> CampaignStatusListResponseDTO {
-        let response: APIResponse<CampaignStatusListResponseDTO> = try await networkAPI.request(CampaignStatusEndpoint.getAllMyStatus)
+    func getMyCampaings(for status: CampaignStatusType, page: Int = 0) async throws -> PageableResponse<MyCampaignDTO> {
+        let query: [String:String] = [
+            "status": status.apiValue,
+            "page": String(page),
+            "size": "20"
+        ]
+        let response: APIResponse<PageableResponse<MyCampaignDTO>> = try await networkAPI.request(CampaignStatusEndpoint.getMyCampaigns, queryParameters: query)
         return response.result
     }
     

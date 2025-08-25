@@ -1,10 +1,10 @@
 import SwiftUI
 import Kingfisher
 
-
 struct MyCampaignRow: View {
     let myCampaign: MyCampaign
     let buttonConfigs: [ButtonConfig]
+    @State private var didFailToLoadThumbnailImage: Bool = false
     
     init(
         myCampaign: MyCampaign,
@@ -45,14 +45,32 @@ struct MyCampaignRow: View {
     }
     
     private var thumbnailSection: some View {
-        KFImage(URL(string: myCampaign.imageUrl))
-            .resizable()
-            .onFailure { error in
-                print("Image loading failed: \(error)")
+        Group {
+            if didFailToLoadThumbnailImage || URL(string: myCampaign.imageUrl) == nil {
+                Image("placeholder")
+                    .resizable()
+            } else {
+                KFImage(URL(string: myCampaign.imageUrl))
+                    .resizable()
+                    .placeholder {
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill(Color.gray.opacity(0.3))
+                            .overlay(
+                                ProgressView()
+                            )
+                    }
+                    .onFailure { error in
+                        print("Image loading failed: \(error)")
+                        didFailToLoadThumbnailImage = true
+                    }
+                    .onSuccess { _ in
+                        didFailToLoadThumbnailImage = false
+                    }
             }
-            .frame(width: 100, height: 100)
-            .padding(.trailing, 8)
-            .cornerRadius(4)
+        }
+        .frame(width: 100, height: 100)
+        .padding(.trailing, 8)
+        .cornerRadius(4)
     }
     
     private var campaignTextSection: some View {

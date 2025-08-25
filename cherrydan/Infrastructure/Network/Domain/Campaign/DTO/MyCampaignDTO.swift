@@ -11,7 +11,6 @@ struct MyCampaignDTO: Codable {
     let recruitCount: Int?
     let snsPlatforms: [String]
     let reviewerAnnouncementStatus: String?
-    let statusLabel: String
     let campaignSite: String?
     
     func toMyCampaign() -> MyCampaign {
@@ -19,7 +18,6 @@ struct MyCampaignDTO: Codable {
             id: id,
             campaignId: campaignId,
             reviewerAnnouncementStatus: reviewerAnnouncementStatus ?? "",
-            statusLabel: CampaignStatusType.allCases.first(where:{ $0.apiValue == statusLabel}) ?? .apply,
             title: campaignTitle ?? "",
             benefit: benefit ?? "",
             detailUrl: campaignDetailUrl ?? "",

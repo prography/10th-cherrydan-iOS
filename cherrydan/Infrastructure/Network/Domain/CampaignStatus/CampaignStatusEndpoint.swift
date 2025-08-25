@@ -1,5 +1,5 @@
 enum CampaignStatusEndpoint: APIEndpoint {
-    case getAllMyStatus
+    case getMyCampaigns
     case createOrRecoverStatus
     case updateStatus
     case deleteStatus
@@ -7,7 +7,7 @@ enum CampaignStatusEndpoint: APIEndpoint {
     
     var path: String {
         switch self {
-        case .getAllMyStatus:
+        case .getMyCampaigns:
             "/campaigns/my-status"
         case .createOrRecoverStatus:
             "/campaigns/my-status"
@@ -22,7 +22,7 @@ enum CampaignStatusEndpoint: APIEndpoint {
     
     var method: HTTPMethod {
         switch self {
-        case .getAllMyStatus:
+        case .getMyCampaigns:
             .get
         case .createOrRecoverStatus:
             .post

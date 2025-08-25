@@ -4,6 +4,9 @@ struct MyCampaignView: View {
     @EnvironmentObject private var router: MyCampaignRouter
     @StateObject private var viewModel = MyCampaignViewModel()
     
+    @State private var isShowingChangeStatusBottomSheet = false
+    @State private var selectedStatusForChange: CampaignStatusType? = nil
+    
     var body: some View {
         CDScreen(
             horizontalPadding: 0,
@@ -23,29 +26,48 @@ struct MyCampaignView: View {
             tabSection
                 .padding(.top, 24)
             
+            CDSelectSection(
+                isDeleteMode: $viewModel.isDeleteMode,
+                toggleSelectAll: {},
+                rightButtonText: "상태 변경",
+                onRightButtonClick: {
+                    isShowingChangeStatusBottomSheet = true
+                },
+                onClickDelete: {},
+                isAllSelected: false,
+                isSelectionValid: true,
+            )
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+            
             campaignListSection
         }
         .animation(.mediumSpring, value: viewModel.isShowingClosedCampaigns)
+        .sheet(isPresented: $isShowingChangeStatusBottomSheet) {
+            ChangeCampaignStatusBottomSheet(
+                isPresented: $isShowingChangeStatusBottomSheet,
+                selectedStatus: $selectedStatusForChange,
+                onStatusSelected: { status in
+                    // TODO: 선택된 캠페인들의 상태를 변경하는 로직 구현
+                    print("Selected status: \(status)")
+                }
+            )
+        }
     }
     
     @ViewBuilder
     private var campaignListSection: some View {
-        switch viewModel.selectedCampaignStatus {
-        case .apply:
-            if !viewModel.isShowingClosedCampaigns {
-                openSection
-            } else {
-                closedCampaignListSection
-                    .transition(.move(edge: .trailing))
-            }
-        default:
+        if !viewModel.isShowingClosedCampaigns {
             openSection
+        } else {
+            closedCampaignListSection
+                .transition(.move(edge: .trailing))
         }
     }
     
     private var openSectionPlaceholder: some View {
         VStack(spacing: 12) {
-            Text("찜한 공고 중 신청 가능한 공고가 없어요")
+            Text("\(viewModel.mainSectionTitle)가 없어요")
                 .font(.m4r)
                 .foregroundStyle(.gray5)
                 .padding(.vertical, 120)
@@ -62,27 +84,7 @@ struct MyCampaignView: View {
                     ForEach(Array(zip(viewModel.mainCampaigns.indices, viewModel.mainCampaigns)), id: \.1.id) { index, campaign in
                         MyCampaignRow(
                             myCampaign: campaign,
-                            buttonConfigs: [
-                                ButtonConfig(
-                                    text: "찜 취소하기",
-                                    type: .smallGray,
-                                    onClick: {
-                                        PopupManager.shared.show(.cancelZzim(onClick: {
-                                            viewModel.cancelBookmark(for: campaign.campaignId)
-                                        }))
-                                    }
-                                ),
-                                ButtonConfig(
-                                    text: "공고 보기",
-                                    type: .smallPrimary,
-                                    onClick: {
-                                        router.push(to: .campaignWeb(
-                                            siteNameKr: campaign.campaignSite,
-                                            campaignSiteUrl: campaign.detailUrl
-                                        ))
-                                    }
-                                )
-                            ]
+                            buttonConfigs: viewModel.getMainButtonConfigs(for: campaign, router: router)
                         )
                         .onAppear {
                             if !viewModel.isShowingClosedCampaigns,
@@ -98,7 +100,9 @@ struct MyCampaignView: View {
                 .padding(.horizontal, 16)
             }
             
-            closedSectionButton
+            if viewModel.hasClosedSection {
+                closedSectionButton
+            }
         }
         .transition(.move(edge: .leading))
     }
@@ -109,7 +113,7 @@ struct MyCampaignView: View {
             viewModel.handleToggleClosed(true)
         }) {
             HStack{
-                Text("신청 마감된 공고")
+                Text(viewModel.closedSectionTitle ?? "")
                     .frame(maxWidth: .infinity ,alignment: .leading)
                     .font(.m3b)
                     .foregroundStyle(.gray5)
@@ -130,7 +134,7 @@ struct MyCampaignView: View {
             }) {
                 HStack(spacing: 0) {
                     Image("chevron_left")
-                    Text("신청 마감된 공고")
+                    Text(viewModel.closedSectionTitle ?? "")
                         .font(.m3b)
                         .foregroundStyle(.gray9)
                 }
@@ -159,27 +163,7 @@ struct MyCampaignView: View {
                 ForEach(Array(zip(viewModel.closedCampaigns.indices, viewModel.closedCampaigns)), id: \.1.id) { index, campaign in
                     MyCampaignRow(
                         myCampaign: campaign,
-                        buttonConfigs: [
-                            ButtonConfig(
-                                text: "찜 취소하기",
-                                type: .smallGray,
-                                onClick: {
-                                    PopupManager.shared.show(.cancelZzim(onClick: {
-                                        viewModel.cancelBookmark(for: campaign.campaignId)
-                                    }))
-                                }
-                            ),
-                            ButtonConfig(
-                                text: "공고 확인하기",
-                                type: .smallWhite,
-                                onClick: {
-                                    router.push(to: .campaignWeb(
-                                        siteNameKr: campaign.campaignSite,
-                                        campaignSiteUrl: campaign.detailUrl
-                                    ))
-                                }
-                            )
-                        ]
+                        buttonConfigs: viewModel.getClosedButtonConfigs(for: campaign, router: router)
                     )
                     .onAppear {
                         if viewModel.isShowingClosedCampaigns,
@@ -206,8 +190,8 @@ struct MyCampaignView: View {
         VStack(spacing: 0) {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 24) {
-                    ForEach(CampaignStatusType.allCases, id: \.self) { status in
-                        tabItem(status)
+                    ForEach(CampaignStatusCategory.allCases, id: \.self) { category in
+                        tabItem(category)
                     }
                 }
                 .padding(.horizontal, 16)
@@ -218,21 +202,19 @@ struct MyCampaignView: View {
     }
     
     @ViewBuilder
-    private func tabItem(_ status: CampaignStatusType) -> some View {
-        let isSelected = status == viewModel.selectedCampaignStatus
+    private func tabItem(_ category: CampaignStatusCategory) -> some View {
+        let isSelected = category == viewModel.selectedCampaignStatus
         Button(action: {
-            viewModel.selectedCampaignStatus = status
+            viewModel.selectedCampaignStatus = category
         }) {
             
             VStack(spacing: 8) {
                 HStack(spacing: 4) {
-                    Text(status.displayText)
+                    Text(category.displayText)
                         .font(.m4b)
                         .foregroundStyle(isSelected ? .mPink3 : .gray5)
                     
-//                    Text(viewModel.)
-//                        .font(.m4b)
-//                        .foregroundStyle(isSelected ? .mPink3 : .gray5)
+                    // 탭별 카운트가 필요하다면 추후 추가 가능
                 }
                 
                 Rectangle()
