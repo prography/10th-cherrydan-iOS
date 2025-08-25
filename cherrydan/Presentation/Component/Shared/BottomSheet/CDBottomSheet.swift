@@ -68,7 +68,7 @@ struct CDBottomSheet<Content: View>: View {
         case .titleCenter(let title, _):
             ZStack {
                 Text(title)
-                    .font(.m3b)
+                    .font(.m3r)
                     .foregroundStyle(.gray9)
                 HStack {
                     Spacer()
