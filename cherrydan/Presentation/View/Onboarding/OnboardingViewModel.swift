@@ -2,6 +2,7 @@ import Foundation
 import SwiftUI
 import AuthenticationServices
 import KakaoSDKUser
+import KakaoSDKCommon
 import NaverThirdPartyLogin
 import GoogleSignIn
 
@@ -40,6 +41,14 @@ class OnboardingViewModel: NSObject, ObservableObject {
         isLoading = true
         
         instance?.requestThirdPartyLogin()
+        
+        // 네이버 로그인 웹뷰에서 뒤로가기/닫기 시 로딩 상태 해제를 위한 타이머
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            // 로그인이 진행 중이 아니라면 로딩 상태 해제
+            if self.instance?.accessToken == nil && self.isLoading {
+                self.isLoading = false
+            }
+        }
     }
     
     func performKakaoLogin() async {
@@ -51,7 +60,14 @@ class OnboardingViewModel: NSObject, ObservableObject {
             if let error = error {
                 print("Kakao login error: \(error)")
                 Task { @MainActor in
-                    ToastManager.shared.show(.errorWithMessage("카카오 로그인 중 오류가 발생했습니다: \(error.localizedDescription)"))
+                    // 취소 케이스 체크
+                    if let sdkError = error as? SdkError,
+                       case .ClientFailed(let reason, _) = sdkError,
+                       reason == .Cancelled {
+                        print("카카오 로그인 취소됨")
+                    } else {
+                        ToastManager.shared.show(.errorWithMessage("카카오 로그인 중 오류가 발생했습니다: \(error.localizedDescription)"))
+                    }
                     self.isLoading = false
                 }
             } else {
@@ -97,6 +113,7 @@ class OnboardingViewModel: NSObject, ObservableObject {
     }
     
     func performGoogleLogIn() {
+        isLoading = true
         guard let presentingViewController = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?.windows.first?.rootViewController else {
             return
         }
@@ -104,17 +121,19 @@ class OnboardingViewModel: NSObject, ObservableObject {
         GIDSignIn.sharedInstance.signIn(withPresenting: presentingViewController) { [weak self] signInResult, error in
             guard let self else { return }
             if let error = error {
-                if let error = error as? GIDSignInError {
-                    switch error.code {
-                    case .canceled:
-                        print("구글 로그인 도중에 취소됨")
-                    default:
-                        print("구글 로그인 도중에 취소됨")
+                Task { @MainActor in
+                    if let error = error as? GIDSignInError {
+                        switch error.code {
+                        case .canceled:
+                            print("구글 로그인 취소됨")
+                        default:
+                            ToastManager.shared.show(.errorWithMessage("구글 로그인 중 오류가 발생했습니다: \(error.localizedDescription)"))
+                        }
+                    } else {
+                        ToastManager.shared.show(.errorWithMessage("구글 로그인 중 오류가 발생했습니다: \(error.localizedDescription)"))
                     }
-                } else {
-                    print("구글 로그인 도중에 취소됨")
+                    self.isLoading = false
                 }
-                
             } else if let signInResult {
                 guard let idToken = signInResult.user.idToken?.tokenString else {
                     return
@@ -213,7 +232,12 @@ extension OnboardingViewModel: NaverThirdPartyLoginConnectionDelegate {
     func oauth20Connection(_ oauthConnection: NaverThirdPartyLoginConnection!, didFailWithError error: Error!) {
         print("네이버 로그인 실패: \(error.localizedDescription)")
         Task { @MainActor in
-            ToastManager.shared.show(.errorWithMessage("네이버 로그인 중 오류가 발생했습니다: \(error.localizedDescription)"))
+            // 취소 케이스 체크 (사용자가 취소한 경우)
+            if error.localizedDescription.contains("cancelled") || error.localizedDescription.contains("사용자") {
+                print("네이버 로그인 취소됨")
+            } else {
+                ToastManager.shared.show(.errorWithMessage("네이버 로그인 중 오류가 발생했습니다: \(error.localizedDescription)"))
+            }
             self.isLoading = false
         }
     }
