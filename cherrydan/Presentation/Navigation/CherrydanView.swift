@@ -78,7 +78,9 @@ struct CherrydanView: View {
                 .sink { notification in
                     guard let tab = notification.userInfo?[PushRouteUserInfoKey.targetTab] as? NotificationType else { return }
                     selectedTab = 0
-                    homeRouter.replace(with: .notification(tab: tab))
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        homeRouter.replace(with: .notification(tab: tab))
+                    }
                 }
                 .store(in: &cancellables)
         }
