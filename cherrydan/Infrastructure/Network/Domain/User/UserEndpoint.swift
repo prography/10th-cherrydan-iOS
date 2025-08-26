@@ -1,6 +1,8 @@
 enum UserEndpoint: APIEndpoint {
     case getUser
     case deleteUser
+    case patchFcmToken
+    case getFcmTokens
     
     var path: String {
         switch self {
@@ -8,6 +10,10 @@ enum UserEndpoint: APIEndpoint {
             "/user/me"
         case .deleteUser:
             "/user/me"
+        case .patchFcmToken:
+            "/user/fcm-token"
+        case .getFcmTokens:
+            "/user/fcm-tokens"
         }
     }
     
@@ -17,6 +23,10 @@ enum UserEndpoint: APIEndpoint {
                 .get
         case .deleteUser:
                 .delete
+        case .patchFcmToken:
+                .patch
+        case .getFcmTokens:
+                .get
         }
     }
     

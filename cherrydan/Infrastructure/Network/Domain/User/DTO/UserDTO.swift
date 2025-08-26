@@ -15,3 +15,17 @@ struct UserDTO: Codable {
         )
     }
 }
+
+struct FcmTokensDTO: Codable {
+    let deviceId: Int
+    let fcmToken: String?
+    let deviceType: String?
+    let deviceModel: String?
+    let appVersion: String?
+    let osVersion: String?
+    let isActive: Bool?
+    let isAllowed: Bool?
+    let lastUpdated: String?
+    let createdAt: String?
+    let updatedAt: String?
+}

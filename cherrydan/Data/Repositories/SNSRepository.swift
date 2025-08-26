@@ -19,7 +19,6 @@ class SNSRepository {
         return response.result
     }
     
-    /// OAuth 인증 URL 생성
     func getOAuthAuthUrl(platform: String) async throws -> OAuthAuthUrlResponseDTO {
         let response: APIResponse<OAuthAuthUrlResponseDTO> = try await networkAPI.request(
             SNSEndpoint.oauthAuthUrl(platform: platform)
@@ -27,7 +26,6 @@ class SNSRepository {
         return response.result
     }
     
-    /// OAuth 콜백 처리
     func handleOAuthCallback(platform: String, code: String, state: String? = nil) async throws -> OAuthCallbackResponseDTO {
         var queryParameters: [String: String] = [
             "code": code

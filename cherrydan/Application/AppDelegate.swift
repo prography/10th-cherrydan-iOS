@@ -11,6 +11,7 @@ import SwiftUI
 
 final class AppDelegate: NSObject, UIApplicationDelegate {
     private let notificationCenter = UNUserNotificationCenter.current()
+    private let userRepository = UserRepository()
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         KakaoSDK.initSDK(appKey: "200f937cbd09c57dfbfccc2994058585")
@@ -29,18 +30,9 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
         instance?.appName = "Cherrdan"  // 애플리케이션 이름
         
         FirebaseApp.configure()
-        /// - Note: 백그라운드에서 FCM 등록 및 토큰 생성&갱신을 수행하여, Messaging.messaging().token이 nil로 나올 가능성을 최소화합니다.
-        Messaging.messaging().isAutoInitEnabled = true
         Messaging.messaging().delegate = self
         
         setupPushNotifications(application)
-        // 앱 시작 시 토큰 선획득 (권한과 무관하게 가능)
-        Task {
-            let token = await Messaging.fetchFCMToken()
-            if let token {
-                KeychainManager.shared.saveFcmToken(token)
-            }
-        }
         
         return true
     }
@@ -61,20 +53,21 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
         return false
     }
     
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        Task {
+            await FCMManager.shared.updateTokenWithPermission()
+        }
+    }
+    
+    /// - Note: 외부에서 Apple Push Notification 권한 수락을 하였을 때 호출되는 이벤트입니다. 서버로 최신 활성화 fcmToken을 갱신합니다.
     func application(
         _ application: UIApplication,
         didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
     ) {
         Messaging.messaging().apnsToken = deviceToken
-        // APNs 토큰 등록 직후 FCM 토큰을 추가 시도하여 저장
+        
         Task {
-            let token = await Messaging.fetchFCMToken()
-            if let token {
-                KeychainManager.shared.saveFcmToken(token)
-                print("FCM token saved after APNs token set")
-            } else {
-                print("FCM token still nil after APNs token set")
-            }
+            await FCMManager.shared.updateTokenWithPermission()
         }
     }
 }
@@ -89,6 +82,11 @@ private extension AppDelegate {
                 // 권한과 무관하게 APNs 등록을 항상 수행하여 FCM 토큰 발급 안정화
                 await MainActor.run {
                     application.registerForRemoteNotifications()
+                }
+                
+                let token = await Messaging.fetchFCMToken()
+                if let token {
+                    KeychainManager.shared.saveFcmToken(token)
                 }
                 
                 let granted = try await notificationCenter.requestAuthorization(options: [.alert, .badge, .sound])
@@ -165,7 +163,9 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
 extension AppDelegate: MessagingDelegate {
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
         guard let token = fcmToken else { return }
-        KeychainManager.shared.saveFcmToken(token)
-        print("Token:", token)
+        
+        Task {
+            await FCMManager.shared.updateTokenWithPermission()
+        }
     }
 }

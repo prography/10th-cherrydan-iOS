@@ -22,7 +22,6 @@ class AuthRepository {
         
         let deviceModel = await UIDevice.current.modelName
         
-        // 알림 권한 상태 확인
         let notificationSettings = await UNUserNotificationCenter.current().notificationSettings()
         let isNotificationAllowed = notificationSettings.authorizationStatus == .authorized
     

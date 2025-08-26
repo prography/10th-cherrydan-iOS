@@ -24,7 +24,6 @@ class CherrydanViewModel: ObservableObject {
                     newVersion: response.latestVersion,
                     minVersion: response.minSupportedVersion
                 )
-                
                 await handleAuthState()
             } catch {
                 print("Failed to get version info: \(error)")
