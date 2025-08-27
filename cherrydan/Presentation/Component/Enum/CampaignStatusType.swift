@@ -87,7 +87,7 @@ enum CampaignStatusCategory: CaseIterable {
         case .liked:
             "신청 가능한 공고"
         case .applied:
-            "발표 기다리는 중"
+            "지원한 공고"
         case .result:
             "선정된 공고"
         case .writingReview:

@@ -4,6 +4,7 @@ enum CampaignStatusEndpoint: APIEndpoint {
     case updateStatus
     case deleteStatus
     case getPopupStatus
+    case getCampaignStatusCount
     
     var path: String {
         switch self {
@@ -17,6 +18,8 @@ enum CampaignStatusEndpoint: APIEndpoint {
             "/campaigns/my-status"
         case .getPopupStatus:
             "/campaigns/my-status/popup"
+        case .getCampaignStatusCount:
+            "/campaigns/my-status/count"
         }
     }
     
@@ -31,6 +34,8 @@ enum CampaignStatusEndpoint: APIEndpoint {
         case .deleteStatus:
             .delete
         case .getPopupStatus:
+            .get
+        case .getCampaignStatusCount:
             .get
         }
     }

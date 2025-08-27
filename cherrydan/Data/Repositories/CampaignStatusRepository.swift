@@ -18,8 +18,6 @@ class CampaignStatusRepository {
     }
     
     func createOrRecoverStatus(request: CampaignStatusRequestDTO) async throws -> MyCampaignDTO {
-    
-        
         let response: APIResponse<MyCampaignDTO> = try await networkAPI.request(CampaignStatusEndpoint.createOrRecoverStatus, parameters: request.dictionaryFormat)
         return response.result
     }
@@ -35,6 +33,11 @@ class CampaignStatusRepository {
     
     func getPopupStatus() async throws -> CampaignStatusPopupResponseDTO {
         let response: APIResponse<CampaignStatusPopupResponseDTO> = try await networkAPI.request(CampaignStatusEndpoint.getPopupStatus)
+        return response.result
+    }
+    
+    func getCampaignStatusCount() async throws -> CampaignStatusCountDTO {
+        let response: APIResponse<CampaignStatusCountDTO> = try await networkAPI.request(CampaignStatusEndpoint.getCampaignStatusCount)
         return response.result
     }
 }

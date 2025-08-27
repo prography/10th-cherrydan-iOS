@@ -37,3 +37,11 @@ struct CampaignStatusPopupResponseDTO: Codable {
     let selected: [CampaignStatusPopupItemDTO]
     let registered: [CampaignStatusPopupItemDTO]
 }
+
+struct CampaignStatusCountDTO: Codable {
+    let apply: Int
+    let selected: Int
+    let notSelected: Int
+    let reviewing: Int
+    let ended: Int
+}
