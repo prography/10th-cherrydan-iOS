@@ -8,6 +8,8 @@ enum PopupType {
     case cancelZzim(onClick:() -> Void)
     case confirmStatusChange(status: String, onClick:() -> Void)
     case visitCompletion(onVisitCompleted: () -> Void, onVisitIncomplete: () -> Void)
+    case reviewWritingCompletion(onConfirm: () -> Void)
+    case passFailSelection(onPass: () -> Void, onFail: () -> Void)
     case custom(PopupConfig)
     
     var config: PopupConfig {
@@ -85,6 +87,28 @@ enum PopupType {
                 buttons: [
                     ButtonConfig(text: "방문 미완료", type: .largeGray, onClick: onVisitIncomplete),
                     ButtonConfig(text: "방문 완료", type: .largePrimary, onClick: onVisitCompleted)
+                ],
+                buttonLayout: .horizontal
+            )
+        case .reviewWritingCompletion(let onConfirm):
+            PopupConfig(
+                image: nil,
+                title: "리뷰 작성 완료",
+                description: "리뷰 작성을 완료하시겠습니까?",
+                buttons: [
+                    ButtonConfig(text: "취소", type: .largeGray, onClick: {}),
+                    ButtonConfig(text: "확인", type: .largePrimary, onClick: onConfirm)
+                ],
+                buttonLayout: .horizontal
+            )
+        case .passFailSelection(let onPass, let onFail):
+            PopupConfig(
+                image: nil,
+                title: "합격/불합격 선택",
+                description: "결과를 선택해주세요.",
+                buttons: [
+                    ButtonConfig(text: "불합격", type: .largeGray, onClick: onFail),
+                    ButtonConfig(text: "합격", type: .largePrimary, onClick: onPass)
                 ],
                 buttonLayout: .horizontal
             )

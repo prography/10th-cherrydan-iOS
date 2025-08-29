@@ -191,7 +191,7 @@ class MyCampaignViewModel: ObservableObject {
                     type: .smallPrimary,
                     onClick: {
                         PopupManager.shared.show(.confirmStatusChange(status: "지원 완료"){
-                            self.changeCampaignStatusToApply(campaignId: campaign.campaignId)
+                            self.changeCampaignStatus(campaignId: campaign.campaignId, to: .apply)
                         }
                         )
                     }
@@ -199,18 +199,47 @@ class MyCampaignViewModel: ObservableObject {
             ]
             
         case .applied:
-            return [
-                ButtonConfig(
-                    text: "공고 보기",
-                    type: .smallGray,
-                    onClick: {
-                        router.push(to: .campaignWeb(
-                            siteNameKr: campaign.campaignSite,
-                            campaignSiteUrl: campaign.detailUrl
-                        ))
-                    }
-                )
-            ]
+            if campaign.subStatusLabel == "completed" {
+                return [
+                    ButtonConfig(
+                        text: "공고 보기",
+                        type: .smallGray,
+                        onClick: {
+                            router.push(to: .campaignWeb(
+                                siteNameKr: campaign.campaignSite,
+                                campaignSiteUrl: campaign.detailUrl
+                            ))
+                        }
+                    ),
+                    ButtonConfig(
+                        text: "합격/불합격 입력",
+                        type: .smallPrimary,
+                        onClick: {
+                            PopupManager.shared.show(.passFailSelection(
+                                onPass: {
+                                    self.changeCampaignStatus(campaignId: campaign.campaignId, to: .selected)
+                                },
+                                onFail: {
+                                    self.changeCampaignStatus(campaignId: campaign.campaignId, to: .notSelected)
+                                }
+                            ))
+                        }
+                    )
+                ]
+            } else {
+                    return [
+                        ButtonConfig(
+                            text: "공고 보기",
+                            type: .smallGray,
+                            onClick: {
+                                router.push(to: .campaignWeb(
+                                    siteNameKr: campaign.campaignSite,
+                                    campaignSiteUrl: campaign.detailUrl
+                                ))
+                            }
+                        )
+                    ]
+            }
             
         case .result:
             return [
@@ -230,7 +259,7 @@ class MyCampaignViewModel: ObservableObject {
                     onClick: {
                         PopupManager.shared.show(.visitCompletion(
                             onVisitCompleted: {
-                                self.changeCampaignStatusToReviewing(campaignId: campaign.campaignId)
+                                self.changeCampaignStatus(campaignId: campaign.campaignId, to: .reviewing)
                             },
                             onVisitIncomplete: {
                                 // 방문 미완료 시 아무 동작 없음
@@ -256,9 +285,10 @@ class MyCampaignViewModel: ObservableObject {
                     text: "리뷰 작성 완료",
                     type: .smallPrimary,
                     onClick: {
-                        router.push(to: .campaignWeb(
-                            siteNameKr: campaign.campaignSite,
-                            campaignSiteUrl: campaign.detailUrl
+                        PopupManager.shared.show(.reviewWritingCompletion(
+                            onConfirm: {
+                                self.changeCampaignStatus(campaignId: campaign.campaignId, to: .ended)
+                            }
                         ))
                     }
                 )
@@ -385,45 +415,41 @@ class MyCampaignViewModel: ObservableObject {
         }
     }
     
-    func changeCampaignStatusToApply(campaignId: Int) {
+    func changeCampaignStatus(campaignId: Int, to statusType: CampaignStatusType) {
         Task {
             do {
                 let request = CampaignStatusRequestDTO(
                     campaignId: campaignId,
-                    status: CampaignStatusType.apply.apiValue
+                    status: statusType.apiValue
                 )
                 _ = try await campaignStatusRepository.createOrRecoverStatus(request: request)
                 
-                // 북마크에서 해당 캠페인 제거
+                // 해당 캠페인을 현재 리스트에서 제거
                 mainCampaigns.removeAll { $0.campaignId == campaignId }
                 
                 fetchCampaignStatusCount()
-                ToastManager.shared.show(.success("상태가 성공적으로 변경되었습니다."))
+                
+                let successMessage = getSuccessMessage(for: statusType)
+                ToastManager.shared.show(.success(successMessage))
             } catch {
-                print("Error changing campaign status to apply: \(error)")
+                print("Error changing campaign status to \(statusType): \(error)")
                 ToastManager.shared.show(.errorWithMessage("상태 변경 중 오류가 발생했습니다."))
             }
         }
     }
     
-    func changeCampaignStatusToReviewing(campaignId: Int) {
-        Task {
-            do {
-                let request = CampaignStatusRequestDTO(
-                    campaignId: campaignId,
-                    status: CampaignStatusType.reviewing.apiValue
-                )
-                _ = try await campaignStatusRepository.createOrRecoverStatus(request: request)
-                
-                // 선정 결과에서 해당 캠페인 제거
-                mainCampaigns.removeAll { $0.campaignId == campaignId }
-                
-                fetchCampaignStatusCount()
-                ToastManager.shared.show(.success("리뷰 작성 중으로 상태가 변경되었습니다."))
-            } catch {
-                print("Error changing campaign status to reviewing: \(error)")
-                ToastManager.shared.show(.errorWithMessage("상태 변경 중 오류가 발생했습니다."))
-            }
+    private func getSuccessMessage(for statusType: CampaignStatusType) -> String {
+        switch statusType {
+        case .apply:
+            return "상태가 성공적으로 변경되었습니다."
+        case .reviewing:
+            return "리뷰 작성 중으로 상태가 변경되었습니다."
+        case .ended:
+            return "리뷰 작성이 완료되었습니다."
+        case .selected:
+            return "선정으로 상태가 변경되었습니다."
+        case .notSelected:
+            return "미선정으로 상태가 변경되었습니다."
         }
     }
     
