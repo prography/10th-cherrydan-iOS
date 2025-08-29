@@ -1,7 +1,8 @@
 struct NoticeBoardBannerDTO: Codable {
     let id: Int
     let title: String?
-    let imageUrl: String?
+    let subTitle: String?
+    let backgroundColor: String?
     let bannerType: String?
     let linkType: String?
     let targetId: Int?
@@ -12,7 +13,8 @@ struct NoticeBoardBannerDTO: Codable {
         return NoticeBoardBanner(
             id: self.id,
             title: self.title ?? "",
-            imageUrl: self.imageUrl ?? "",
+            subTitle: self.subTitle ?? "",
+            backgroundColor: self.backgroundColor ?? "",
             bannerType: self.bannerType ?? "",
             linkType: self.linkType ?? "",
             targetId: self.targetId ?? -1,

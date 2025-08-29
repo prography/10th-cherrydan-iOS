@@ -69,13 +69,13 @@ class HomeViewModel: ObservableObject {
         self.noticeBoardAPI = noticeBoardAPI
         self.bookmarkAPI = bookmarkAPI
         initializeFetch()
+        fetchBannerData()
     }
     
     func fetchBannerData() {
-        isLoading = true
-        
         Task {
             do {
+                isLoading = true
                 let response = try await noticeBoardAPI.getNoticeBoardBanner()
                 
                 banners = response.result.map{$0.toNoticeBoardBanner()}

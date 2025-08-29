@@ -40,9 +40,9 @@ struct HomeView: View {
                 
                 ScrollView(.vertical, showsIndicators: false) {
                     LazyVStack(alignment: .leading, spacing: 0) {
-                        //                    CampaignBanner(banners: viewModel.banners)
-                        //                        .padding(.top, 8)
-                        //                        .padding(.bottom, 16)
+                        CampaignBanner(banners: viewModel.banners)
+                            .padding(.top, 8)
+                            .padding(.bottom, 16)
                         
                         CDTabSection(
                             selectedCategory: $viewModel.selectedCategory,
@@ -89,9 +89,6 @@ struct HomeView: View {
         }
         .animation(.fastSpring, value: viewModel.selectedSortType)
         .animation(.mediumSpring, value: showRegionSideMenu)
-//        .onViewDidLoad {
-//            viewModel.fetchBannerData()
-//        }
     }
     
     private var sortSection: some View {
@@ -190,7 +187,7 @@ struct HomeView: View {
             GridItem(.flexible(), spacing: 8)
         ], spacing: 32) {
             ForEach(Array(zip(viewModel.campaigns.indices, viewModel.campaigns)), id: \.1.id) { index, campaign in
-                Button(action:{
+                Button(action: {
                     router.push(to: .campaignWeb(
                         siteNameKr: campaign.campaignSite.siteNameKr,
                         campaignSiteUrl: campaign.detailUrl
