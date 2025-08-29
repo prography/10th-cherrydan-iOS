@@ -18,12 +18,24 @@ class CampaignStatusRepository {
     }
     
     func createOrRecoverStatus(request: CampaignStatusRequestDTO) async throws -> MyCampaignDTO {
-        let response: APIResponse<MyCampaignDTO> = try await networkAPI.request(CampaignStatusEndpoint.createOrRecoverStatus, parameters: request.dictionaryFormat)
+        let param: [String: Any] = [
+            "campaignId": request.campaignId,
+            "status": "\(request.status)",
+            "isActive" : true
+        ]
+        
+        let response: APIResponse<MyCampaignDTO> = try await networkAPI.request(CampaignStatusEndpoint.createOrRecoverStatus, parameters: param)
         return response.result
     }
     
     func updateStatus(request: CampaignStatusRequestDTO) async throws -> MyCampaignDTO {
-        let response: APIResponse<MyCampaignDTO> = try await networkAPI.request(CampaignStatusEndpoint.updateStatus, parameters: request.dictionaryFormat)
+        let param: [String: Any] = [
+            "campaignId": request.campaignId,
+            "status": "\(request.status)",
+            "isActive" : true
+        ]
+        
+        let response: APIResponse<MyCampaignDTO> = try await networkAPI.request(CampaignStatusEndpoint.updateStatus, parameters: param)
         return response.result
     }
     

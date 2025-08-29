@@ -19,6 +19,7 @@ class MyCampaignViewModel: ObservableObject {
     @Published var selectedCampaignStatus: CampaignStatusCategory = .liked {
         didSet {
             if oldValue != selectedCampaignStatus {
+                selectedCampaignIds.removeAll()
                 fetchCampaignsForSelectedStatus()
             }
         }
@@ -34,6 +35,9 @@ class MyCampaignViewModel: ObservableObject {
     @Published var currentClosedPage: Int = 0
     @Published var hasMoreClosedPages: Bool = true
     
+    @Published var selectedCampaignIds: Set<Int> = []
+    @Published var campaignStatusCounts: CampaignStatusCountDTO? = nil
+    
     private let bookmarkRepository: BookmarkRepository
     private let campaignStatusRepository: CampaignStatusRepository
     
@@ -47,6 +51,7 @@ class MyCampaignViewModel: ObservableObject {
     }
     
     func initializeFetch()  {
+        fetchCampaignStatusCount()
         fetchCampaignsForSelectedStatus()
     }
     
@@ -172,29 +177,6 @@ class MyCampaignViewModel: ObservableObject {
         case .liked:
             return [
                 ButtonConfig(
-                    text: "찜 취소하기",
-                    type: .smallGray,
-                    onClick: {
-                        PopupManager.shared.show(.cancelZzim(onClick: {
-                            self.cancelBookmark(for: campaign.campaignId)
-                        }))
-                    }
-                ),
-                ButtonConfig(
-                    text: "지원 완료로 변경",
-                    type: .smallPrimary,
-                    onClick: {
-                        router.push(to: .campaignWeb(
-                            siteNameKr: campaign.campaignSite,
-                            campaignSiteUrl: campaign.detailUrl
-                        ))
-                    }
-                )
-            ]
-            
-        case .applied:
-            return [
-                ButtonConfig(
                     text: "공고 보기",
                     type: .smallGray,
                     onClick: {
@@ -205,8 +187,22 @@ class MyCampaignViewModel: ObservableObject {
                     }
                 ),
                 ButtonConfig(
-                    text: "결과 발표일 업데",
+                    text: "지원 완료로 변경",
                     type: .smallPrimary,
+                    onClick: {
+                        PopupManager.shared.show(.confirmStatusChange(status: "지원 완료"){
+                            self.changeCampaignStatusToApply(campaignId: campaign.campaignId)
+                        }
+                        )
+                    }
+                )
+            ]
+            
+        case .applied:
+            return [
+                ButtonConfig(
+                    text: "공고 보기",
+                    type: .smallGray,
                     onClick: {
                         router.push(to: .campaignWeb(
                             siteNameKr: campaign.campaignSite,
@@ -229,12 +225,16 @@ class MyCampaignViewModel: ObservableObject {
                     }
                 ),
                 ButtonConfig(
-                    text: "발표 완료 버튼",
+                    text: "방문 완료로 변경",
                     type: .smallPrimary,
                     onClick: {
-                        router.push(to: .campaignWeb(
-                            siteNameKr: campaign.campaignSite,
-                            campaignSiteUrl: campaign.detailUrl
+                        PopupManager.shared.show(.visitCompletion(
+                            onVisitCompleted: {
+                                self.changeCampaignStatusToReviewing(campaignId: campaign.campaignId)
+                            },
+                            onVisitIncomplete: {
+                                // 방문 미완료 시 아무 동작 없음
+                            }
                         ))
                     }
                 )
@@ -295,16 +295,7 @@ class MyCampaignViewModel: ObservableObject {
         case .liked:
             return [
                 ButtonConfig(
-                    text: "찜 취소하기",
-                    type: .smallGray,
-                    onClick: {
-                        PopupManager.shared.show(.cancelZzim(onClick: {
-                            self.cancelBookmark(for: campaign.campaignId)
-                        }))
-                    }
-                ),
-                ButtonConfig(
-                    text: "공고 확인하기",
+                    text: "공고 보기",
                     type: .smallWhite,
                     onClick: {
                         router.push(to: .campaignWeb(
@@ -326,21 +317,130 @@ class MyCampaignViewModel: ObservableObject {
                             campaignSiteUrl: campaign.detailUrl
                         ))
                     }
-                ),
-                ButtonConfig(
-                    text: "리뷰어 결과 확인",
-                    type: .smallWhite,
-                    onClick: {
-                        router.push(to: .campaignWeb(
-                            siteNameKr: campaign.campaignSite,
-                            campaignSiteUrl: campaign.detailUrl
-                        ))
-                    }
                 )
             ]
             
         default:
             return []
+        }
+    }
+    
+    func fetchCampaignStatusCount() {
+        Task {
+            do {
+                let count = try await campaignStatusRepository.getCampaignStatusCount()
+                campaignStatusCounts = count
+            } catch {
+                print("Error fetching campaign status count: \(error)")
+            }
+        }
+    }
+    
+    func toggleCampaignSelection(campaignId: Int) {
+        if selectedCampaignIds.contains(campaignId) {
+            selectedCampaignIds.remove(campaignId)
+        } else {
+            selectedCampaignIds.insert(campaignId)
+        }
+    }
+    
+    func toggleSelectAll() {
+        let allCampaignIds = Set(mainCampaigns.map { $0.campaignId })
+        if selectedCampaignIds == allCampaignIds {
+            selectedCampaignIds.removeAll()
+        } else {
+            selectedCampaignIds = allCampaignIds
+        }
+    }
+    
+    var isAllSelected: Bool {
+        let allCampaignIds = Set(mainCampaigns.map { $0.campaignId })
+        return !allCampaignIds.isEmpty && selectedCampaignIds == allCampaignIds
+    }
+    
+    var isSelectionValid: Bool {
+        !selectedCampaignIds.isEmpty
+    }
+    
+    func updateSelectedCampaignsStatus(to newStatus: CampaignStatusType) {
+        Task {
+            do {
+                for campaignId in selectedCampaignIds {
+                    let request = CampaignStatusRequestDTO(
+                        campaignId: campaignId,
+                        status: newStatus.apiValue
+                    )
+                    _ = try await campaignStatusRepository.createOrRecoverStatus(request: request)
+                }
+                
+                selectedCampaignIds.removeAll()
+                fetchCampaignStatusCount()
+                fetchCampaignsForSelectedStatus()
+                
+                ToastManager.shared.show(.success("상태가 성공적으로 변경되었습니다."))
+            } catch {
+                print("Error updating campaign status: \(error)")
+                ToastManager.shared.show(.errorWithMessage("상태 변경 중 오류가 발생했습니다."))
+            }
+        }
+    }
+    
+    func changeCampaignStatusToApply(campaignId: Int) {
+        Task {
+            do {
+                let request = CampaignStatusRequestDTO(
+                    campaignId: campaignId,
+                    status: CampaignStatusType.apply.apiValue
+                )
+                _ = try await campaignStatusRepository.createOrRecoverStatus(request: request)
+                
+                // 북마크에서 해당 캠페인 제거
+                mainCampaigns.removeAll { $0.campaignId == campaignId }
+                
+                fetchCampaignStatusCount()
+                ToastManager.shared.show(.success("상태가 성공적으로 변경되었습니다."))
+            } catch {
+                print("Error changing campaign status to apply: \(error)")
+                ToastManager.shared.show(.errorWithMessage("상태 변경 중 오류가 발생했습니다."))
+            }
+        }
+    }
+    
+    func changeCampaignStatusToReviewing(campaignId: Int) {
+        Task {
+            do {
+                let request = CampaignStatusRequestDTO(
+                    campaignId: campaignId,
+                    status: CampaignStatusType.reviewing.apiValue
+                )
+                _ = try await campaignStatusRepository.createOrRecoverStatus(request: request)
+                
+                // 선정 결과에서 해당 캠페인 제거
+                mainCampaigns.removeAll { $0.campaignId == campaignId }
+                
+                fetchCampaignStatusCount()
+                ToastManager.shared.show(.success("리뷰 작성 중으로 상태가 변경되었습니다."))
+            } catch {
+                print("Error changing campaign status to reviewing: \(error)")
+                ToastManager.shared.show(.errorWithMessage("상태 변경 중 오류가 발생했습니다."))
+            }
+        }
+    }
+    
+    func getCountForStatus(_ category: CampaignStatusCategory) -> Int? {
+        guard let counts = campaignStatusCounts else { return nil }
+        
+        switch category {
+        case .liked:
+            return nil
+        case .applied:
+            return counts.apply
+        case .result:
+            return counts.selected + counts.notSelected
+        case .writingReview:
+            return counts.reviewing
+        case .writingDone:
+            return counts.ended
         }
     }
 }

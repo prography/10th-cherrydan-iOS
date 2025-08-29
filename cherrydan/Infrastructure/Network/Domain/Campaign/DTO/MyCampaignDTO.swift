@@ -11,6 +11,7 @@ struct MyCampaignDTO: Codable {
     let recruitCount: Int?
     let snsPlatforms: [String]
     let reviewerAnnouncementStatus: String?
+    let subStatusLabel: String?
     let campaignSite: String?
     
     func toMyCampaign() -> MyCampaign {
@@ -28,6 +29,7 @@ struct MyCampaignDTO: Codable {
             snsPlatforms: snsPlatforms.compactMap { snsPlatform in
                 SNSPlatformType.allCases.first(where:{ $0.displayName == snsPlatform})
             },
+            subStatusLabel: subStatusLabel,
             campaignSite: campaignSite ?? ""
         )
     }

@@ -10,5 +10,6 @@ struct MyCampaign: Identifiable, Equatable {
     let applicantCount: Int
     let recruitCount: Int
     let snsPlatforms: [SNSPlatformType]
+    let subStatusLabel: String?
     let campaignSite: String
 }

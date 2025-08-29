@@ -3,8 +3,7 @@ import Foundation
 // MARK: - Request DTOs
 struct CampaignStatusRequestDTO: Codable {
     let campaignId: Int
-    let status: CampaignStatusType
-    let isActive: Bool?
+    let status: String
 }
 
 struct DeleteRequest: Codable {

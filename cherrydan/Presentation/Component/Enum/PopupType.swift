@@ -6,6 +6,8 @@ enum PopupType {
     case loginNeeded(onClick:() -> Void)
     case loginWithDuplicatedAccount(account: String)
     case cancelZzim(onClick:() -> Void)
+    case confirmStatusChange(status: String, onClick:() -> Void)
+    case visitCompletion(onVisitCompleted: () -> Void, onVisitIncomplete: () -> Void)
     case custom(PopupConfig)
     
     var config: PopupConfig {
@@ -61,6 +63,28 @@ enum PopupType {
                 buttons: [
                     ButtonConfig(text: "취소", type: .largeGray, onClick: {}),
                     ButtonConfig(text: "제거", type: .largePrimary, onClick: onClick)
+                ],
+                buttonLayout: .horizontal
+            )
+        case .confirmStatusChange(_, let onConfirm):
+            PopupConfig(
+                image: nil,
+                title: "상태 변경 안내",
+                description: "지원 완료로 상태를 변경하시겠습니까?",
+                buttons: [
+                    ButtonConfig(text: "취소", type: .largeGray, onClick: {}),
+                    ButtonConfig(text: "확인", type: .largePrimary, onClick: onConfirm)
+                ],
+                buttonLayout: .horizontal
+            )
+        case .visitCompletion(let onVisitCompleted, let onVisitIncomplete):
+            PopupConfig(
+                image: nil,
+                title: "방문 완료 여부",
+                description: "방문을 완료하셨나요?",
+                buttons: [
+                    ButtonConfig(text: "방문 미완료", type: .largeGray, onClick: onVisitIncomplete),
+                    ButtonConfig(text: "방문 완료", type: .largePrimary, onClick: onVisitCompleted)
                 ],
                 buttonLayout: .horizontal
             )

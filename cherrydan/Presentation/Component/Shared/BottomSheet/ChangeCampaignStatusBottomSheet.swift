@@ -49,18 +49,5 @@ struct ChangeCampaignStatusBottomSheet: View {
 }
 
 extension CampaignStatusType {
-    var displayName: String {
-        switch self {
-        case .apply:
-            "신청"
-        case .selected:
-            "미선정"
-        case .notSelected:
-            "선정"
-        case .reviewing:
-            "등록"
-        case .ended:
-            "종료"
-        }
-    }
+    
 }

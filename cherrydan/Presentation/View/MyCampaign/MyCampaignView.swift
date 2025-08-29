@@ -28,14 +28,18 @@ struct MyCampaignView: View {
             
             CDSelectSection(
                 isDeleteMode: $viewModel.isDeleteMode,
-                toggleSelectAll: {},
+                toggleSelectAll: {
+                    viewModel.toggleSelectAll()
+                },
                 rightButtonText: "상태 변경",
                 onRightButtonClick: {
                     isShowingChangeStatusBottomSheet = true
                 },
-                onClickDelete: {},
-                isAllSelected: false,
-                isSelectionValid: true,
+                onClickDelete: {
+                    // TODO: 삭제 로직 구현 필요 시 추가
+                },
+                isAllSelected: viewModel.isAllSelected,
+                isSelectionValid: viewModel.isSelectionValid
             )
             .padding(.horizontal, 16)
             .padding(.vertical, 8)
@@ -48,8 +52,9 @@ struct MyCampaignView: View {
                 isPresented: $isShowingChangeStatusBottomSheet,
                 selectedStatus: $selectedStatusForChange,
                 onStatusSelected: { status in
-                    // TODO: 선택된 캠페인들의 상태를 변경하는 로직 구현
-                    print("Selected status: \(status)")
+                    viewModel.updateSelectedCampaignsStatus(to: status)
+                    isShowingChangeStatusBottomSheet = false
+                    selectedStatusForChange = nil
                 }
             )
         }
@@ -80,21 +85,39 @@ struct MyCampaignView: View {
             if viewModel.mainCampaigns.isEmpty {
                 openSectionPlaceholder
             } else {
-                LazyVStack(spacing: 20) {
+                LazyVStack(spacing: 0) {
                     ForEach(Array(zip(viewModel.mainCampaigns.indices, viewModel.mainCampaigns)), id: \.1.id) { index, campaign in
-                        MyCampaignRow(
-                            myCampaign: campaign,
-                            buttonConfigs: viewModel.getMainButtonConfigs(for: campaign, router: router)
-                        )
-                        .onAppear {
-                            if !viewModel.isShowingClosedCampaigns,
-                               index == viewModel.mainCampaigns.count - 10,
-                               viewModel.hasMoreOpenPages,
-                               !viewModel.isLoading {
-                                viewModel.loadNextPage()
+                        VStack(spacing: 0) {
+                            if viewModel.selectedCampaignStatus == .applied {
+                                if shouldShowSectionTitle(at: index, for: campaign) {
+                                    sectionTitle(for: campaign)
+                                        .padding(.top, index == 0 ? 0 : 20)
+                                }
+                            }
+                            
+                            MyCampaignRow(
+                                myCampaign: campaign,
+                                buttonConfigs: viewModel.getMainButtonConfigs(for: campaign, router: router),
+                                isDeleteMode: viewModel.isDeleteMode,
+                                isSelected: viewModel.selectedCampaignIds.contains(campaign.campaignId),
+                                onSelectionToggle: {
+                                    viewModel.toggleCampaignSelection(campaignId: campaign.campaignId)
+                                }
+                            )
+                            .onAppear {
+                                if !viewModel.isShowingClosedCampaigns,
+                                   index == viewModel.mainCampaigns.count - 10,
+                                   viewModel.hasMoreOpenPages,
+                                   !viewModel.isLoading {
+                                    viewModel.loadNextPage()
+                                }
+                            }
+                            
+                            if index < viewModel.mainCampaigns.count - 1 {
+                                Divider()
+                                    .padding(.vertical, 12)
                             }
                         }
-                        Divider()
                     }
                 }
                 .padding(.horizontal, 16)
@@ -163,7 +186,12 @@ struct MyCampaignView: View {
                 ForEach(Array(zip(viewModel.closedCampaigns.indices, viewModel.closedCampaigns)), id: \.1.id) { index, campaign in
                     MyCampaignRow(
                         myCampaign: campaign,
-                        buttonConfigs: viewModel.getClosedButtonConfigs(for: campaign, router: router)
+                        buttonConfigs: viewModel.getClosedButtonConfigs(for: campaign, router: router),
+                        isDeleteMode: viewModel.isDeleteMode,
+                        isSelected: viewModel.selectedCampaignIds.contains(campaign.campaignId),
+                        onSelectionToggle: {
+                            viewModel.toggleCampaignSelection(campaignId: campaign.campaignId)
+                        }
                     )
                     .onAppear {
                         if viewModel.isShowingClosedCampaigns,
@@ -201,6 +229,41 @@ struct MyCampaignView: View {
         }
     }
     
+    // MARK: - Section Title Helper Methods
+    private func shouldShowSectionTitle(at index: Int, for campaign: MyCampaign) -> Bool {
+        // 첫 번째 아이템이거나, 이전 아이템과 subStatusLabel이 다른 경우
+        if index == 0 {
+            return true
+        }
+        
+        let previousCampaign = viewModel.mainCampaigns[index - 1]
+        return campaign.subStatusLabel != previousCampaign.subStatusLabel
+    }
+    
+    @ViewBuilder
+    private func sectionTitle(for campaign: MyCampaign) -> some View {
+        let title = getSectionTitle(for: campaign.subStatusLabel)
+        
+        HStack {
+            Text(title)
+                .font(.m3b)
+                .foregroundStyle(.gray9)
+            Spacer()
+        }
+        .padding(.bottom, 20)
+    }
+    
+    private func getSectionTitle(for subStatusLabel: String?) -> String {
+        switch subStatusLabel {
+        case "waiting":
+            return "발표 기다리는 중"
+        case "completed":
+            return "결과 발표 완료"
+        default:
+            return "발표 기다리는 중"
+        }
+    }
+    
     @ViewBuilder
     private func tabItem(_ category: CampaignStatusCategory) -> some View {
         let isSelected = category == viewModel.selectedCampaignStatus
@@ -214,7 +277,11 @@ struct MyCampaignView: View {
                         .font(.m4b)
                         .foregroundStyle(isSelected ? .mPink3 : .gray5)
                     
-                    // 탭별 카운트가 필요하다면 추후 추가 가능
+                    if let count = viewModel.getCountForStatus(category) {
+                        Text("\(count)")
+                            .font(.m4b)
+                            .foregroundStyle(isSelected ? .mPink3 : .gray5)
+                    }
                 }
                 
                 Rectangle()

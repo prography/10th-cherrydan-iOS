@@ -1,9 +1,24 @@
 enum CampaignStatusType: CaseIterable, Codable {
     case apply
-    case selected
     case notSelected
+    case selected
     case reviewing
     case ended
+    
+    var displayName: String {
+        switch self {
+        case .apply:
+            "신청"
+        case .notSelected:
+            "미선정"
+        case .selected:
+            "선정"
+        case .reviewing:
+            "등록"
+        case .ended:
+            "종료"
+        }
+    }
     
     var apiValue: String {
         switch self {
