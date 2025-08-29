@@ -7,7 +7,7 @@ struct CampaignStatusRequestDTO: Codable {
 }
 
 struct DeleteRequest: Codable {
-    let campaignId: Int
+    let campaignIds: [Int]
 }
 
 struct CampaignStatusListResponseDTO: Codable {

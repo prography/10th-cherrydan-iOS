@@ -36,7 +36,7 @@ struct MyCampaignView: View {
                     isShowingChangeStatusBottomSheet = true
                 },
                 onClickDelete: {
-                    // TODO: 삭제 로직 구현 필요 시 추가
+                    viewModel.deleteSelectedCampaigns()
                 },
                 isAllSelected: viewModel.isAllSelected,
                 isSelectionValid: viewModel.isSelectionValid

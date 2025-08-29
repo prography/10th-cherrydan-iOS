@@ -453,6 +453,34 @@ class MyCampaignViewModel: ObservableObject {
         }
     }
     
+    func deleteSelectedCampaigns() {
+        Task {
+            do {
+                switch selectedCampaignStatus {
+                case .liked:
+                    // 관심공고: 북마크 개별 삭제
+                    for campaignId in selectedCampaignIds {
+                        try await bookmarkRepository.cancelBookmark(campaignId: campaignId)
+                        mainCampaigns.removeAll { $0.campaignId == campaignId }
+                    }
+                    ToastManager.shared.show(.success("선택된 관심공고가 삭제되었습니다."))
+                    
+                case .applied, .result, .writingReview, .writingDone:
+                    try await campaignStatusRepository.deleteStatus(request: DeleteRequest(campaignIds: Array(selectedCampaignIds)))
+                    mainCampaigns.removeAll { selectedCampaignIds.contains($0.campaignId)} }
+                
+                ToastManager.shared.show(.success("선택된 캠페인 상태가 삭제되었습니다."))
+                selectedCampaignIds.removeAll()
+                isDeleteMode = false
+                fetchCampaignStatusCount()
+                
+            } catch {
+                print("Error deleting campaigns: \(error)")
+                ToastManager.shared.show(.errorWithMessage("삭제 중 오류가 발생했습니다."))
+            }
+        }
+    }
+    
     func getCountForStatus(_ category: CampaignStatusCategory) -> Int? {
         guard let counts = campaignStatusCounts else { return nil }
         
